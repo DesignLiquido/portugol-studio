@@ -1,0 +1,7 @@
+{
+    "name": "@designliquido/portugol-studio",
+    "description": "Dialeto de Portugol Studio baseado em Delégua e TypeScript",
+    "dependencies": {
+        "@designliquido/delegua": "^0.32.2"
+    }
+}
