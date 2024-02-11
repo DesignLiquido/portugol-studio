@@ -20,9 +20,9 @@ Feito isso, no diretório raiz do projeto, execute:
 yarn
 ```
 
-Isso deve baixar e instalar os pacotes que Delégua precisa para ser desenvolvida.
+Isso deve baixar e instalar os pacotes que este dialeto de Portugol Studio precisa para ser desenvolvido.
 
-Delégua funciona em qualquer sistema operacional que tenha uma versão de Node.js compatível. 
+Este dialeto, assim como Delégua, funciona em qualquer sistema operacional que tenha uma versão de Node.js compatível. 
 
 Para os fontes, usamos [TypeScript](https://www.typescriptlang.org/) (versão mais recente). Normalmente desenvolvemos em Visual Studio Code, e, ao abrir o projeto nele, já temos as configurações para depurar (debugar) Delégua. Outros editores podem ser usados, mas não temos arquivos de suporte a todos eles.
 
