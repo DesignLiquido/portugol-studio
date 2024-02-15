@@ -13,7 +13,7 @@
     },
     "scripts": {
         "empacotar": "yarn rimraf ./dist && tsc && yarn copyfiles -V ./package.json ./dist && yarn copyfiles -V ./README.md ./dist",
-        "gerar-documentacao-tecnica": "typedoc --out docs index.ts",
+        "gerar-documentacao-tecnica": "yarn typedoc --out docs index.ts",
         "publicar-docs": "yarn gerar-documentacao-tecnica && copyfiles -V ./recursos/**/* ./docs && gh-pages -d docs",
         "publicar-npm": "npm publish ./dist --access public",
         "testes-unitarios": "jest --coverage",
@@ -34,6 +34,7 @@
         "rimraf": "^5.0.5",
         "ts-jest": "^29.1.2",
         "ts-node": "^10.9.2",
+        "typedoc": "^0.25.8",
         "typescript": "^5.3.3"
     }
 }
