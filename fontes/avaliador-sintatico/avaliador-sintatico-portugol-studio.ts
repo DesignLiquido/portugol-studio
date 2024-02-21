@@ -37,7 +37,7 @@ import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/int
 import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/portugol-studio';
 import { RetornoDeclaracao } from '@designliquido/delegua/avaliador-sintatico/retornos';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
-import { TiposDadosInterface } from '@designliquido/delegua/interfaces/tipos-dados-interface';
+import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 /**
  * O avaliador sintático (_Parser_) é responsável por transformar os símbolos do Lexador em estruturas de alto nível.
@@ -777,7 +777,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         const inicializador = this.expressao();
 
-        return new Const(identificador, inicializador, tipo.lexema as TiposDadosInterface);
+        return new Const(identificador, inicializador, tipo.lexema as TipoDadosElementar);
     }
 
     resolverDeclaracaoForaDeBloco(): Declaracao | Declaracao[] | Construto | Construto[] | any {
