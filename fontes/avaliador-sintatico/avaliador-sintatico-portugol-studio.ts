@@ -34,10 +34,11 @@ import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintati
 
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 
-import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/portugol-studio';
 import { RetornoDeclaracao } from '@designliquido/delegua/avaliador-sintatico/retornos';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
+
+import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 /**
  * O avaliador sintático (_Parser_) é responsável por transformar os símbolos do Lexador em estruturas de alto nível.
