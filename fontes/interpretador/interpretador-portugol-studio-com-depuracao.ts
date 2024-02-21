@@ -1,6 +1,6 @@
-import { Leia } from '@designliquido/delegua/fontes/declaracoes';
+import { Leia } from '@designliquido/delegua/declaracoes';
 import { visitarExpressaoLeiaComum } from './comum';
-import { InterpretadorComDepuracao } from '@designliquido/delegua/fontes/interpretador/interpretador-com-depuracao';
+import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
 
 export class InterpretadorPortugolStudioComDepuracao extends InterpretadorComDepuracao {
     mensagemPrompt: string;

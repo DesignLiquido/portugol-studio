@@ -1,6 +1,6 @@
-import { Variavel } from '@designliquido/delegua/fontes/construtos';
-import { Expressao, Leia } from '@designliquido/delegua/fontes/declaracoes';
-import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/fontes/interfaces/pilha-escopos-execucao-interface';
+import { Variavel } from '@designliquido/delegua/construtos';
+import { Expressao, Leia } from '@designliquido/delegua/declaracoes';
+import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 
 /**
  * Execução da leitura de valores da entrada configurada no

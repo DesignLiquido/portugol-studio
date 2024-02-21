@@ -1,5 +1,5 @@
-import { Leia } from '@designliquido/delegua/fontes/declaracoes';
-import { InterpretadorBase } from '@designliquido/delegua/fontes/interpretador/interpretador-base';
+import { Leia } from '@designliquido/delegua/declaracoes';
+import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
 import { visitarExpressaoLeiaComum } from './comum';
 
 export class InterpretadorPortugolStudio extends InterpretadorBase {

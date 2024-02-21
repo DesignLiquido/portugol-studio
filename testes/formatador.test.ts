@@ -1,6 +1,6 @@
 import * as sistemaOperacional from 'os';
 
-import { FormatadorPortugolStudio } from '@designliquido/delegua/fontes/formatadores';
+import { FormatadorPortugolStudio } from '@designliquido/delegua/formatadores';
 
 import { AvaliadorSintaticoPortugolStudio } from '../fontes';
 import { LexadorPortugolStudio } from '../fontes/lexador/lexador-portugol-studio';

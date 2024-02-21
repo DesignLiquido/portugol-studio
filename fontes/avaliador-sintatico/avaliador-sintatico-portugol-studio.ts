@@ -11,7 +11,7 @@ import {
     Unario,
     Variavel,
     Vetor,
-} from '@designliquido/delegua/fontes/construtos';
+} from '@designliquido/delegua/construtos';
 import {
     Escreva,
     Declaracao,
@@ -28,16 +28,16 @@ import {
     EscrevaMesmaLinha,
     Retorna,
     Const,
-} from '@designliquido/delegua/fontes/declaracoes';
-import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/fontes/interfaces/retornos';
-import { AvaliadorSintaticoBase } from '@designliquido/delegua/fontes/avaliador-sintatico/avaliador-sintatico-base';
+} from '@designliquido/delegua/declaracoes';
+import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/interfaces/retornos';
+import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintatico/avaliador-sintatico-base';
 
-import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/fontes/interfaces';
+import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 
-import tiposDeSimbolos from '@designliquido/delegua/fontes/tipos-de-simbolos/portugol-studio';
-import { RetornoDeclaracao } from '@designliquido/delegua/fontes/avaliador-sintatico/retornos';
-import { ErroAvaliadorSintatico } from '@designliquido/delegua/fontes/avaliador-sintatico/erro-avaliador-sintatico';
-import { TiposDadosInterface } from '@designliquido/delegua/fontes/interfaces/tipos-dados-interface';
+import tiposDeSimbolos from '@designliquido/delegua/tipos-de-simbolos/portugol-studio';
+import { RetornoDeclaracao } from '@designliquido/delegua/avaliador-sintatico/retornos';
+import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
+import { TiposDadosInterface } from '@designliquido/delegua/interfaces/tipos-dados-interface';
 
 /**
  * O avaliador sintático (_Parser_) é responsável por transformar os símbolos do Lexador em estruturas de alto nível.

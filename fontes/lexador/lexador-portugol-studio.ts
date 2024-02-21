@@ -1,7 +1,7 @@
-import { RetornoLexador } from '@designliquido/delegua/fontes/interfaces/retornos';
-import { ErroLexador } from '@designliquido/delegua/fontes/lexador/erro-lexador';
-import { LexadorBase } from '@designliquido/delegua/fontes/lexador/lexador-base';
-import { SimboloInterface } from '@designliquido/delegua/fontes/interfaces';
+import { RetornoLexador } from '@designliquido/delegua/interfaces/retornos';
+import { ErroLexador } from '@designliquido/delegua/lexador/erro-lexador';
+import { LexadorBase } from '@designliquido/delegua/lexador/lexador-base';
+import { SimboloInterface } from '@designliquido/delegua/interfaces';
 
 import { palavrasReservadas } from './palavras-reservadas';
 

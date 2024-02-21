@@ -1,4 +1,4 @@
-import { ErroAvaliadorSintatico } from "@designliquido/delegua/fontes/avaliador-sintatico";
+import { ErroAvaliadorSintatico } from "@designliquido/delegua/avaliador-sintatico";
 
 import { AvaliadorSintaticoPortugolStudio } from "../fontes";
 import { LexadorPortugolStudio } from "../fontes/lexador/lexador-portugol-studio";
