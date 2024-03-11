@@ -127,7 +127,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 this.avancarEDevolverAnterior();
                 const expressao = this.expressao();
                 this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após a expressão.");
-    
+
                 return new Agrupamento(this.hashArquivo, Number(simboloAtual.linha), expressao);
 
             case tiposDeSimbolos.CADEIA:
@@ -279,9 +279,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                             this.erros.push(excecao);
                             throw excecao;
                         }
-    
+
                         this.consumir(tiposDeSimbolos.DOIS_PONTOS, "Esperado ':' após declaração do 'contrario'.");
-    
+
                         const declaracoes = [];
                         do {
                             declaracoes.push(this.resolverDeclaracaoForaDeBloco());
@@ -292,7 +292,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                             !this.verificarTipoSimboloAtual(tiposDeSimbolos.CONTRARIO) &&
                             !this.verificarTipoSimboloAtual(tiposDeSimbolos.CHAVE_DIREITA)
                         );
-    
+
                         caminhoPadrao = {
                             declaracoes,
                         };
@@ -327,7 +327,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                         condicoes: caminhoCondicoes,
                         declaracoes,
                     });
-                } 
+                }
             }
 
             return new Escolha(condicao, caminhos, caminhoPadrao);
@@ -471,7 +471,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 valorInicializacao = literalInicializacao.literal;
             }
 
-            inicializacoes.push(new Var(identificador, new Literal(this.hashArquivo, Number(simboloCadeia.linha), valorInicializacao)));
+            inicializacoes.push(
+                new Var(identificador, new Literal(this.hashArquivo, Number(simboloCadeia.linha), valorInicializacao), "caracter")
+            );
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
         return inicializacoes;
@@ -498,7 +500,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             }
 
             inicializacoes.push(
-                new Var(identificador, new Literal(this.hashArquivo, Number(simboloCaracter.linha), valorInicializacao))
+                new Var(identificador, new Literal(this.hashArquivo, Number(simboloCaracter.linha), valorInicializacao), "caracter")
             );
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
@@ -548,7 +550,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             valorInicializacao.valores = valores;
         }
 
-        return new Var(identificador, valorInicializacao);
+        return new Var(identificador, valorInicializacao, "inteiro[]");
     }
 
     protected declaracaoTrivialInteiro(simboloInteiro: SimboloInterface, identificador: SimboloInterface) {
@@ -557,8 +559,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
             valorInicializacao = this.expressao();
         }
-
-        return new Var(identificador, valorInicializacao);
+        return new Var(identificador, valorInicializacao, 'inteiro');
     }
 
     declaracaoInteiros(): Var[] {
@@ -590,7 +591,6 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 inicializacoes.push(this.declaracaoTrivialInteiro(simboloInteiro, identificador));
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
-
         return inicializacoes;
     }
 
@@ -636,7 +636,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 valorInicializacao = literalInicializacao.lexema.toLowerCase() === 'verdadeiro' ? true : false;
             }
 
-            inicializacoes.push(new Var(identificador, new Literal(this.hashArquivo, Number(simboloLogico.linha), valorInicializacao)));
+            inicializacoes.push(
+                new Var(identificador, new Literal(this.hashArquivo, Number(simboloLogico.linha), valorInicializacao), 'lógico')
+            );
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
         return inicializacoes;
@@ -722,11 +724,14 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 valorInicializacao = Number(literalInicializacao.literal);
             }
 
-            inicializacoes.push(new Var(identificador, new Literal(this.hashArquivo, Number(simboloReal.linha), valorInicializacao)));
+            inicializacoes.push(
+                new Var(identificador, new Literal(this.hashArquivo, Number(simboloReal.linha), valorInicializacao), 'real')
+            );
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
         return inicializacoes;
     }
+
 
     expressao(): Construto {
         // if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.LEIA)) return this.declaracaoLeia();
