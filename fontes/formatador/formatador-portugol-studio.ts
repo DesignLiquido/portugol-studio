@@ -1,6 +1,9 @@
-import { AcessoIndiceVariavel, AcessoMetodoOuPropriedade, Agrupamento, Aleatorio, AtribuicaoPorIndice, Atribuir, Binario, Bloco, CabecalhoPrograma, Chamada, Classe, Const, ConstMultiplo, Construto, Continua, Declaracao, DefinirValor, Dicionario, Enquanto, Escolha, Escreva, EscrevaMesmaLinha, Expressao, ExpressaoRegular, Falhar, Fazer, FimPara, FormatacaoEscrita, FuncaoConstruto, FuncaoDeclaracao, Importar, InicioAlgoritmo, Isto, Leia, LeiaMultiplo, Literal, Logico, Para, ParaCada, Retorna, Se, Super, Sustar, TendoComo, Tente, TipoDe, Tupla, Unario, Var, VarMultiplo, Variavel, Vetor, VisitanteComumInterface } from "@designliquido/delegua";
-import { ContinuarQuebra, RetornoQuebra, SustarQuebra } from "@designliquido/delegua/quebras";
+
+import { VisitanteComumInterface } from '@designliquido/delegua/fontes/interfaces';
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
+import { Aleatorio, Bloco, CabecalhoPrograma, Classe, Const, ConstMultiplo, Continua, Declaracao, Enquanto, Escolha, Escreva, EscrevaMesmaLinha, Expressao, Falhar, Fazer, FuncaoDeclaracao, Importar, InicioAlgoritmo, Leia, LeiaMultiplo, Para, ParaCada, Retorna, Se, Sustar, TendoComo, Tente, Var, VarMultiplo } from '@designliquido/delegua/fontes/declaracoes';
+import { AcessoIndiceVariavel, AcessoMetodoOuPropriedade, Agrupamento, AtribuicaoPorIndice, Atribuir, Binario, Chamada, Construto, DefinirValor, Dicionario, ExpressaoRegular, FimPara, FormatacaoEscrita, FuncaoConstruto, Isto, Literal, Logico, Super, TipoDe, Tupla, Unario, Variavel, Vetor } from '@designliquido/delegua/fontes/construtos';
+import { ContinuarQuebra, SustarQuebra } from '@designliquido/delegua/fontes/quebras';
 
 export class FormatadorPortugolStudio implements VisitanteComumInterface {
     indentacaoAtual: number;
