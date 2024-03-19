@@ -1,9 +1,63 @@
+import { VisitanteComumInterface } from '@designliquido/delegua/interfaces';
+import {
+    Aleatorio,
+    Bloco,
+    CabecalhoPrograma,
+    Classe,
+    Const,
+    ConstMultiplo,
+    Continua,
+    Declaracao,
+    Enquanto,
+    Escolha,
+    Escreva,
+    EscrevaMesmaLinha,
+    Expressao,
+    Falhar,
+    Fazer,
+    FuncaoDeclaracao,
+    Importar,
+    InicioAlgoritmo,
+    Leia,
+    LeiaMultiplo,
+    Para,
+    ParaCada,
+    Retorna,
+    Se,
+    Sustar,
+    TendoComo,
+    Tente,
+    Var,
+    VarMultiplo,
+} from '@designliquido/delegua/declaracoes';
+import {
+    AcessoIndiceVariavel,
+    AcessoMetodoOuPropriedade,
+    Agrupamento,
+    AtribuicaoPorIndice,
+    Atribuir,
+    Binario,
+    Chamada,
+    Construto,
+    DefinirValor,
+    Dicionario,
+    ExpressaoRegular,
+    FimPara,
+    FormatacaoEscrita,
+    FuncaoConstruto,
+    Isto,
+    Literal,
+    Logico,
+    Super,
+    TipoDe,
+    Tupla,
+    Unario,
+    Variavel,
+    Vetor,
+} from '@designliquido/delegua/construtos';
+import { ContinuarQuebra, SustarQuebra } from '@designliquido/delegua/quebras';
 
-import { VisitanteComumInterface } from '@designliquido/delegua/fontes/interfaces';
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
-import { Aleatorio, Bloco, CabecalhoPrograma, Classe, Const, ConstMultiplo, Continua, Declaracao, Enquanto, Escolha, Escreva, EscrevaMesmaLinha, Expressao, Falhar, Fazer, FuncaoDeclaracao, Importar, InicioAlgoritmo, Leia, LeiaMultiplo, Para, ParaCada, Retorna, Se, Sustar, TendoComo, Tente, Var, VarMultiplo } from '@designliquido/delegua/fontes/declaracoes';
-import { AcessoIndiceVariavel, AcessoMetodoOuPropriedade, Agrupamento, AtribuicaoPorIndice, Atribuir, Binario, Chamada, Construto, DefinirValor, Dicionario, ExpressaoRegular, FimPara, FormatacaoEscrita, FuncaoConstruto, Isto, Literal, Logico, Super, TipoDe, Tupla, Unario, Variavel, Vetor } from '@designliquido/delegua/fontes/construtos';
-import { ContinuarQuebra, SustarQuebra } from '@designliquido/delegua/fontes/quebras';
 
 export class FormatadorPortugolStudio implements VisitanteComumInterface {
     indentacaoAtual: number;
@@ -42,7 +96,9 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         throw new Error('Método não implementado');
     }
     visitarDeclaracaoConst(declaracao: Const): any {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}const ${declaracao.tipo} ${declaracao.simbolo.lexema}`;
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}const ${declaracao.tipo} ${
+            declaracao.simbolo.lexema
+        }`;
         if (declaracao.inicializador) {
             this.codigoFormatado += ` = `;
             this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
@@ -68,7 +124,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             this.visitarExpressaoBinaria(expressao.valor);
         } else {
             if (this.deveIndentar) {
-                this.codigoFormatado += `${" ".repeat(this.indentacaoAtual)}`
+                this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}`;
             }
             this.codigoFormatado += `${expressao.simbolo.lexema} = `;
             this.formatarDeclaracaoOuConstruto(expressao.valor);
@@ -88,7 +144,9 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
     }
 
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}funcao ${declaracao.simbolo.lexema}() {${this.quebraLinha}`;
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}funcao ${declaracao.simbolo.lexema}() {${
+            this.quebraLinha
+        }`;
 
         this.visitarExpressaoFuncaoConstruto(declaracao.funcao);
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}}${this.quebraLinha}`;
@@ -236,33 +294,33 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             let tipoDado;
 
             switch (declaracao.tipo) {
-                case "inteiro[]":
-                    tipoDado = "inteiro"
+                case 'inteiro[]':
+                    tipoDado = 'inteiro';
                     break;
-                case "texto[]":
-                case "caracter[]":
-                    tipoDado = "caracter"
+                case 'texto[]':
+                case 'caracter[]':
+                    tipoDado = 'caracter';
                     break;
                 default:
-                    tipoDado = declaracao.tipo
+                    tipoDado = declaracao.tipo;
                     break;
             }
 
-            this.codigoFormatado += `${" ".repeat(this.indentacaoAtual)}${tipoDado} ${declaracao.simbolo.lexema}`
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}${tipoDado} ${declaracao.simbolo.lexema}`;
 
             if (declaracao.inicializador instanceof Vetor) {
-                this.codigoFormatado += `[${declaracao.inicializador.valores.length}]`
+                this.codigoFormatado += `[${declaracao.inicializador.valores.length}]`;
             }
-            this.codigoFormatado += ` = `
-            this.formatarDeclaracaoOuConstruto(declaracao.inicializador)
+            this.codigoFormatado += ` = `;
+            this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
             if (this.devePularLinha) {
                 this.codigoFormatado += this.quebraLinha;
             }
         } else {
-            console.log("Eu passo aqui");
+            console.log('Eu passo aqui');
 
-            this.codigoFormatado += `${declaracao.simbolo.lexema} = `
-            this.formatarDeclaracaoOuConstruto(declaracao.inicializador)
+            this.codigoFormatado += `${declaracao.simbolo.lexema} = `;
+            this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
         }
     }
     visitarDeclaracaoVarMultiplo(declaracao: VarMultiplo): Promise<any> {
@@ -408,10 +466,10 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         if (typeof expressao.valor === 'boolean') {
             switch (expressao.valor) {
                 case true:
-                    this.codigoFormatado += "verdadeiro";
+                    this.codigoFormatado += 'verdadeiro';
                     break;
                 default:
-                    this.codigoFormatado += "falso";
+                    this.codigoFormatado += 'falso';
                     break;
             }
             return;
@@ -451,10 +509,10 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
                 operador = `--`;
                 break;
             case tiposDeSimbolos.NEGACAO:
-                operador = "nao "
-                break
+                operador = 'nao ';
+                break;
             default:
-                console.log(expressao.operador.tipo)
+                console.log(expressao.operador.tipo);
                 break;
         }
 
