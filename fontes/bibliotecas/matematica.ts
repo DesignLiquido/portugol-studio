@@ -31,3 +31,15 @@ export async function cosseno(angulo: number) {
 export async function tangente(angulo: number) {
     return Promise.resolve(Math.tan(angulo));
 }
+
+export async function valor_absoluto(numero: number){
+    return Promise.resolve(Math.abs(numero));
+}
+
+export async function maior_numero(numeroA: number, numeroB: number){
+    return Promise.resolve(Math.max(numeroA, numeroB));
+}
+
+export async function menor_numero(numeroA: number, numeroB: number){
+    return Promise.resolve(Math.min(numeroA, numeroB));
+}
