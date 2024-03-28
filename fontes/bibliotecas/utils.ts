@@ -1,4 +1,13 @@
 const horaInicial: number = Date.now();
+import * as os from 'os';
+
+export async function obter_diretorio_usuario(): Promise<string> {
+    try {
+        return os.homedir();
+    } catch (error) {
+        throw new Error("Não foi possível obter o diretório do usuário");
+    }
+}
 
 export async function numero_elementos(vetor: any[]): Promise<number> {
     return vetor.length;
