@@ -4,9 +4,29 @@ import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 
+import * as calendario from '../bibliotecas/calendario';
 import * as matematica from '../bibliotecas/matematica';
 import * as texto from '../bibliotecas/texto';
 import * as util from '../bibliotecas/util';
+
+function carregarBibliotecaCalendario(): DeleguaModulo {
+    const metodos: { [nome: string]: FuncaoPadrao } = {
+        dia_mes_atual: new FuncaoPadrao(0, calendario.dia_mes_atual),
+        dia_semana_atual: new FuncaoPadrao(0, calendario.dia_semana_atual),
+        mes_atual: new FuncaoPadrao(0, calendario.mes_atual),
+        ano_atual: new FuncaoPadrao(0, calendario.ano_atual),
+        hora_atual: new FuncaoPadrao(0, calendario.hora_atual),
+        minuto_atual: new FuncaoPadrao(0, calendario.minuto_atual),
+        segundo_atual: new FuncaoPadrao(0, calendario.segundo_atual),
+        milisegundo_atual: new FuncaoPadrao(0, calendario.milisegundo_atual),
+        dia_semana_completo: new FuncaoPadrao(0, calendario.dia_semana_completo),
+        dia_semana_curto: new FuncaoPadrao(0, calendario.dia_semana_completo),
+    };
+
+    const objetoCalendario = new DeleguaModulo('Calendario');
+    objetoCalendario.componentes = metodos;
+    return objetoCalendario;
+}
 
 function carregarBibliotecaMatematica(): DeleguaModulo {
     const metodos: { [nome: string]: FuncaoPadrao } = {
@@ -62,6 +82,8 @@ function carregarBibliotecaUtil(): DeleguaModulo {
 
 export async function visitarExpressaoImportarComum(expressao: Importar): Promise<any> {
     switch (expressao.caminho.valor) {
+        case 'Calendario':
+            return carregarBibliotecaCalendario();
         case 'Matematica':
             return carregarBibliotecaMatematica();
         case 'Texto':

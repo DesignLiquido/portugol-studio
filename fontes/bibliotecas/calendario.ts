@@ -24,13 +24,13 @@ export async function hora_atual(formato_12h: boolean): Promise<number> {
     const data = new Date();
     if (!formato_12h) {
         return data.getHours();
-    } else {
-        let hora = data.getHours() % 12;
-        if (hora === 0) {
-            hora = 12;
-        }
-        return hora;
     }
+
+    let hora = data.getHours() % 12;
+    if (hora === 0) {
+        hora = 12;
+    }
+    return hora;
 }
 
 export async function minuto_atual(): Promise<number> {
@@ -73,9 +73,9 @@ export async function dia_semana_completo(
         }
 
         return dia;
-    } else {
-        throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
-    }
+    } 
+        
+    throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
 }
 
 export async function dia_semana_curto(numero_dia: number, caixa_alta: boolean, caixa_baixa: boolean): Promise<string> {
@@ -91,9 +91,9 @@ export async function dia_semana_curto(numero_dia: number, caixa_alta: boolean, 
         }
 
         return dia;
-    } else {
-        throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
-    }
+    } 
+        
+    throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
 }
 
 export async function dia_semana_abreviado(
@@ -113,7 +113,7 @@ export async function dia_semana_abreviado(
         }
 
         return dia;
-    } else {
-        throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
     }
+        
+    throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
 }
