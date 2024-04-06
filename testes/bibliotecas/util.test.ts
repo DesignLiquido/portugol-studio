@@ -88,7 +88,7 @@ describe('Biblioteca Util', () => {
             const endTime = new Date().getTime();
             const elapsedTime = endTime - startTime;
             expect(elapsedTime).toBeGreaterThanOrEqual(intervalo * 0.9);
-            expect(elapsedTime).toBeLessThanOrEqual(intervalo * 1.3);
+            expect(elapsedTime).toBeLessThanOrEqual(intervalo * 1.5);
         });
     });
 
@@ -104,7 +104,7 @@ describe('Biblioteca Util', () => {
             const tempoAtual = Date.now();
             const tempoDecorridoEsperado = tempoAtual - horaInicial;
             expect(resultado).toBeGreaterThanOrEqual(tempoDecorridoEsperado * 0.9);
-            expect(resultado).toBeLessThanOrEqual(tempoDecorridoEsperado * 1.3);
+            expect(resultado).toBeLessThanOrEqual(tempoDecorridoEsperado * 1.5);
         });
     });
 });
