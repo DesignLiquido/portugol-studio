@@ -292,6 +292,24 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
+                    '    inclua biblioteca Matematica',
+                    '    funcao inicio()',
+                    '    {',
+                    '        escreva(Matematica.raiz(4.0, 2.0))',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
+            });
+
+            it('Importação de bibliotecas, com nome de constante definido', () => {
+                const resultado = lexador.mapear([
+                    'programa',
+                    '{',
                     '    inclua biblioteca Matematica --> mat',
                     '    funcao inicio()',
                     '    {',

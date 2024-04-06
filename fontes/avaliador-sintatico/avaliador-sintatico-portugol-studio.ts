@@ -215,15 +215,20 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     /**
      * Declaração para inclusão de uma biblioteca. 
      * Exemplo: `inclua biblioteca Matematica --> mat` seria o mesmo que
-     * `const mat = importar('matematica')` em Delégua.
+     * `const mat = importar('Matematica')` em Delégua, ou
+     * `inclua biblioteca Matematica` (sem o nome da variável) seria o
+     * mesmo que `const Matematica = importar('Matematica')`
      * @returns Uma declaração do tipo `Importar`.
      */
     declaracaoInclua(): Const {
         this.avancarEDevolverAnterior();
         this.consumir(tiposDeSimbolos.BIBLIOTECA, 'Esperado palavra reservada "biblioteca" após "inclua".');
         const nomeBiblioteca = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado identificador com nome de biblioteca após palavra reservada "biblioteca"');
-        this.consumir(tiposDeSimbolos.SETA, 'Esperado seta de atribuição após nome de biblioteca.');
-        const constanteBiblioteca = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado identificador com nome de constante de biblioteca após seta de atribuição em declaração "inclua".');
+        let constanteBiblioteca = nomeBiblioteca;
+        if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.SETA)) {
+            constanteBiblioteca = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado identificador com nome de constante de biblioteca após seta de atribuição em declaração "inclua".');
+        }
+
         return new Const(
             constanteBiblioteca,
             new Importar(new Literal(this.hashArquivo, nomeBiblioteca.linha, nomeBiblioteca.lexema), null)
