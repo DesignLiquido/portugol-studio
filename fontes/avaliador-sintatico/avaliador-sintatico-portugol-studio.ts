@@ -40,6 +40,7 @@ import { RetornoDeclaracao } from '@designliquido/delegua/avaliador-sintatico/re
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
+import { Matriz } from '../construtos/matriz';
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 /**
@@ -48,13 +49,13 @@ import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
  * Há dois grupos de estruturas de alto nível: Construtos e Declarações.
  */
 export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
-    private declaracoes: Declaracao[] = []
+    private declaracoes: Declaracao[] = [];
 
     declaracaoEscreva(): Escreva {
         throw new Error('Método não implementado.');
     }
 
-    private validarEscopoPrograma(): void {
+    private validarEscopoProgramaEAvaliacaoSintatica(): void {
         this.consumir(tiposDeSimbolos.PROGRAMA, "Esperada expressão 'programa' para inicializar programa.");
 
         this.consumir(
@@ -213,7 +214,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     /**
-     * Declaração para inclusão de uma biblioteca. 
+     * Declaração para inclusão de uma biblioteca.
      * Exemplo: `inclua biblioteca Matematica --> mat` seria o mesmo que
      * `const mat = importar('Matematica')` em Delégua, ou
      * `inclua biblioteca Matematica` (sem o nome da variável) seria o
@@ -223,10 +224,16 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     declaracaoInclua(): Const {
         this.avancarEDevolverAnterior();
         this.consumir(tiposDeSimbolos.BIBLIOTECA, 'Esperado palavra reservada "biblioteca" após "inclua".');
-        const nomeBiblioteca = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado identificador com nome de biblioteca após palavra reservada "biblioteca"');
+        const nomeBiblioteca = this.consumir(
+            tiposDeSimbolos.IDENTIFICADOR,
+            'Esperado identificador com nome de biblioteca após palavra reservada "biblioteca"'
+        );
         let constanteBiblioteca = nomeBiblioteca;
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.SETA)) {
-            constanteBiblioteca = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado identificador com nome de constante de biblioteca após seta de atribuição em declaração "inclua".');
+            constanteBiblioteca = this.consumir(
+                tiposDeSimbolos.IDENTIFICADOR,
+                'Esperado identificador com nome de constante de biblioteca após seta de atribuição em declaração "inclua".'
+            );
         }
 
         return new Const(
@@ -297,7 +304,6 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             let caminhoPadrao = null;
             while (!this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CHAVE_DIREITA) && !this.estaNoFinal()) {
                 if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CASO)) {
-
                     if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CONTRARIO)) {
                         if (caminhoPadrao !== null) {
                             const excecao = new ErroAvaliadorSintatico(
@@ -314,7 +320,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                         do {
                             declaracoes.push(this.resolverDeclaracaoForaDeBloco());
 
-                            this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARE)
+                            this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARE);
                         } while (
                             !this.verificarTipoSimboloAtual(tiposDeSimbolos.CASO) &&
                             !this.verificarTipoSimboloAtual(tiposDeSimbolos.CONTRARIO) &&
@@ -344,7 +350,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                         } else {
                             declaracoes.push(retornoDeclaracao as Declaracao);
                         }
-                        this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARE)
+                        this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PARE);
                     } while (
                         !this.verificarTipoSimboloAtual(tiposDeSimbolos.CASO) &&
                         !this.verificarTipoSimboloAtual(tiposDeSimbolos.CONTRARIO) &&
@@ -500,7 +506,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             }
 
             inicializacoes.push(
-                new Var(identificador, new Literal(this.hashArquivo, Number(simboloCadeia.linha), valorInicializacao), "caracter")
+                new Var(
+                    identificador,
+                    new Literal(this.hashArquivo, Number(simboloCadeia.linha), valorInicializacao),
+                    'caracter'
+                )
             );
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
@@ -517,19 +527,15 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 "Esperado identificador após palavra reservada 'caracter'."
             );
 
-            // Inicializações de variáveis podem ter valores definidos.
-            let valorInicializacao = '';
-            if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
-                const literalInicializacao = this.consumir(
-                    tiposDeSimbolos.CARACTER,
-                    'Esperado literal de caracter após símbolo de igual em declaração de variável.'
-                );
-                valorInicializacao = literalInicializacao.literal;
-            }
+            const dimensoes = this.logicaComumDimensoesMatrizes();
 
-            inicializacoes.push(
-                new Var(identificador, new Literal(this.hashArquivo, Number(simboloCaracter.linha), valorInicializacao), "caracter")
-            );
+            if (dimensoes.length > 0) {
+                inicializacoes.push(
+                    this.declaracaoVetorOuMatriz(simboloCaracter, identificador, dimensoes, 'caracter')
+                );
+            } else {
+                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloCaracter, identificador, 'caracter'));
+            }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
         return inicializacoes;
@@ -546,48 +552,91 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return new Expressao(expressao);
     }
 
-    protected declaracaoVetorInteiros(
-        simboloInteiro: SimboloInterface,
-        identificador: SimboloInterface,
-        posicoes: number
-    ) {
-        let valorInicializacao: Vetor = new Vetor(this.hashArquivo, Number(simboloInteiro.linha), []);
-        if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
-            this.consumir(
-                tiposDeSimbolos.CHAVE_ESQUERDA,
-                'Esperado chave esquerda após sinal de igual em lado direito da atribuição de vetor.'
-            );
+    /**
+     * Método recursivo que lê os valores de inicialização de uma matriz de N dimensões.
+     * @param {number[]} dimensoes O número de dimensões faltantes.
+     * Cada passo recursivo usa o primeiro valor e chama a função passando esse vetor, mas sem
+     * o primeiro valor.
+     */
+    protected lerValoresAtribuicaoMatriz(dimensoes: number[]) {
+        this.consumir(
+            tiposDeSimbolos.CHAVE_ESQUERDA,
+            'Esperado chave esquerda após sinal de igual em lado direito da atribuição de vetor.'
+        );
 
-            const valores = [];
-            do {
+        const valores = [];
+        do {
+            if (dimensoes.length === 1) {
                 valores.push(this.primario());
-            } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
-
-            this.consumir(
-                tiposDeSimbolos.CHAVE_DIREITA,
-                'Esperado chave direita após valores de vetor em lado direito da atribuição de vetor.'
-            );
-
-            if (posicoes !== valores.length) {
-                throw this.erro(
-                    simboloInteiro,
-                    `Esperado ${posicoes} números, mas foram fornecidos ${valores.length} valores do lado direito da atribuição.`
-                );
+            } else {
+                const valoresProximaDimensao = this.lerValoresAtribuicaoMatriz(dimensoes.slice(1));
+                valores.push(valoresProximaDimensao);
             }
+        } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
-            valorInicializacao.valores = valores;
-        }
+        this.consumir(
+            tiposDeSimbolos.CHAVE_DIREITA,
+            'Esperado chave direita após valores de vetor em lado direito da atribuição de vetor.'
+        );
 
-        return new Var(identificador, valorInicializacao, "inteiro[]");
+        // TODO: Recolocar.
+        /* if (dimensoes !== valores.length) {
+            throw this.erro(
+                simboloInteiro,
+                `Esperado ${dimensoes} números, mas foram fornecidos ${valores.length} valores do lado direito da atribuição.`
+            );
+        } */
+
+        return valores;
     }
 
-    protected declaracaoTrivialInteiro(simboloInteiro: SimboloInterface, identificador: SimboloInterface) {
+    protected declaracaoVetorOuMatriz(
+        simboloTipo: SimboloInterface,
+        identificador: SimboloInterface,
+        dimensoes: number[],
+        tipoDados: string = 'inteiro'
+    ) {
+        let valorInicializacao: Matriz = new Matriz(this.hashArquivo, Number(simboloTipo.linha), dimensoes, null);
+        if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
+            valorInicializacao.valores = this.lerValoresAtribuicaoMatriz(dimensoes);
+        }
+
+        return new Var(identificador, valorInicializacao, `${tipoDados}[]` as any);
+    }
+
+    protected declaracaoVariavelSemDimensoes(
+        simboloInteiro: SimboloInterface,
+        identificador: SimboloInterface,
+        tipoDados: string = 'inteiro'
+    ) {
         // Inicializações de variáveis podem ter valores definidos.
         let valorInicializacao: Construto = new Literal(this.hashArquivo, Number(simboloInteiro.linha), 0);
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
             valorInicializacao = this.expressao();
         }
-        return new Var(identificador, valorInicializacao, 'inteiro');
+        return new Var(identificador, valorInicializacao, tipoDados as any);
+    }
+
+    protected logicaComumDimensoesMatrizes(): number[] {
+        let dimensoes = [];
+        while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.COLCHETE_ESQUERDO)) {
+            let simboloNumeroPosicoes: SimboloInterface;
+            if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.INTEIRO)) {
+                simboloNumeroPosicoes = this.simboloAnterior();
+            }
+
+            this.consumir(
+                tiposDeSimbolos.COLCHETE_DIREITO,
+                'Esperado fechamento de identificação de número de posições de uma dimensão de vetor ou matriz.'
+            );
+
+            // Portugol Studio permite declarar vetores sem posições definidas.
+            // Quando isso acontece, definimos a quantidade de posições de uma dimensão como -1.
+            const numeroPosicoes = simboloNumeroPosicoes ? Number(simboloNumeroPosicoes.literal) : -1;
+            dimensoes.push(numeroPosicoes);
+        }
+
+        return dimensoes;
     }
 
     declaracaoInteiros(): Var[] {
@@ -600,25 +649,15 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 "Esperado identificador após palavra reservada 'inteiro'."
             );
 
-            if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.COLCHETE_ESQUERDO)) {
-                // TODO
-                const numeroPosicoes = this.consumir(
-                    tiposDeSimbolos.INTEIRO,
-                    'Esperado número inteiro para definir quantas posições terá o vetor.'
-                );
+            const dimensoes = this.logicaComumDimensoesMatrizes();
 
-                this.consumir(
-                    tiposDeSimbolos.COLCHETE_DIREITO,
-                    'Esperado fechamento de identificação de número de posições de uma declaração de vetor.'
-                );
-
-                inicializacoes.push(
-                    this.declaracaoVetorInteiros(simboloInteiro, identificador, Number(numeroPosicoes.literal))
-                );
+            if (dimensoes.length > 0) {
+                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloInteiro, identificador, dimensoes));
             } else {
-                inicializacoes.push(this.declaracaoTrivialInteiro(simboloInteiro, identificador));
+                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloInteiro, identificador));
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
+
         return inicializacoes;
     }
 
@@ -665,7 +704,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             }
 
             inicializacoes.push(
-                new Var(identificador, new Literal(this.hashArquivo, Number(simboloLogico.linha), valorInicializacao), 'lógico')
+                new Var(
+                    identificador,
+                    new Literal(this.hashArquivo, Number(simboloLogico.linha), valorInicializacao),
+                    'lógico'
+                )
             );
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
@@ -673,7 +716,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     declaracaoRetorne(): Retorna {
-        this.avancarEDevolverAnterior()
+        this.avancarEDevolverAnterior();
         const simboloChave = this.simbolos[this.atual];
         let valor = null;
 
@@ -719,7 +762,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             let incrementar = null;
             if (!this.verificarTipoSimboloAtual(tiposDeSimbolos.PARENTESE_DIREITO)) {
                 incrementar = this.expressao();
-                this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.INCREMENTAR, tiposDeSimbolos.DECREMENTAR)
+                this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.INCREMENTAR, tiposDeSimbolos.DECREMENTAR);
             }
 
             this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após cláusulas");
@@ -742,24 +785,17 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 "Esperado identificador após palavra reservada 'real'."
             );
 
-            // Inicializações de variáveis podem ter valores definidos.
-            let valorInicializacao = 0;
-            if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
-                const literalInicializacao = this.consumir(
-                    tiposDeSimbolos.REAL,
-                    'Esperado literal real após símbolo de igual em declaração de variável.'
-                );
-                valorInicializacao = Number(literalInicializacao.literal);
-            }
+            const dimensoes = this.logicaComumDimensoesMatrizes();
 
-            inicializacoes.push(
-                new Var(identificador, new Literal(this.hashArquivo, Number(simboloReal.linha), valorInicializacao), 'real')
-            );
+            if (dimensoes.length > 0) {
+                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloReal, identificador, dimensoes, 'real'));
+            } else {
+                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloReal, identificador, 'real'));
+            }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
         return inicializacoes;
     }
-
 
     expressao(): Construto {
         return this.atribuir();
@@ -871,9 +907,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         this.hashArquivo = hashArquivo || 0;
         this.simbolos = retornoLexador?.simbolos || [];
-        this.declaracoes = []
+        this.declaracoes = [];
 
-        this.validarEscopoPrograma();
+        this.validarEscopoProgramaEAvaliacaoSintatica();
 
         return {
             declaracoes: this.declaracoes.filter((d) => d),

@@ -8,6 +8,8 @@ import * as calendario from '../bibliotecas/calendario';
 import * as matematica from '../bibliotecas/matematica';
 import * as texto from '../bibliotecas/texto';
 import * as util from '../bibliotecas/util';
+import { Matriz } from 'fontes/construtos/matriz';
+import { InterpretadorPortugolStudio } from './interpretador-portugol-studio';
 
 function carregarBibliotecaCalendario(): DeleguaModulo {
     const metodos: { [nome: string]: FuncaoPadrao } = {
@@ -122,4 +124,31 @@ export async function visitarExpressaoLeiaComum(
                 : (<Variavel>argumento).simbolo;
         pilhaEscoposExecucao.definirVariavel(simbolo.lexema, valorLido);
     }
+}
+
+export async function visitarExpressaoMatrizComum(
+    interpretador: InterpretadorPortugolStudio, 
+    expressao: Matriz
+): Promise<any> {
+    return await resolverValoresMatriz(interpretador, expressao.valores);
+}
+
+/**
+ * Função recursiva que visita todos os valores de uma matriz.
+ * @param interpretador A instância do interpretador.
+ * @param valores A matriz de valores das dimensões ainda não resolvidas.
+ */
+async function resolverValoresMatriz(interpretador: InterpretadorPortugolStudio, valores: any[]) {
+    const valoresResolvidos = [];
+    if (valores && valores.length > 0) {
+        for (let i = 0; i < valores.length; i++) {
+            if (Array.isArray(valores[i])) {
+                valoresResolvidos.push(await resolverValoresMatriz(interpretador, valores[i]));
+            } else {
+                valoresResolvidos.push(await interpretador.avaliar(valores[i]));
+            }
+        }
+    }
+    
+    return valoresResolvidos;
 }
