@@ -40,6 +40,7 @@ import { RetornoDeclaracao } from '@designliquido/delegua/avaliador-sintatico/re
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
+import { Matriz } from '../construtos/matriz';
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 /**
@@ -54,7 +55,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         throw new Error('Método não implementado.');
     }
 
-    private validarEscopoPrograma(): void {
+    private validarEscopoProgramaEAvaliacaoSintatica(): void {
         this.consumir(tiposDeSimbolos.PROGRAMA, "Esperada expressão 'programa' para inicializar programa.");
 
         this.consumir(
@@ -546,36 +547,51 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return new Expressao(expressao);
     }
 
-    protected declaracaoVetorInteiros(
+    /**
+     * Método recursivo que lê os valores de inicialização de uma matriz de N dimensões.
+     * @param {number[]} dimensoes O número de dimensões faltantes. 
+     * Cada passo recursivo usa o primeiro valor e chama a função passando esse vetor, mas sem
+     * o primeiro valor.
+     */
+    protected lerValoresAtribuicaoMatriz(dimensoes: number[]) {
+        this.consumir(
+            tiposDeSimbolos.CHAVE_ESQUERDA,
+            'Esperado chave esquerda após sinal de igual em lado direito da atribuição de vetor.'
+        );
+
+        const valores = [];
+        do {
+            if (dimensoes.length === 1) {
+                valores.push(this.primario());
+            } else {
+                const valoresProximaDimensao = this.lerValoresAtribuicaoMatriz(dimensoes.slice(1));
+                valores.push(valoresProximaDimensao);
+            }
+        } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
+
+        this.consumir(
+            tiposDeSimbolos.CHAVE_DIREITA,
+            'Esperado chave direita após valores de vetor em lado direito da atribuição de vetor.'
+        );
+
+        /* if (dimensoes !== valores.length) {
+            throw this.erro(
+                simboloInteiro,
+                `Esperado ${dimensoes} números, mas foram fornecidos ${valores.length} valores do lado direito da atribuição.`
+            );
+        } */
+
+        return valores;
+    }
+
+    protected declaracaoVetorOuMatrizDeInteiros(
         simboloInteiro: SimboloInterface,
         identificador: SimboloInterface,
-        posicoes: number
+        dimensoes: number[]
     ) {
-        let valorInicializacao: Vetor = new Vetor(this.hashArquivo, Number(simboloInteiro.linha), []);
+        let valorInicializacao: Matriz = new Matriz(this.hashArquivo, Number(simboloInteiro.linha), dimensoes, null);
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
-            this.consumir(
-                tiposDeSimbolos.CHAVE_ESQUERDA,
-                'Esperado chave esquerda após sinal de igual em lado direito da atribuição de vetor.'
-            );
-
-            const valores = [];
-            do {
-                valores.push(this.primario());
-            } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
-
-            this.consumir(
-                tiposDeSimbolos.CHAVE_DIREITA,
-                'Esperado chave direita após valores de vetor em lado direito da atribuição de vetor.'
-            );
-
-            if (posicoes !== valores.length) {
-                throw this.erro(
-                    simboloInteiro,
-                    `Esperado ${posicoes} números, mas foram fornecidos ${valores.length} valores do lado direito da atribuição.`
-                );
-            }
-
-            valorInicializacao.valores = valores;
+            valorInicializacao.valores = this.lerValoresAtribuicaoMatriz(dimensoes);
         }
 
         return new Var(identificador, valorInicializacao, "inteiro[]");
@@ -600,25 +616,30 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 "Esperado identificador após palavra reservada 'inteiro'."
             );
 
-            if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.COLCHETE_ESQUERDO)) {
-                // TODO
+            let dimensoes = [];
+            while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.COLCHETE_ESQUERDO)) {
                 const numeroPosicoes = this.consumir(
                     tiposDeSimbolos.INTEIRO,
-                    'Esperado número inteiro para definir quantas posições terá o vetor.'
+                    'Esperado número inteiro para definir quantas posições terá a dimensão do vetor ou matriz.'
                 );
 
                 this.consumir(
                     tiposDeSimbolos.COLCHETE_DIREITO,
-                    'Esperado fechamento de identificação de número de posições de uma declaração de vetor.'
+                    'Esperado fechamento de identificação de número de posições de uma dimensão de vetor ou matriz.'
                 );
 
+                dimensoes.push(Number(numeroPosicoes.literal));
+            }
+
+            if (dimensoes.length > 0) {
                 inicializacoes.push(
-                    this.declaracaoVetorInteiros(simboloInteiro, identificador, Number(numeroPosicoes.literal))
+                    this.declaracaoVetorOuMatrizDeInteiros(simboloInteiro, identificador, dimensoes)
                 );
             } else {
                 inicializacoes.push(this.declaracaoTrivialInteiro(simboloInteiro, identificador));
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
+
         return inicializacoes;
     }
 
@@ -873,7 +894,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         this.simbolos = retornoLexador?.simbolos || [];
         this.declaracoes = []
 
-        this.validarEscopoPrograma();
+        this.validarEscopoProgramaEAvaliacaoSintatica();
 
         return {
             declaracoes: this.declaracoes.filter((d) => d),

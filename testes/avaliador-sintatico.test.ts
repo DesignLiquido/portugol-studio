@@ -323,6 +323,25 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
             });
+
+            it('Matrizes', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    funcao inicio()',
+                    '    {',
+                    '        //Declaração de uma matriz de inteiros',
+                    '        // de duas linhas e duas colunas já inicializado.',
+                    '        inteiro matriz[2][2] = {{15,22},{10,11}}',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
+            });
         });
 
         describe('Casos de Falha', () => {
