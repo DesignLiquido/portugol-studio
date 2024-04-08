@@ -579,6 +579,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             'Esperado chave direita após valores de vetor em lado direito da atribuição de vetor.'
         );
 
+        // TODO: Recolocar.
         /* if (dimensoes !== valores.length) {
             throw this.erro(
                 simboloInteiro,

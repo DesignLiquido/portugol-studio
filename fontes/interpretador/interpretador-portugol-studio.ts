@@ -4,6 +4,7 @@ import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execuca
 import { EspacoVariaveis } from '@designliquido/delegua/espaco-variaveis';
 import { DeleguaModulo } from '@designliquido/delegua/estruturas';
 
+import { Matriz } from '../construtos/matriz';
 import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
 import * as comum from './comum';
 
@@ -34,5 +35,9 @@ export class InterpretadorPortugolStudio extends InterpretadorBase {
      */
     async visitarExpressaoLeia(expressao: Leia): Promise<any> {
         return comum.visitarExpressaoLeiaComum(this.interfaceEntradaSaida, this.pilhaEscoposExecucao, expressao);
+    }
+
+    async visitarExpressaoMatriz(expressao: Matriz): Promise<any> {
+        return comum.visitarExpressaoMatrizComum(this, expressao);
     }
 }

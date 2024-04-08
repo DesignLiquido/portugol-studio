@@ -3,6 +3,7 @@ import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/
 import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
 import { DeleguaModulo } from '@designliquido/delegua/estruturas';
 
+import { Matriz } from '../construtos/matriz';
 import * as comum from './comum';
 
 export class InterpretadorPortugolStudioComDepuracao extends InterpretadorComDepuracao {
@@ -26,6 +27,10 @@ export class InterpretadorPortugolStudioComDepuracao extends InterpretadorComDep
      */
     async visitarExpressaoLeia(expressao: Leia): Promise<any> {
         return comum.visitarExpressaoLeiaComum(this.interfaceEntradaSaida, this.pilhaEscoposExecucao, expressao);
+    }
+
+    async visitarExpressaoMatriz(expressao: Matriz): Promise<any> {
+        return comum.visitarExpressaoMatrizComum(this, expressao);
     }
 
     /**

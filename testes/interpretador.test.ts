@@ -441,6 +441,11 @@ describe('Interpretador (Portugol Studio)', () => {
             });
 
             it('Matrizes', async () => {
+                let _saidas = "";
+                interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                    _saidas += saida;
+                }
+
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
@@ -481,6 +486,7 @@ describe('Interpretador (Portugol Studio)', () => {
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
+                expect(_saidas.length).toBeGreaterThanOrEqual(4);
             });
         });
     });
