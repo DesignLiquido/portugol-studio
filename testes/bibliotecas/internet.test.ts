@@ -1,0 +1,131 @@
+import fetch, { Response } from 'node-fetch';
+import fs from 'fs';
+import { resolve } from 'path';
+import {
+    obter_texto,
+    endereco_disponivel,
+    definir_tempo_limite,
+    baixar_imagem,
+} from '../../fontes/bibliotecas/internet';
+jest.mock('node-fetch');
+
+describe('Biblioteca Internet', () => {
+    describe('Obter Texto', () => {
+        it('Trivial', async () => {
+            const caminho = 'https://example.com/texto.txt';
+            const conteudoEsperado = 'Conteúdo do arquivo';
+            (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+                text: jest.fn().mockResolvedValueOnce(conteudoEsperado),
+            } as unknown as Response);
+
+            const resultado = await obter_texto(caminho);
+            expect(resultado).toBe(conteudoEsperado);
+        });
+
+        it('Falha - Vazio', async () => {
+            const caminho = 'https://example.com/vazio.txt';
+            (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+                text: jest.fn().mockResolvedValueOnce(''),
+            } as unknown as Response);
+
+            await expect(obter_texto(caminho)).rejects.toThrow(`O caminho ${caminho} não tem nenhum conteúdo`);
+        });
+
+        it('Falha - Conteudo Inacessivel', async () => {
+            const caminho = 'https://example.com/inexistente.txt';
+            (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(new Error('Failed to fetch'));
+
+            await expect(obter_texto(caminho)).rejects.toThrow(`Não foi possível obter o conteúdo de ${caminho}`);
+        });
+    });
+    describe('Baixar Imagem', () => {
+        //Ajustar depois
+        it.skip('Trivial', async () => {
+            const endereco = 'https://example.com/imagem.jpg';
+            const caminho = './imagem';
+            const tipoDaImagem = 'jpg';
+            const imagemObtida = Buffer.from('Imagem de exemplo');
+            (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+                headers: {
+                    head: jest.fn().mockReturnValueOnce(`image/${tipoDaImagem}`),
+                },
+            } as unknown as Response);
+            (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+                buffer: jest.fn().mockResolvedValueOnce(imagemObtida),
+            } as unknown as Response);
+            const mockStreamWrite = jest.fn();
+            const mockStreamEnd = jest.fn();
+            jest.spyOn(fs, 'createWriteStream').mockReturnValueOnce({
+                write: mockStreamWrite,
+                end: mockStreamEnd,
+            } as unknown as fs.WriteStream);
+
+            await baixar_imagem(endereco, caminho);
+            expect(fs.createWriteStream).toHaveBeenCalledWith(resolve(caminho + `.${tipoDaImagem}`));
+            expect(mockStreamWrite).toHaveBeenCalledWith(imagemObtida);
+            expect(mockStreamEnd).toHaveBeenCalled();
+        });
+
+        it('Falha - Imagem não encontrada', async () => {
+            const endereco = 'https://example.com/inexistente.jpg';
+            const caminho = './imagem';
+            (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(new Error('Failed to fetch'));
+
+            await expect(baixar_imagem(endereco, caminho)).rejects.toThrow(
+                `Não foi possível obter o conteúdo de ${endereco}`
+            );
+        });
+        //Ajustar depois
+        it.skip('Falha - Incapaz de salvar a imagem', async () => {
+            const endereco = 'https://example.com/imagem.jpg';
+            const caminho = './imagem';
+            const tipoDaImagem = 'jpg';
+            const imagemObtida = Buffer.from('Imagem de exemplo');
+            (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+                headers: {
+                    get: jest.fn().mockReturnValueOnce(`image/${tipoDaImagem}`),
+                },
+                buffer: jest.fn().mockResolvedValueOnce(imagemObtida),
+            } as unknown as Response);
+            jest.spyOn(fs, 'createWriteStream').mockImplementationOnce(() => {
+                throw new Error('Failed to create write stream');
+            });
+
+            await expect(baixar_imagem(endereco, caminho)).rejects.toThrow(
+                `Não foi possível salvar a imagem em ${resolve(
+                    caminho + `.${tipoDaImagem}`
+                )}\nGaranta que o caminho é válido e todas as pastas existem`
+            );
+        });
+    });
+
+    describe('Endereço Disponível', () => {
+        it('Trivial', async () => {
+            const endereco = 'https://example.com/existente';
+            (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+                status: 200,
+            } as unknown as Response);
+
+            const resultado = await endereco_disponivel(endereco);
+            expect(resultado).toBe(true);
+        });
+
+        it('404', async () => {
+            const endereco = 'https://example.com/inexistente';
+            (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+                status: 404,
+            } as unknown as Response);
+
+            const resultado = await endereco_disponivel(endereco);
+            expect(resultado).toBe(false);
+        });
+
+        it('Erro durante o fetch', async () => {
+            const endereco = 'https://example.com/inacessivel';
+            (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(new Error('Failed to fetch'));
+
+            const resultado = await endereco_disponivel(endereco);
+            expect(resultado).toBe(false);
+        });
+    });
+});
