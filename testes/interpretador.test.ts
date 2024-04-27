@@ -520,7 +520,6 @@ describe('Interpretador (Portugol Studio)', () => {
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas.length).toBeGreaterThan(0);
-                    console.log(_saidas);
                 });
             });
         });
