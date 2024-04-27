@@ -139,6 +139,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.REAL:
                 const simboloVariavel: SimboloInterface = this.avancarEDevolverAnterior();
                 return new Literal(this.hashArquivo, Number(simboloVariavel.linha), simboloVariavel.literal);
+            default:
+                throw this.erro(simboloAtual, 'Não deveria cair aqui.');
         }
     }
 
@@ -486,7 +488,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     declaracaoCadeiasCaracteres(): Var[] {
-        const simboloCadeia = this.consumir(tiposDeSimbolos.CADEIA, '');
+        const simboloCadeia = this.consumir(tiposDeSimbolos.CADEIA, 'Esse erro nunca deve acontecer (declaracaoCadeiasCaracteres).');
 
         const inicializacoes = [];
         do {
@@ -495,23 +497,13 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 "Esperado identificador após palavra reservada 'cadeia'."
             );
 
-            // Inicializações de variáveis podem ter valores definidos.
-            let valorInicializacao = '';
-            if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
-                const literalInicializacao = this.consumir(
-                    tiposDeSimbolos.CADEIA,
-                    'Esperado literal de cadeia de caracteres após símbolo de igual em declaração de variável.'
-                );
-                valorInicializacao = literalInicializacao.literal;
-            }
+            const dimensoes = this.logicaComumDimensoesMatrizes();
 
-            inicializacoes.push(
-                new Var(
-                    identificador,
-                    new Literal(this.hashArquivo, Number(simboloCadeia.linha), valorInicializacao),
-                    'caracter'
-                )
-            );
+            if (dimensoes.length > 0) {
+                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloCadeia, identificador, dimensoes, 'texto'));
+            } else {
+                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloCadeia, identificador, 'texto'));
+            }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
         return inicializacoes;

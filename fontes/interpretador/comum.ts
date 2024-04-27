@@ -1,4 +1,4 @@
-import { Variavel } from '@designliquido/delegua/construtos';
+import { Construto, Variavel } from '@designliquido/delegua/construtos';
 import { Expressao, Importar, Leia } from '@designliquido/delegua/declaracoes';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/estruturas';
@@ -80,6 +80,25 @@ function carregarBibliotecaUtil(): DeleguaModulo {
     const objetoUtil = new DeleguaModulo('Util');
     objetoUtil.componentes = metodos;
     return objetoUtil;
+}
+
+/**
+ * Avaliação de argumentos para `escreva`. Diferentemente de outros dialetos, aqui não ocorre `trimEnd`, já que `\n`
+ * É significativo para Portugol Studio.
+ * @param interpretador A instância do interpretador.
+ * @param argumentos Os argumentos.
+ * @returns {string} O texto formatado.
+ */
+export async function avaliarArgumentosEscreva(interpretador: InterpretadorPortugolStudio, argumentos: Construto[]): Promise<string> {
+    let formatoTexto: string = '';
+
+    for (const argumento of argumentos) {
+        const resultadoAvaliacao = await interpretador.avaliar(argumento);
+        let valor = resultadoAvaliacao?.hasOwnProperty('valor') ? resultadoAvaliacao.valor : resultadoAvaliacao;
+        formatoTexto += `${interpretador.paraTexto(valor)} `;
+    }
+
+    return formatoTexto;
 }
 
 export async function visitarExpressaoImportarComum(expressao: Importar): Promise<any> {
