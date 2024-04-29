@@ -38,6 +38,7 @@ import {
     Atribuir,
     Binario,
     Chamada,
+    Comentario,
     Construto,
     DefinirValor,
     Dicionario,
@@ -77,6 +78,22 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.deveIndentar = true;
     }
 
+    visitarDeclaracaoComentario(declaracao: Comentario): void | Promise<any> {
+        if (declaracao.multilinha) {
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}/`;
+
+            for (let linhaConteudo of (declaracao.conteudo as string[])) {
+                this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}* ${linhaConteudo.replace(/\s+/g, " ")}${this.quebraLinha}`;
+            }
+
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)} */${this.quebraLinha}`;
+        } else {
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}// `;
+            this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, " ");
+            this.codigoFormatado += `${this.quebraLinha}`;
+        }
+    }
+
     visitarDeclaracaoTendoComo(declaracao: TendoComo): void | Promise<any> {
         throw new Error('Método não implementado.');
     }
@@ -92,9 +109,11 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
     visitarExpressaoTupla(expressao: Tupla): Promise<any> {
         throw new Error('Método não implementado');
     }
+
     visitarDeclaracaoClasse(declaracao: Classe) {
         throw new Error('Método não implementado');
     }
+
     visitarDeclaracaoConst(declaracao: Const): any {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}const ${declaracao.tipo} ${
             declaracao.simbolo.lexema

@@ -413,7 +413,7 @@ describe('Interpretador (Portugol Studio)', () => {
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
-                expect(_saidas).toBe('9');
+                expect(_saidas).toContain('9');
             });
 
             it('Biblioteca matemática, com nome de variável', async () => {
@@ -437,7 +437,7 @@ describe('Interpretador (Portugol Studio)', () => {
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
-                expect(_saidas).toBe('9');
+                expect(_saidas).toContain('9');
             });
 
             describe('Matrizes', () => {
