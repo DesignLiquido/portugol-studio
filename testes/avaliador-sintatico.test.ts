@@ -1,7 +1,9 @@
 import { ErroAvaliadorSintatico } from "@designliquido/delegua/avaliador-sintatico";
+import { FuncaoDeclaracao } from "@designliquido/delegua";
 
 import { AvaliadorSintaticoPortugolStudio } from "../fontes";
 import { LexadorPortugolStudio } from "../fontes/lexador/lexador-portugol-studio";
+import { Limpa } from "../fontes/construtos";
 
 
 describe('Avaliador sintático (Portugol Studio)', () => {
@@ -341,6 +343,29 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
+            });
+
+            it('limpa()', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    funcao inicio()',
+                    '    {',
+                    `        escreva('1, 2, 3')`,
+                    '        limpa()',
+                    `        escreva('4, 5, 6')`,
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
+                const declaracaoFuncao = retornoAvaliadorSintatico.declaracoes[0];
+                expect(declaracaoFuncao).toBeInstanceOf(FuncaoDeclaracao);
+                expect((declaracaoFuncao as FuncaoDeclaracao).funcao.corpo.length).toBe(3);
+                expect((declaracaoFuncao as FuncaoDeclaracao).funcao.corpo[1]).toBeInstanceOf(Limpa);
             });
         });
 

@@ -803,6 +803,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
     expressaoLimpa(): Limpa {
         const simboloLimpa = this.avancarEDevolverAnterior();
+        this.consumir(tiposDeSimbolos.PARENTESE_ESQUERDO, 'Esperado parêntese esquerdo após palavra reservada "limpa".');
+        this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, 'Esperado parêntese direito após parêntese esquerdo que acompanha palavra reservada "limpa".');
         return new Limpa(simboloLimpa.hashArquivo, simboloLimpa.linha);
     }
 
