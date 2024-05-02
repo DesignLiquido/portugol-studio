@@ -30,6 +30,7 @@ export default {
     INCLUA: 'INCLUA',
     INTEIRO: 'INTEIRO',
     LEIA: 'LEIA',
+    LIMPA: 'LIMPA',
     LOGICO: 'LOGICO',
     MAIOR: 'MAIOR',
     MAIOR_IGUAL: 'MAIOR_IGUAL',

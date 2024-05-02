@@ -6,11 +6,21 @@ import { DeleguaModulo } from '@designliquido/delegua/estruturas';
 
 import { Matriz } from '../construtos/matriz';
 import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
+import { VisitantePortugolStudioInterface } from '../interfaces';
+import { Limpa } from '../construtos';
+
 import * as comum from './comum';
 
-export class InterpretadorPortugolStudio extends InterpretadorBase {
-    constructor(diretorioBase: string, performance = false, funcaoDeRetorno: Function = null) {
+export class InterpretadorPortugolStudio extends InterpretadorBase implements VisitantePortugolStudioInterface {
+    funcaoLimpa: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
+
+    constructor(diretorioBase: string, performance = false, funcaoDeRetorno: Function = null, funcaoLimpa: Function = null) {
         super(diretorioBase, performance, funcaoDeRetorno);
+
+        if (funcaoLimpa !== null) {
+            this.funcaoLimpa = funcaoLimpa;
+        }
+
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoPortugolStudio();
         const escopoExecucao: EscopoExecucao = {
             declaracoes: [],
@@ -21,6 +31,11 @@ export class InterpretadorPortugolStudio extends InterpretadorBase {
             emLacoRepeticao: false,
         };
         this.pilhaEscoposExecucao.empilhar(escopoExecucao);
+    }
+
+    async visitarExpressaoLimpa(expressao: Limpa): Promise<any> {
+        this.funcaoLimpa();
+        return Promise.resolve();
     }
     
     async visitarDeclaracaoImportar(declaracao: Importar): Promise<DeleguaModulo> {

@@ -3,13 +3,14 @@ import { Expressao, Importar, Leia } from '@designliquido/delegua/declaracoes';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
+import { InterpretadorBase } from '@designliquido/delegua';
+
+import { Matriz } from '../construtos/matriz';
 
 import * as calendario from '../bibliotecas/calendario';
 import * as matematica from '../bibliotecas/matematica';
 import * as texto from '../bibliotecas/texto';
 import * as util from '../bibliotecas/util';
-import { Matriz } from 'fontes/construtos/matriz';
-import { InterpretadorPortugolStudio } from './interpretador-portugol-studio';
 
 function carregarBibliotecaCalendario(): DeleguaModulo {
     const metodos: { [nome: string]: FuncaoPadrao } = {
@@ -89,7 +90,7 @@ function carregarBibliotecaUtil(): DeleguaModulo {
  * @param argumentos Os argumentos.
  * @returns {string} O texto formatado.
  */
-export async function avaliarArgumentosEscreva(interpretador: InterpretadorPortugolStudio, argumentos: Construto[]): Promise<string> {
+export async function avaliarArgumentosEscreva(interpretador: InterpretadorBase, argumentos: Construto[]): Promise<string> {
     let formatoTexto: string = '';
 
     for (const argumento of argumentos) {
@@ -146,7 +147,7 @@ export async function visitarExpressaoLeiaComum(
 }
 
 export async function visitarExpressaoMatrizComum(
-    interpretador: InterpretadorPortugolStudio, 
+    interpretador: InterpretadorBase, 
     expressao: Matriz
 ): Promise<any> {
     return await resolverValoresMatriz(interpretador, expressao.valores);
@@ -157,7 +158,7 @@ export async function visitarExpressaoMatrizComum(
  * @param interpretador A instância do interpretador.
  * @param valores A matriz de valores das dimensões ainda não resolvidas.
  */
-async function resolverValoresMatriz(interpretador: InterpretadorPortugolStudio, valores: any[]) {
+async function resolverValoresMatriz(interpretador: InterpretadorBase, valores: any[]) {
     const valoresResolvidos = [];
     if (valores && valores.length > 0) {
         for (let i = 0; i < valores.length; i++) {

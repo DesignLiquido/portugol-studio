@@ -11,7 +11,6 @@ import {
     Literal,
     Unario,
     Variavel,
-    Vetor,
 } from '@designliquido/delegua/construtos';
 import {
     Escreva,
@@ -40,7 +39,7 @@ import { RetornoDeclaracao } from '@designliquido/delegua/avaliador-sintatico/re
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
-import { Matriz } from '../construtos/matriz';
+import { Matriz, Limpa } from '../construtos';
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
 
 /**
@@ -139,6 +138,12 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.REAL:
                 const simboloVariavel: SimboloInterface = this.avancarEDevolverAnterior();
                 return new Literal(this.hashArquivo, Number(simboloVariavel.linha), simboloVariavel.literal);
+            case tiposDeSimbolos.FALSO:
+                this.avancarEDevolverAnterior();
+                return new Literal(this.hashArquivo, Number(simboloAtual.linha), false);
+            case tiposDeSimbolos.VERDADEIRO:
+                this.avancarEDevolverAnterior();
+                return new Literal(this.hashArquivo, Number(simboloAtual.linha), true);
             default:
                 throw this.erro(simboloAtual, 'Não deveria cair aqui.');
         }
@@ -488,7 +493,10 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     declaracaoCadeiasCaracteres(): Var[] {
-        const simboloCadeia = this.consumir(tiposDeSimbolos.CADEIA, 'Esse erro nunca deve acontecer (declaracaoCadeiasCaracteres).');
+        const simboloCadeia = this.consumir(
+            tiposDeSimbolos.CADEIA,
+            'Esse erro nunca deve acontecer (declaracaoCadeiasCaracteres).'
+        );
 
         const inicializacoes = [];
         do {
@@ -793,6 +801,13 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return this.atribuir();
     }
 
+    expressaoLimpa(): Limpa {
+        const simboloLimpa = this.avancarEDevolverAnterior();
+        this.consumir(tiposDeSimbolos.PARENTESE_ESQUERDO, 'Esperado parêntese esquerdo após palavra reservada "limpa".');
+        this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, 'Esperado parêntese direito após parêntese esquerdo que acompanha palavra reservada "limpa".');
+        return new Limpa(simboloLimpa.hashArquivo, simboloLimpa.linha);
+    }
+
     funcao(tipo: string): FuncaoDeclaracao {
         const simboloFuncao: SimboloInterface = this.avancarEDevolverAnterior();
 
@@ -870,6 +885,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 return this.declaracaoInteiros();
             case tiposDeSimbolos.LEIA:
                 return this.declaracaoLeia();
+            case tiposDeSimbolos.LIMPA:
+                return this.expressaoLimpa();
             case tiposDeSimbolos.LOGICO:
                 return this.declaracaoLogicos();
             case tiposDeSimbolos.PARA:
