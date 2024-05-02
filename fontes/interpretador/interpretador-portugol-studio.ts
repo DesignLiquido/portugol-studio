@@ -6,10 +6,10 @@ import { DeleguaModulo } from '@designliquido/delegua/estruturas';
 
 import { Matriz } from '../construtos/matriz';
 import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
+import { VisitantePortugolStudioInterface } from '../interfaces';
+import { Limpa } from '../construtos';
 
 import * as comum from './comum';
-import { VisitantePortugolStudioInterface } from 'fontes/interfaces';
-import { Limpa } from 'fontes/construtos';
 
 export class InterpretadorPortugolStudio extends InterpretadorBase implements VisitantePortugolStudioInterface {
     funcaoLimpa: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
