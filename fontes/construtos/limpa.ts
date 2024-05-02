@@ -11,7 +11,7 @@ export class Limpa implements Construto {
         this.linha = linha;
     }
 
-    aceitar(visitante: VisitantePortugolStudioInterface): Promise<any> {
-        throw new Error("Method not implemented.");
+    async aceitar(visitante: VisitantePortugolStudioInterface): Promise<any> {
+        return await visitante.visitarExpressaoLimpa(this);
     }
 }

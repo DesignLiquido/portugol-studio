@@ -522,6 +522,30 @@ describe('Interpretador (Portugol Studio)', () => {
                     expect(_saidas.length).toBeGreaterThan(0);
                 });
             });
+
+            describe('Função limpa()', () => {
+                it('Trivial', async () => {
+                    const metodoVisitarExpressaoLimpa = jest.spyOn(interpretador, 'visitarExpressaoLimpa');
+
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        `        escreva('1, 2, 3')`,
+                        '        limpa()',
+                        `        escreva('4, 5, 6')`,
+                        '    }',
+                        '}'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(metodoVisitarExpressaoLimpa).toHaveBeenCalledTimes(1);
+                });
+            });
         });
     });
 });
