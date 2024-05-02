@@ -401,6 +401,30 @@ describe('Interpretador (Portugol Studio)', () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
+                    '    inclua biblioteca Matematica',
+                    '    funcao inicio()',
+                    '    {',
+                    '        escreva(Matematica.raiz(81.0, 2.0))',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+                expect(_saidas).toContain('9');
+            });
+
+            it('Biblioteca matemática, com nome de variável', async () => {
+                let _saidas = "";
+                interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                    _saidas += saida;
+                }
+
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
                     '    inclua biblioteca Matematica --> mat',
                     '    funcao inicio()',
                     '    {',
@@ -413,7 +437,114 @@ describe('Interpretador (Portugol Studio)', () => {
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
-                expect(_saidas).toBe('9');
+                expect(_saidas).toContain('9');
+            });
+
+            describe('Matrizes', () => {
+                it('Operações Básicas', async () => {
+                    let _saidas = "";
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        _saidas += saida;
+                    }
+    
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        '        //Declaração de uma matriz de inteiros',
+                        '        // de duas linhas e duas colunas já inicializado.',
+                        '        inteiro matriz[2][2] = {{15,22},{10,11}}',
+    
+                        '        //Atribui -1 na primeira linha e segunda',
+                        '        // coluna da matriz.',
+                        '        matriz[0][1] = -1',
+                        
+                        '        //Imprime o valor 15 correspondente ',
+                        '        // a primeira linha e primeira coluna da matriz.',
+                        '        inteiro i = 0',
+                        '        escreva(matriz[i][0])',
+                        '        escreva("\n")',
+                        
+                        '        //Imprime o valor 11 correspondente  ',
+                        '        // a última linha e última coluna da matriz.',
+                        '        escreva(matriz[1][1])',
+                        
+                        '        //Declaração de uma matriz de reais de ',
+                        '        // duas linhas e quatro colunas.',
+                        '        real outra_matriz[2][4]',
+                        
+                        '        //Declaração de uma matriz de caracteres onde o tamanho',
+                        '        // de linhas e colunas são definidos pela inicialização',
+                        `        caracter jogo_velha[][] = {{'X','O','X'}`,
+                        `                                  ,{'O','X','O'}`,
+                        `                                  ,{' ',' ','X'}}`,
+                        '    }',
+                        '}'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas.length).toBeGreaterThanOrEqual(4);
+                });
+
+                it('Matrizes com Para', async () => {
+                    let _saidas = "";
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        _saidas += saida;
+                    }
+
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {', 
+                        '        cadeia nome[] = { "João", "Ana" , "Tiago", "Luiz", "Carlos" }',
+                        '        real altura[] = { 5.7, 8.8, 9.75, 1.32, 9.93 }',
+                        '        // Cria o cabeçalho da tabela',
+                        '        escreva ("--------------------\n")',
+                        '        escreva ("       TABELA       \n")',
+                        '        escreva ("--------------------\n")',
+                        '        para (inteiro posicao = 0; posicao < 5; posicao++)',
+                        '        {', 
+                        '            escreva (nome[posicao], "\t\t", altura [posicao], "\n")',
+                        '        }',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas.length).toBeGreaterThan(0);
+                });
+            });
+
+            describe('Função limpa()', () => {
+                it('Trivial', async () => {
+                    const metodoVisitarExpressaoLimpa = jest.spyOn(interpretador, 'visitarExpressaoLimpa');
+
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        `        escreva('1, 2, 3')`,
+                        '        limpa()',
+                        `        escreva('4, 5, 6')`,
+                        '    }',
+                        '}'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(metodoVisitarExpressaoLimpa).toHaveBeenCalledTimes(1);
+                });
             });
         });
     });

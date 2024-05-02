@@ -1,12 +1,35 @@
-import { Variavel } from '@designliquido/delegua/construtos';
+import { Construto, Variavel } from '@designliquido/delegua/construtos';
 import { Expressao, Importar, Leia } from '@designliquido/delegua/declaracoes';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
+import { InterpretadorBase } from '@designliquido/delegua';
 
+import { Matriz } from '../construtos/matriz';
+
+import * as calendario from '../bibliotecas/calendario';
 import * as matematica from '../bibliotecas/matematica';
 import * as texto from '../bibliotecas/texto';
 import * as util from '../bibliotecas/util';
+
+function carregarBibliotecaCalendario(): DeleguaModulo {
+    const metodos: { [nome: string]: FuncaoPadrao } = {
+        dia_mes_atual: new FuncaoPadrao(0, calendario.dia_mes_atual),
+        dia_semana_atual: new FuncaoPadrao(0, calendario.dia_semana_atual),
+        mes_atual: new FuncaoPadrao(0, calendario.mes_atual),
+        ano_atual: new FuncaoPadrao(0, calendario.ano_atual),
+        hora_atual: new FuncaoPadrao(0, calendario.hora_atual),
+        minuto_atual: new FuncaoPadrao(0, calendario.minuto_atual),
+        segundo_atual: new FuncaoPadrao(0, calendario.segundo_atual),
+        milisegundo_atual: new FuncaoPadrao(0, calendario.milisegundo_atual),
+        dia_semana_completo: new FuncaoPadrao(0, calendario.dia_semana_completo),
+        dia_semana_curto: new FuncaoPadrao(0, calendario.dia_semana_completo),
+    };
+
+    const objetoCalendario = new DeleguaModulo('Calendario');
+    objetoCalendario.componentes = metodos;
+    return objetoCalendario;
+}
 
 function carregarBibliotecaMatematica(): DeleguaModulo {
     const metodos: { [nome: string]: FuncaoPadrao } = {
@@ -60,8 +83,29 @@ function carregarBibliotecaUtil(): DeleguaModulo {
     return objetoUtil;
 }
 
+/**
+ * Avaliação de argumentos para `escreva`. Diferentemente de outros dialetos, aqui não ocorre `trimEnd`, já que `\n`
+ * É significativo para Portugol Studio.
+ * @param interpretador A instância do interpretador.
+ * @param argumentos Os argumentos.
+ * @returns {string} O texto formatado.
+ */
+export async function avaliarArgumentosEscreva(interpretador: InterpretadorBase, argumentos: Construto[]): Promise<string> {
+    let formatoTexto: string = '';
+
+    for (const argumento of argumentos) {
+        const resultadoAvaliacao = await interpretador.avaliar(argumento);
+        let valor = resultadoAvaliacao?.hasOwnProperty('valor') ? resultadoAvaliacao.valor : resultadoAvaliacao;
+        formatoTexto += `${interpretador.paraTexto(valor)} `;
+    }
+
+    return formatoTexto;
+}
+
 export async function visitarExpressaoImportarComum(expressao: Importar): Promise<any> {
     switch (expressao.caminho.valor) {
+        case 'Calendario':
+            return carregarBibliotecaCalendario();
         case 'Matematica':
             return carregarBibliotecaMatematica();
         case 'Texto':
@@ -100,4 +144,31 @@ export async function visitarExpressaoLeiaComum(
                 : (<Variavel>argumento).simbolo;
         pilhaEscoposExecucao.definirVariavel(simbolo.lexema, valorLido);
     }
+}
+
+export async function visitarExpressaoMatrizComum(
+    interpretador: InterpretadorBase, 
+    expressao: Matriz
+): Promise<any> {
+    return await resolverValoresMatriz(interpretador, expressao.valores);
+}
+
+/**
+ * Função recursiva que visita todos os valores de uma matriz.
+ * @param interpretador A instância do interpretador.
+ * @param valores A matriz de valores das dimensões ainda não resolvidas.
+ */
+async function resolverValoresMatriz(interpretador: InterpretadorBase, valores: any[]) {
+    const valoresResolvidos = [];
+    if (valores && valores.length > 0) {
+        for (let i = 0; i < valores.length; i++) {
+            if (Array.isArray(valores[i])) {
+                valoresResolvidos.push(await resolverValoresMatriz(interpretador, valores[i]));
+            } else {
+                valoresResolvidos.push(await interpretador.avaliar(valores[i]));
+            }
+        }
+    }
+    
+    return valoresResolvidos;
 }

@@ -1,17 +1,32 @@
 import { Importar, Leia } from '@designliquido/delegua/declaracoes';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
-import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
 import { DeleguaModulo } from '@designliquido/delegua/estruturas';
+
+import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
+import { Matriz } from '../construtos/matriz';
+import { VisitantePortugolStudioInterface } from '../interfaces';
+import { Limpa } from '../construtos';
 
 import * as comum from './comum';
 
-export class InterpretadorPortugolStudioComDepuracao extends InterpretadorComDepuracao {
+export class InterpretadorPortugolStudioComDepuracao extends InterpretadorComDepuracao implements VisitantePortugolStudioInterface {
     mensagemPrompt: string;
+    funcaoLimpa: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
 
-    constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null) {
+    constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null, funcaoLimpa: Function = null) {
         super(diretorioBase, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
+
+        if (funcaoLimpa !== null) {
+            this.funcaoLimpa = funcaoLimpa;
+        }
+
         this.mensagemPrompt = '> ';
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoPortugolStudio();
+    }
+
+    async visitarExpressaoLimpa(expressao: Limpa): Promise<any> {
+        this.funcaoLimpa();
+        return Promise.resolve();
     }
 
     async visitarDeclaracaoImportar(declaracao: Importar): Promise<DeleguaModulo> {
@@ -26,6 +41,10 @@ export class InterpretadorPortugolStudioComDepuracao extends InterpretadorComDep
      */
     async visitarExpressaoLeia(expressao: Leia): Promise<any> {
         return comum.visitarExpressaoLeiaComum(this.interfaceEntradaSaida, this.pilhaEscoposExecucao, expressao);
+    }
+
+    async visitarExpressaoMatriz(expressao: Matriz): Promise<any> {
+        return comum.visitarExpressaoMatrizComum(this, expressao);
     }
 
     /**
