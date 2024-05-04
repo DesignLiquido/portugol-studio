@@ -355,7 +355,7 @@ describe('Tipos', () => {
     });
 
     describe('Conversão de Real para Inteiro', () => {
-        it('Deve Retornar a Parte Real de Um Inteiro', () => {
+        it('Deve Retornar a Parte Inteira de Um Real', () => {
             const valor = 123.45;
             const resultado = real_para_inteiro(valor);
             expect(resultado).toBe(123);
