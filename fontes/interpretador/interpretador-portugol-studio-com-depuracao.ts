@@ -1,4 +1,4 @@
-import { Importar, Leia } from '@designliquido/delegua/declaracoes';
+import { EscrevaMesmaLinha, Importar, Leia } from '@designliquido/delegua/declaracoes';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
 import { DeleguaModulo } from '@designliquido/delegua/estruturas';
 
@@ -27,6 +27,25 @@ export class InterpretadorPortugolStudioComDepuracao extends InterpretadorComDep
     async visitarExpressaoLimpa(expressao: Limpa): Promise<any> {
         this.funcaoLimpa();
         return Promise.resolve();
+    }
+
+    /**
+     * Execução de uma escrita na saída padrão, sem quebras de linha, e sem remoção de espaços ao final.
+     * @param declaracao A declaração.
+     * @returns Sempre nulo, por convenção de visita.
+     */
+    async visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
+        try {
+            const formatoTexto: string = await comum.avaliarArgumentosEscreva(this, declaracao.argumentos);
+            this.funcaoDeRetornoMesmaLinha(formatoTexto);
+            return null;
+        } catch (erro: any) {
+            this.erros.push({
+                erroInterno: erro,
+                linha: declaracao.linha,
+                hashArquivo: declaracao.hashArquivo,
+            });
+        }
     }
 
     async visitarDeclaracaoImportar(declaracao: Importar): Promise<DeleguaModulo> {

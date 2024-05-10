@@ -57,8 +57,7 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
     }
 
     /**
-     * Execução de uma escrita na saída padrão, sem quebras de linha.
-     * Implementada para alguns dialetos, como VisuAlg.
+     * Execução de uma escrita na saída padrão, sem quebras de linha, e sem remoção de espaços ao final.
      * @param declaracao A declaração.
      * @returns Sempre nulo, por convenção de visita.
      */
