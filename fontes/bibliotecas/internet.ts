@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch, { RequestInit, Response } from 'node-fetch';
 import { createWriteStream } from 'fs';
 import { resolve } from 'path';
 
@@ -8,9 +8,20 @@ export async function definir_tempo_limite(time: number): Promise<void> {
     timeout = time;
 }
 
+async function fetch_com_timeout(url: string, options: RequestInit = {}): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const { signal } = controller;
+    try {
+        return await fetch(url, { ...options, signal });
+    } finally {
+        clearTimeout(timeoutId);
+    }
+}
+
 export async function obter_texto(caminho: string): Promise<string> {
     try {
-        const response = await fetch(caminho, { method: 'GET', timeout });
+        const response = await fetch_com_timeout(caminho, { method: 'GET' });
 
         const conteudo = await response.text();
         if (!conteudo) {
@@ -31,14 +42,17 @@ export async function baixar_imagem(endereco: string, caminho: string): Promise<
 
     try {
         tipoDaImagem = 'png';
-        headerDaRequisicao = (await fetch(endereco, { method: 'HEAD', timeout })).headers.get('content-type');
+        const responseHead = await fetch_com_timeout(endereco, { method: 'HEAD' });
+        headerDaRequisicao = responseHead.headers.get('content-type') || '';
         if (headerDaRequisicao.includes('image/png')) {
             tipoDaImagem = 'png';
         } else if (headerDaRequisicao.includes('image/jpeg') || headerDaRequisicao.includes('image/jpg')) {
             tipoDaImagem = 'jpg';
         }
         
-        imagemObtida = await (await fetch(endereco, {method: 'GET', timeout})).buffer();
+        const responseImage = await fetch_com_timeout(endereco, { method: 'GET' });
+        const arrayBuffer = await responseImage.arrayBuffer();
+        imagemObtida = Buffer.from(arrayBuffer);
     } catch (error) {
         throw new Error(`Não foi possível obter o conteúdo de ${endereco}`);
     }
@@ -63,7 +77,7 @@ export async function baixar_imagem(endereco: string, caminho: string): Promise<
 
 export async function endereco_disponivel(endereco: string): Promise<boolean> {
     try {
-        const response = await fetch(endereco, { method: 'HEAD', timeout });
+        const response = await fetch_com_timeout(endereco, { method: 'HEAD' });
         const status = response.status;
 
         if (status === 404 || status === 0) {
