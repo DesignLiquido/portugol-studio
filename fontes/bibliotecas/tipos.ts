@@ -1,5 +1,3 @@
-import { exit } from 'process';
-
 const PADRAO_INTEIRO_NOTACAO_HEXADECIMAL: RegExp = /^(0x|0X)?([0-9]|[a-f]|[A-F])+$/;
 const PADRAO_INTEIRO_NOTACAO_BINARIA: RegExp = /^(0b|0B)?[0-1]+$/;
 const PADRAO_INTEIRO_NOTACAO_DECIMAL: RegExp = /^-?\d+$/;

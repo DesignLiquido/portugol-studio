@@ -8,8 +8,10 @@ import { InterpretadorBase } from '@designliquido/delegua';
 import { Matriz } from '../construtos/matriz';
 
 import * as calendario from '../bibliotecas/calendario';
+import * as internet from '../bibliotecas/internet';
 import * as matematica from '../bibliotecas/matematica';
 import * as texto from '../bibliotecas/texto';
+import * as tipos from '../bibliotecas/tipos';
 import * as util from '../bibliotecas/util';
 
 function carregarBibliotecaCalendario(): DeleguaModulo {
@@ -29,6 +31,19 @@ function carregarBibliotecaCalendario(): DeleguaModulo {
     const objetoCalendario = new DeleguaModulo('Calendario');
     objetoCalendario.componentes = metodos;
     return objetoCalendario;
+}
+
+function carregarBibliotecaInternet(): DeleguaModulo {
+    const metodos: { [nome: string]: FuncaoPadrao } = {
+        definir_tempo_limite: new FuncaoPadrao(1, internet.definir_tempo_limite),
+        obter_texto: new FuncaoPadrao(1, internet.obter_texto),
+        baixar_imagem: new FuncaoPadrao(2, internet.baixar_imagem),
+        endereco_disponivel: new FuncaoPadrao(1, internet.endereco_disponivel)
+    };
+
+    const objetoInternet = new DeleguaModulo('Internet');
+    objetoInternet.componentes = metodos;
+    return objetoInternet;
 }
 
 function carregarBibliotecaMatematica(): DeleguaModulo {
@@ -67,6 +82,37 @@ function carregarBibliotecaTexto(): DeleguaModulo {
     return objetoTexto;
 }
 
+function carregarBibliotecaTipos(): DeleguaModulo {
+    const metodos: { [nome: string]: FuncaoPadrao } = {
+        cadeia_e_inteiro: new FuncaoPadrao(2, tipos.cadeia_e_inteiro),
+        cadeia_e_real: new FuncaoPadrao(1, tipos.cadeia_e_real),
+        cadeia_e_logico: new FuncaoPadrao(1, tipos.cadeia_e_logico),
+        cadeia_e_caracter: new FuncaoPadrao(1, tipos.cadeia_e_caracter),
+        cadeia_para_caracter: new FuncaoPadrao(1, tipos.cadeia_para_caracter),
+        cadeia_para_inteiro: new FuncaoPadrao(2, tipos.cadeia_para_inteiro),
+        cadeia_para_real: new FuncaoPadrao(1, tipos.cadeia_para_real),
+        cadeia_para_logico: new FuncaoPadrao(1, tipos.cadeia_para_logico),
+        inteiro_e_caracter: new FuncaoPadrao(1, tipos.inteiro_e_caracter),
+        inteiro_para_cadeia: new FuncaoPadrao(2, tipos.inteiro_para_cadeia),
+        inteiro_para_caracter: new FuncaoPadrao(1, tipos.inteiro_para_caracter),
+        inteiro_para_logico: new FuncaoPadrao(1, tipos.inteiro_para_logico),
+        inteiro_para_real: new FuncaoPadrao(1, tipos.inteiro_para_real),
+        caracter_e_inteiro: new FuncaoPadrao(1, tipos.caracter_e_inteiro),
+        caracter_e_logico: new FuncaoPadrao(1, tipos.caracter_e_logico),
+        caracter_para_cadeia: new FuncaoPadrao(1, tipos.caracter_para_cadeia),
+        caracter_para_inteiro: new FuncaoPadrao(1, tipos.caracter_para_inteiro),
+        caracter_para_logico: new FuncaoPadrao(1, tipos.caracter_para_logico),
+        logico_para_cadeia: new FuncaoPadrao(1, tipos.logico_para_cadeia),
+        logico_para_inteiro: new FuncaoPadrao(1, tipos.logico_para_inteiro),
+        logico_para_caracter: new FuncaoPadrao(1, tipos.logico_para_caracter),
+        real_para_inteiro: new FuncaoPadrao(1, tipos.real_para_inteiro)
+    };
+
+    const objetoTipos = new DeleguaModulo('Tipos');
+    objetoTipos.componentes = metodos;
+    return objetoTipos;
+}
+
 function carregarBibliotecaUtil(): DeleguaModulo {
     const metodos: { [nome: string]: FuncaoPadrao } = {
         obter_diretorio_usuario: new FuncaoPadrao(0, util.obter_diretorio_usuario),
@@ -76,7 +122,7 @@ function carregarBibliotecaUtil(): DeleguaModulo {
         sorteia: new FuncaoPadrao(2, util.sorteia),
         aguarde: new FuncaoPadrao(1, util.aguarde),
         tempo_decorrido: new FuncaoPadrao(0, util.tempo_decorrido)
-    }
+    };
 
     const objetoUtil = new DeleguaModulo('Util');
     objetoUtil.componentes = metodos;
@@ -106,10 +152,14 @@ export async function visitarExpressaoImportarComum(expressao: Importar): Promis
     switch (expressao.caminho.valor) {
         case 'Calendario':
             return carregarBibliotecaCalendario();
+        case 'Internet':
+            return carregarBibliotecaInternet();
         case 'Matematica':
             return carregarBibliotecaMatematica();
         case 'Texto':
             return carregarBibliotecaTexto();
+        case 'Tipos':
+            return carregarBibliotecaTipos();
         case 'Util':
             return carregarBibliotecaUtil();
         default:
