@@ -14,7 +14,7 @@
     "scripts": {
         "empacotar": "yarn rimraf ./dist && tsc && yarn copyfiles -V ./package.json ./dist && yarn copyfiles -V ./README.md ./dist",
         "gerar-documentacao-tecnica": "yarn typedoc --out docs index.ts",
-        "publicar-docs": "yarn gerar-documentacao-tecnica && copyfiles -V ./recursos/**/* ./docs && gh-pages -d docs",
+        "publicar-docs": "yarn gerar-documentacao-tecnica && yarn copyfiles -V ./recursos/**/* ./docs && yarn gh-pages -d docs",
         "publicar-npm": "npm publish ./dist --access public",
         "testes-unitarios": "jest --coverage",
         "testes-unitarios:insignias": "jest-coverage-badges --output ./recursos/imagens",
@@ -24,7 +24,7 @@
         "deixar-codigo-bonito": "prettier --config .prettierrc --write fontes/**/*.ts"
     },
     "dependencies": {
-        "@designliquido/delegua": "^0.34.2",
+        "@designliquido/delegua": "^0.34.3",
         "lodash": "^4.17.21",
         "node-fetch": "2"
     },
