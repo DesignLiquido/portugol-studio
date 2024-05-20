@@ -1,3 +1,4 @@
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 import * as os from 'os';
 
 const horaInicial: number = Date.now();
@@ -10,19 +11,19 @@ export async function obter_diretorio_usuario(): Promise<string> {
     }
 }
 
-export async function numero_elementos(vetor: any[]): Promise<number> {
+export async function numero_elementos(interpretador: InterpretadorInterface, vetor: any[]): Promise<number> {
     return vetor.length;
 }
 
-export async function numero_linhas(matriz: any[][]): Promise<number> {
+export async function numero_linhas(interpretador: InterpretadorInterface, matriz: any[][]): Promise<number> {
     return matriz.length;
 }
 
-export async function numero_colunas(matriz: any[][]): Promise<number> {
+export async function numero_colunas(interpretador: InterpretadorInterface, matriz: any[][]): Promise<number> {
     return matriz[0].length;
 }
 
-export async function sorteia(minimo: number, maximo: number): Promise<number> {
+export async function sorteia(interpretador: InterpretadorInterface, minimo: number, maximo: number): Promise<number> {
     if (minimo > maximo) {
         throw new Error(`O valor mínimo (${minimo}) é maior do que o valor máximo (${maximo})`);
     } 
@@ -34,7 +35,7 @@ export async function sorteia(minimo: number, maximo: number): Promise<number> {
     return Math.floor(Math.random() * (maximo + 1 - minimo)) + minimo;
 }
 
-export async function aguarde(intervalo: number): Promise<void> {
+export async function aguarde(interpretador: InterpretadorInterface, intervalo: number): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, intervalo));
 }
 

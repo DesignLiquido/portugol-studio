@@ -1,10 +1,11 @@
 import fetch, { RequestInit, Response } from 'node-fetch';
 import { createWriteStream } from 'fs';
 import { resolve } from 'path';
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 
 let timeout: number = 2000;
 
-export async function definir_tempo_limite(time: number): Promise<void> {
+export async function definir_tempo_limite(interpretador: InterpretadorInterface, time: number): Promise<void> {
     timeout = time;
 }
 
@@ -19,7 +20,7 @@ async function fetch_com_timeout(url: string, options: RequestInit = {}): Promis
     }
 }
 
-export async function obter_texto(caminho: string): Promise<string> {
+export async function obter_texto(interpretador: InterpretadorInterface, caminho: string): Promise<string> {
     try {
         const response = await fetch_com_timeout(caminho, { method: 'GET' });
 
@@ -34,7 +35,7 @@ export async function obter_texto(caminho: string): Promise<string> {
     }
 }
 
-export async function baixar_imagem(endereco: string, caminho: string): Promise<string> {
+export async function baixar_imagem(interpretador: InterpretadorInterface, endereco: string, caminho: string): Promise<string> {
     let tipoDaImagem: string;
     let headerDaRequisicao: string;
     let imagemObtida: Buffer;
@@ -75,7 +76,7 @@ export async function baixar_imagem(endereco: string, caminho: string): Promise<
     return tipoDaImagem;
 }
 
-export async function endereco_disponivel(endereco: string): Promise<boolean> {
+export async function endereco_disponivel(interpretador: InterpretadorInterface, endereco: string): Promise<boolean> {
     try {
         const response = await fetch_com_timeout(endereco, { method: 'HEAD' });
         const status = response.status;

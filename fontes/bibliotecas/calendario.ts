@@ -1,3 +1,5 @@
+import { InterpretadorInterface } from "@designliquido/delegua/interfaces";
+
 export async function dia_mes_atual(): Promise<number> {
     const data = new Date();
     return data.getDate();
@@ -20,7 +22,7 @@ export async function ano_atual(): Promise<number> {
     return data.getFullYear();
 }
 
-export async function hora_atual(formato_12h: boolean): Promise<number> {
+export async function hora_atual(interpretador: InterpretadorInterface, formato_12h: boolean): Promise<number> {
     const data = new Date();
     if (!formato_12h) {
         return data.getHours();
@@ -49,6 +51,7 @@ export async function milisegundo_atual(): Promise<number> {
 }
 
 export async function dia_semana_completo(
+    interpretador: InterpretadorInterface, 
     numero_dia: number,
     caixa_alta: boolean,
     caixa_baixa: boolean
@@ -78,7 +81,12 @@ export async function dia_semana_completo(
     throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
 }
 
-export async function dia_semana_curto(numero_dia: number, caixa_alta: boolean, caixa_baixa: boolean): Promise<string> {
+export async function dia_semana_curto(
+    interpretador: InterpretadorInterface, 
+    numero_dia: number, 
+    caixa_alta: boolean, 
+    caixa_baixa: boolean
+): Promise<string> {
     const dias: string[] = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];
 
     if (numero_dia > 0 && numero_dia < 8) {
@@ -97,6 +105,7 @@ export async function dia_semana_curto(numero_dia: number, caixa_alta: boolean, 
 }
 
 export async function dia_semana_abreviado(
+    interpretador: InterpretadorInterface, 
     numero_dia: number,
     caixa_alta: boolean,
     caixa_baixa: boolean

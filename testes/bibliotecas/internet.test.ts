@@ -7,6 +7,7 @@ import {
     definir_tempo_limite,
     baixar_imagem,
 } from '../../fontes/bibliotecas/internet';
+import { InterpretadorInterface } from '@designliquido/delegua';
 jest.mock('node-fetch');
 
 describe('Biblioteca Internet', () => {
@@ -18,7 +19,7 @@ describe('Biblioteca Internet', () => {
                 text: jest.fn().mockResolvedValueOnce(conteudoEsperado),
             } as unknown as Response);
 
-            const resultado = await obter_texto(caminho);
+            const resultado = await obter_texto({} as InterpretadorInterface, caminho);
             expect(resultado).toBe(conteudoEsperado);
         });
 
@@ -28,14 +29,14 @@ describe('Biblioteca Internet', () => {
                 text: jest.fn().mockResolvedValueOnce(''),
             } as unknown as Response);
 
-            await expect(obter_texto(caminho)).rejects.toThrow(`O caminho ${caminho} não tem nenhum conteúdo`);
+            await expect(obter_texto({} as InterpretadorInterface, caminho)).rejects.toThrow(`O caminho ${caminho} não tem nenhum conteúdo`);
         });
 
         it('Falha - Conteudo Inacessivel', async () => {
             const caminho = 'https://example.com/inexistente.txt';
             (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(new Error('Failed to fetch'));
 
-            await expect(obter_texto(caminho)).rejects.toThrow(`Não foi possível obter o conteúdo de ${caminho}`);
+            await expect(obter_texto({} as InterpretadorInterface, caminho)).rejects.toThrow(`Não foi possível obter o conteúdo de ${caminho}`);
         });
     });
     describe('Baixar Imagem', () => {
@@ -60,7 +61,7 @@ describe('Biblioteca Internet', () => {
                 end: mockStreamEnd,
             } as unknown as fs.WriteStream);
 
-            await baixar_imagem(endereco, caminho);
+            await baixar_imagem({} as InterpretadorInterface, endereco, caminho);
             expect(fs.createWriteStream).toHaveBeenCalledWith(resolve(caminho + `.${tipoDaImagem}`));
             expect(mockStreamWrite).toHaveBeenCalledWith(imagemObtida);
             expect(mockStreamEnd).toHaveBeenCalled();
@@ -71,7 +72,7 @@ describe('Biblioteca Internet', () => {
             const caminho = './imagem';
             (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(new Error('Failed to fetch'));
 
-            await expect(baixar_imagem(endereco, caminho)).rejects.toThrow(
+            await expect(baixar_imagem({} as InterpretadorInterface, endereco, caminho)).rejects.toThrow(
                 `Não foi possível obter o conteúdo de ${endereco}`
             );
         });
@@ -91,7 +92,7 @@ describe('Biblioteca Internet', () => {
                 throw new Error('Failed to create write stream');
             });
 
-            await expect(baixar_imagem(endereco, caminho)).rejects.toThrow(
+            await expect(baixar_imagem({} as InterpretadorInterface, endereco, caminho)).rejects.toThrow(
                 `Não foi possível salvar a imagem em ${resolve(
                     caminho + `.${tipoDaImagem}`
                 )}\nGaranta que o caminho é válido e todas as pastas existem`
@@ -106,7 +107,7 @@ describe('Biblioteca Internet', () => {
                 status: 200,
             } as unknown as Response);
 
-            const resultado = await endereco_disponivel(endereco);
+            const resultado = await endereco_disponivel({} as InterpretadorInterface, endereco);
             expect(resultado).toBe(true);
         });
 
@@ -116,7 +117,7 @@ describe('Biblioteca Internet', () => {
                 status: 404,
             } as unknown as Response);
 
-            const resultado = await endereco_disponivel(endereco);
+            const resultado = await endereco_disponivel({} as InterpretadorInterface, endereco);
             expect(resultado).toBe(false);
         });
 
@@ -124,7 +125,7 @@ describe('Biblioteca Internet', () => {
             const endereco = 'https://example.com/inacessivel';
             (fetch as jest.MockedFunction<typeof fetch>).mockRejectedValueOnce(new Error('Failed to fetch'));
 
-            const resultado = await endereco_disponivel(endereco);
+            const resultado = await endereco_disponivel({} as InterpretadorInterface, endereco);
             expect(resultado).toBe(false);
         });
     });

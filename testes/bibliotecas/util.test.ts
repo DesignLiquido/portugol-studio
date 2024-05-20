@@ -8,6 +8,7 @@ import {
     aguarde,
     tempo_decorrido,
 } from '../../fontes/bibliotecas/util';
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 
 describe('Biblioteca Util', () => {
     describe('Obter Diretório do Usuário', () => {
@@ -27,7 +28,7 @@ describe('Biblioteca Util', () => {
     describe('Número de Elementos', () => {
         it('Trivial', async () => {
             const vetor = [1, 2, 3, 4, 5];
-            const resultado = await numero_elementos(vetor);
+            const resultado = await numero_elementos({} as InterpretadorInterface, vetor);
             expect(resultado).toBe(5);
         });
     });
@@ -39,7 +40,7 @@ describe('Biblioteca Util', () => {
                 [4, 5, 6],
                 [7, 8, 9],
             ];
-            const resultado = await numero_linhas(matriz);
+            const resultado = await numero_linhas({} as InterpretadorInterface, matriz);
             expect(resultado).toBe(3);
         });
     });
@@ -51,7 +52,7 @@ describe('Biblioteca Util', () => {
                 [4, 5, 6],
                 [7, 8, 9],
             ];
-            const resultado = await numero_colunas(matriz);
+            const resultado = await numero_colunas({} as InterpretadorInterface, matriz);
             expect(resultado).toBe(3);
         });
     });
@@ -60,7 +61,7 @@ describe('Biblioteca Util', () => {
         it('Trivial', async () => {
             const minimo = 1;
             const maximo = 10;
-            const resultado = await sorteia(minimo, maximo);
+            const resultado = await sorteia({} as InterpretadorInterface, minimo, maximo);
             expect(resultado).toBeGreaterThanOrEqual(minimo);
             expect(resultado).toBeLessThanOrEqual(maximo);
         });
@@ -68,7 +69,7 @@ describe('Biblioteca Util', () => {
         it('Falha - Minimo maior que Maximo', async () => {
             const minimo = 10;
             const maximo = 1;
-            await expect(sorteia(minimo, maximo)).rejects.toThrow(
+            await expect(sorteia({} as InterpretadorInterface, minimo, maximo)).rejects.toThrow(
                 `O valor mínimo (${minimo}) é maior do que o valor máximo (${maximo})`
             );
         });
@@ -76,7 +77,7 @@ describe('Biblioteca Util', () => {
         it('Falha - Minimo é igual a Maximo', async () => {
             const minimo = 5;
             const maximo = 5;
-            await expect(sorteia(minimo, maximo)).rejects.toThrow(`Os valores mínimo e máximo são iguais: ${minimo}`);
+            await expect(sorteia({} as InterpretadorInterface, minimo, maximo)).rejects.toThrow(`Os valores mínimo e máximo são iguais: ${minimo}`);
         });
     });
 
@@ -84,7 +85,7 @@ describe('Biblioteca Util', () => {
         it('Trivial', async () => {
             const startTime = new Date().getTime();
             const intervalo = 50;
-            await aguarde(intervalo);
+            await aguarde({} as InterpretadorInterface, intervalo);
             const endTime = new Date().getTime();
             const elapsedTime = endTime - startTime;
             expect(elapsedTime).toBeGreaterThanOrEqual(intervalo * 0.9);

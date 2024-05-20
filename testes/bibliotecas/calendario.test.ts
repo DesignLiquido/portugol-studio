@@ -1,3 +1,4 @@
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 import {
     dia_mes_atual,
     dia_semana_abreviado,
@@ -51,7 +52,7 @@ describe('Biblioteca Calendario', () => {
         it('Formato 24 horas', async () => {
             const dataAtual = new Date();
             const horaEsperada = dataAtual.getHours();
-            const resultado = await hora_atual(false);
+            const resultado = await hora_atual({} as InterpretadorInterface, false);
             expect(resultado).toBe(horaEsperada);
         });
 
@@ -61,7 +62,7 @@ describe('Biblioteca Calendario', () => {
             if (horaEsperada === 0) {
                 horaEsperada = 12;
             }
-            const resultado = await hora_atual(true);
+            const resultado = await hora_atual({} as InterpretadorInterface, true);
             expect(resultado).toBe(horaEsperada);
         });
     });
@@ -96,7 +97,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 1;
             const caixaAlta = false;
             const caixaBaixa = false;
-            const resultado = await dia_semana_completo(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_completo({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('Domingo');
         });
 
@@ -104,7 +105,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 4;
             const caixaAlta = true;
             const caixaBaixa = false;
-            const resultado = await dia_semana_completo(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_completo({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('QUARTA-FEIRA');
         });
 
@@ -112,7 +113,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 6;
             const caixaAlta = false;
             const caixaBaixa = true;
-            const resultado = await dia_semana_completo(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_completo({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('sexta-feira');
         });
 
@@ -120,7 +121,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 10;
             const caixaAlta = false;
             const caixaBaixa = false;
-            await expect(dia_semana_completo(numeroDia, caixaAlta, caixaBaixa)).rejects.toThrow(
+            await expect(dia_semana_completo({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa)).rejects.toThrow(
                 `'${numeroDia}' não corresponde a um dia da semana válido.`
             );
         });
@@ -131,7 +132,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 1;
             const caixaAlta = false;
             const caixaBaixa = false;
-            const resultado = await dia_semana_curto(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_curto({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('Domingo');
         });
 
@@ -139,7 +140,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 4;
             const caixaAlta = true;
             const caixaBaixa = false;
-            const resultado = await dia_semana_curto(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_curto({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('QUARTA');
         });
 
@@ -147,7 +148,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 6;
             const caixaAlta = false;
             const caixaBaixa = true;
-            const resultado = await dia_semana_curto(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_curto({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('sexta');
         });
 
@@ -155,7 +156,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 10;
             const caixaAlta = false;
             const caixaBaixa = false;
-            await expect(dia_semana_curto(numeroDia, caixaAlta, caixaBaixa)).rejects.toThrow(
+            await expect(dia_semana_curto({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa)).rejects.toThrow(
                 `'${numeroDia}' não corresponde a um dia da semana válido.`
             );
         });
@@ -165,7 +166,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 1; 
             const caixaAlta = false;
             const caixaBaixa = false;
-            const resultado = await dia_semana_abreviado(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_abreviado({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('Dom');
         });
 
@@ -173,7 +174,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 4; 
             const caixaAlta = true;
             const caixaBaixa = false;
-            const resultado = await dia_semana_abreviado(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_abreviado({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('QUA');
         });
 
@@ -181,7 +182,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 6; 
             const caixaAlta = false;
             const caixaBaixa = true;
-            const resultado = await dia_semana_abreviado(numeroDia, caixaAlta, caixaBaixa);
+            const resultado = await dia_semana_abreviado({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa);
             expect(resultado).toBe('sex');
         });
 
@@ -189,7 +190,7 @@ describe('Biblioteca Calendario', () => {
             const numeroDia = 10; 
             const caixaAlta = false;
             const caixaBaixa = false;
-            await expect(dia_semana_abreviado(numeroDia, caixaAlta, caixaBaixa)).rejects.toThrow(
+            await expect(dia_semana_abreviado({} as InterpretadorInterface, numeroDia, caixaAlta, caixaBaixa)).rejects.toThrow(
                 `'${numeroDia}' não corresponde a um dia da semana válido.`
             );
         });
