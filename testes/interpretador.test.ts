@@ -38,72 +38,74 @@ describe('Interpretador (Portugol Studio)', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Leia', async () => {
-                // Aqui vamos simular a resposta para cinco variáveis de `leia()`.
-                const respostas = [1, 2, 3, 4, 5];
-                interpretador.interfaceEntradaSaida = {
-                    question: (mensagem: string, callback: Function) => {
-                        callback(respostas.pop());
+            describe('Leia', () => {
+                it('Trivial', async () => {
+                    // Aqui vamos simular a resposta para cinco variáveis de `leia()`.
+                    const respostas = [1, 2, 3, 4, 5];
+                    interpretador.interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.pop());
+                        }
+                    };
+    
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        '        inteiro numero1, numero2, numero3, numero4, numero5',
+                        '        leia(numero1, numero2, numero3, numero4, numero5)',
+                        '        escreva(numero1 + numero2 + numero3 + numero4 + numero5)',
+                        '    }',
+                        '}'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: string) => {
+                        expect(saida).toEqual("15")
                     }
-                };
-
-                const retornoLexador = lexador.mapear([
-                    'programa',
-                    '{',
-                    '    funcao inicio()',
-                    '    {',
-                    '        inteiro numero1, numero2, numero3, numero4, numero5',
-                    '        leia(numero1, numero2, numero3, numero4, numero5)',
-                    '        escreva(numero1 + numero2 + numero3 + numero4 + numero5)',
-                    '    }',
-                    '}'
-                ], -1);
-
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-                interpretador.funcaoDeRetorno = (saida: string) => {
-                    expect(saida).toEqual("15")
-                }
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
-            });
-
-            it('Sucesso - Leia com condicional se', async () => {
-                const respostas = [1];
-                interpretador.interfaceEntradaSaida = {
-                    question: (mensagem: string, callback: Function) => {
-                        callback(respostas.pop());
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
+    
+                it('Leia com condicional se', async () => {
+                    const respostas = [1];
+                    interpretador.interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.pop());
+                        }
+                    };
+    
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        '        inteiro n',
+                        '        leia(n)',
+                        '        se(n == 1) {',
+                        '           escreva("É igual a 1")',
+                        '        }',
+                        '        senao {',
+                        '           escreva("Não é igual a 1")',
+                        '        }',
+                        '    }',
+                        '}'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+    
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        expect(saida).toEqual("É igual a 1")
                     }
-                };
-
-                const retornoLexador = lexador.mapear([
-                    'programa',
-                    '{',
-                    '    funcao inicio()',
-                    '    {',
-                    '        inteiro n',
-                    '        leia(n)',
-                    '        se(n == 1) {',
-                    '           escreva("É igual a 1")',
-                    '        }',
-                    '        senao {',
-                    '           escreva("Não é igual a 1")',
-                    '        }',
-                    '    }',
-                    '}'
-                ], -1);
-
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-
-                interpretador.funcaoDeRetorno = (saida: any) => {
-                    expect(saida).toEqual("É igual a 1")
-                }
-
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-
-                expect(retornoInterpretador.erros).toHaveLength(0);
+    
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
             });
 
             it('Atribuição variaveis com soma', async () => {

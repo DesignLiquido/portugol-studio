@@ -3,8 +3,8 @@ import { Expressao, Importar, Leia } from '@designliquido/delegua/declaracoes';
 import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
-import { InterpretadorBase } from '@designliquido/delegua';
 
+import { VisitantePortugolStudioInterface } from '../interfaces';
 import { Matriz } from '../construtos/matriz';
 
 import * as calendario from '../bibliotecas/calendario';
@@ -136,7 +136,7 @@ function carregarBibliotecaUtil(): DeleguaModulo {
  * @param argumentos Os argumentos.
  * @returns {string} O texto formatado.
  */
-export async function avaliarArgumentosEscreva(interpretador: InterpretadorBase, argumentos: Construto[]): Promise<string> {
+export async function avaliarArgumentosEscreva(interpretador: VisitantePortugolStudioInterface, argumentos: Construto[]): Promise<string> {
     let formatoTexto: string = '';
 
     for (const argumento of argumentos) {
@@ -197,7 +197,7 @@ export async function visitarExpressaoLeiaComum(
 }
 
 export async function visitarExpressaoMatrizComum(
-    interpretador: InterpretadorBase, 
+    interpretador: VisitantePortugolStudioInterface, 
     expressao: Matriz
 ): Promise<any> {
     return await resolverValoresMatriz(interpretador, expressao.valores);
@@ -208,7 +208,7 @@ export async function visitarExpressaoMatrizComum(
  * @param interpretador A instância do interpretador.
  * @param valores A matriz de valores das dimensões ainda não resolvidas.
  */
-async function resolverValoresMatriz(interpretador: InterpretadorBase, valores: any[]) {
+async function resolverValoresMatriz(interpretador: VisitantePortugolStudioInterface, valores: any[]) {
     const valoresResolvidos = [];
     if (valores && valores.length > 0) {
         for (let i = 0; i < valores.length; i++) {

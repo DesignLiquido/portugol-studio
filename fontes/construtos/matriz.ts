@@ -1,7 +1,6 @@
 import { VisitanteComumInterface } from "@designliquido/delegua";
 import { Construto } from "@designliquido/delegua/construtos";
-
-import { InterpretadorPortugolStudio } from "../interpretador";
+import { VisitantePortugolStudioInterface } from "fontes/interfaces";
 
 export class Matriz implements Construto {
     linha: number;
@@ -16,7 +15,7 @@ export class Matriz implements Construto {
         this.valores = valores;
     }
 
-    async aceitar(visitante: VisitanteComumInterface): Promise<any> {
-        return await (visitante as InterpretadorPortugolStudio).visitarExpressaoMatriz(this);
+    async aceitar(visitante: VisitantePortugolStudioInterface): Promise<any> {
+        return await visitante.visitarExpressaoMatriz(this);
     }
 }
