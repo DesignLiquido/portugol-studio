@@ -416,6 +416,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 !this.verificarSeSimboloAtualEIgualA(
                     tiposDeSimbolos.CADEIA,
                     tiposDeSimbolos.REAL,
+                    tiposDeSimbolos.IDENTIFICADOR,
                     tiposDeSimbolos.INTEIRO
                 )
             ) {
@@ -554,11 +555,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
     /**
      * Método recursivo que lê os valores de inicialização de uma matriz de N dimensões.
-     * @param {number[]} dimensoes O número de dimensões faltantes.
+     * @param {Construto[]} dimensoes O número de dimensões faltantes.
      * Cada passo recursivo usa o primeiro valor e chama a função passando esse vetor, mas sem
      * o primeiro valor.
      */
-    protected lerValoresAtribuicaoMatriz(dimensoes: number[]) {
+    protected lerValoresAtribuicaoMatriz(dimensoes: Construto[]) {
         this.consumir(
             tiposDeSimbolos.CHAVE_ESQUERDA,
             'Esperado chave esquerda após sinal de igual em lado direito da atribuição de vetor.'
@@ -593,7 +594,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     protected declaracaoVetorOuMatriz(
         simboloTipo: SimboloInterface,
         identificador: SimboloInterface,
-        dimensoes: number[],
+        dimensoes: Construto[],
         tipoDados: string = 'inteiro'
     ) {
         let valorInicializacao: Matriz = new Matriz(this.hashArquivo, Number(simboloTipo.linha), dimensoes, null);
@@ -617,23 +618,22 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return new Var(identificador, valorInicializacao, tipoDados as any);
     }
 
-    protected logicaComumDimensoesMatrizes(): number[] {
+    protected logicaComumDimensoesMatrizes(): Construto[] {
         let dimensoes = [];
         while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.COLCHETE_ESQUERDO)) {
-            let simboloNumeroPosicoes: SimboloInterface;
-            if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.INTEIRO)) {
-                simboloNumeroPosicoes = this.simboloAnterior();
-            }
-
-            this.consumir(
-                tiposDeSimbolos.COLCHETE_DIREITO,
-                'Esperado fechamento de identificação de número de posições de uma dimensão de vetor ou matriz.'
-            );
-
             // Portugol Studio permite declarar vetores sem posições definidas.
             // Quando isso acontece, definimos a quantidade de posições de uma dimensão como -1.
-            const numeroPosicoes = simboloNumeroPosicoes ? Number(simboloNumeroPosicoes.literal) : -1;
-            dimensoes.push(numeroPosicoes);
+            if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.COLCHETE_DIREITO)) {
+                const simboloColcheteDireito = this.simbolos[this.atual - 1];
+                dimensoes.push(new Literal(this.hashArquivo, simboloColcheteDireito.linha, -1));
+            } else {
+                let construtoNumeroPosicoes = this.primario();
+                dimensoes.push(construtoNumeroPosicoes);
+                this.consumir(
+                    tiposDeSimbolos.COLCHETE_DIREITO,
+                    'Esperado fechamento de identificação de número de posições de uma dimensão de vetor ou matriz.'
+                );
+            }
         }
 
         return dimensoes;

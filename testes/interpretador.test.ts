@@ -441,6 +441,29 @@ describe('Interpretador (Portugol Studio)', () => {
             });
 
             describe('Matrizes', () => {
+                it('Declaração com índice variável', async () => {
+                    let _saidas = "";
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        _saidas += saida;
+                    }
+    
+                    const retornoLexador = lexador.mapear([
+                        `programa {`,
+                        `    funcao inicio() {`,
+                        `      inteiro numeros = 3`,
+                        `      inteiro listaNumeros[numeros]`,
+                        `      escreva(listaNumeros)`,
+                        `    }`,
+                        `}`
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toContain('[]');
+                });
+
                 it('Operações Básicas', async () => {
                     let _saidas = "";
                     interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {

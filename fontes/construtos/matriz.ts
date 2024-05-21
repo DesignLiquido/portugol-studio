@@ -6,10 +6,10 @@ import { InterpretadorPortugolStudio } from "../interpretador";
 export class Matriz implements Construto {
     linha: number;
     hashArquivo: number;
-    dimensoes: number[];
+    dimensoes: Construto[];
     valores: any;
 
-    constructor(hashArquivo: number, linha: number, dimensoes: number[], valores: any) {
+    constructor(hashArquivo: number, linha: number, dimensoes: Construto[], valores: any) {
         this.linha = linha;
         this.hashArquivo = hashArquivo;
         this.dimensoes = dimensoes;
