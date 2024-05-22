@@ -5,7 +5,7 @@ import { ErroEmTempoDeExecucao } from "@designliquido/delegua/excecoes";
 import { DeleguaClasse, DeleguaFuncao } from "@designliquido/delegua/estruturas";
 import { EspacoVariaveis } from "@designliquido/delegua/espaco-variaveis";
 
-import { TipoInferencia, inferirTipoVariavel } from "./inferenciador";
+import { TipoInferencia, inferirTipoVariavel, converterValor } from "./inferenciador";
 
 export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoInterface {
     pilha: EscopoExecucao[];
@@ -49,21 +49,6 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
         return this.pilha.pop();
     }
 
-    private converterValor(tipo: string, valor: any) {
-        switch ((tipo || '').toLowerCase()) {
-            case 'inteiro':
-                return parseInt(valor);
-            case 'lógico':
-                return Boolean(valor);
-            case 'real':
-                return Number(valor);
-            case 'texto':
-                return String(valor);
-            default:
-                return valor;
-        }
-    }
-
     definirConstante(nomeConstante: string, valor: any, tipo?: string): void {
         const constante = this.pilha[this.pilha.length - 1].ambiente.valores[nomeConstante];
 
@@ -76,10 +61,12 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
             tipoConstante = inferirTipoVariavel(valor);
         }
 
+        const tipoAbsoluto = tipoConstante.endsWith('[]') ? tipoConstante.slice(0, -2) : undefined;
+
         let elementoAlvo: VariavelInterface = {
-            valor: this.converterValor(tipo, valor),
+            valor: converterValor(tipoConstante, valor),
             tipo: tipoConstante,
-            subtipo: undefined,
+            subtipo: tipoAbsoluto,
             imutavel: true,
         };
 
@@ -92,22 +79,25 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
             const ambiente = this.pilha[this.pilha.length - i].ambiente;
             if (ambiente.valores[nomeVariavel] !== undefined) {
                 variavel = ambiente.valores[nomeVariavel];
+                break;
             }
         }
 
         let tipoVariavel;
         if (variavel && variavel.hasOwnProperty('tipo')) {
-            tipoVariavel = variavel.tipo
+            tipoVariavel = variavel.tipo;
         } else if (tipo) {
-            tipoVariavel = tipo
+            tipoVariavel = tipo;
         } else {
             tipoVariavel = inferirTipoVariavel(valor);
         }
 
+        const tipoAbsoluto = tipoVariavel.endsWith('[]') ? tipoVariavel.slice(0, -2) : undefined;
+
         let elementoAlvo: VariavelInterface = {
-            valor: this.converterValor(tipo, valor),
+            valor: converterValor(tipoVariavel, valor),
             tipo: tipoVariavel,
-            subtipo: undefined,
+            subtipo: tipoAbsoluto,
             imutavel: false,
         };
 
@@ -139,7 +129,7 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
                 }
                 const tipo = (variavel && variavel.hasOwnProperty('tipo') ? variavel.tipo : inferirTipoVariavel(valor)).toLowerCase() as TipoInferencia;
 
-                const valorResolvido = this.converterValor(tipo, valor);
+                const valorResolvido = converterValor(tipo, valor);
                 ambiente.valores[simbolo.lexema] = {
                     valor: valorResolvido,
                     tipo,

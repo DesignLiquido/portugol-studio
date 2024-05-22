@@ -208,19 +208,13 @@ describe('Interpretador (Portugol Studio)', () => {
                     '{  ',
                         //variável global do tipo inteiro  
                         'inteiro variavel',
-
                         'funcao inicio()',
                         '{  ',
                             'inteiro outra_variavel',
-
                             'real altura = 1.79',  
-                    
                             'cadeia frase = "Isso é uma variável do tipo cadeia"',
-                    
                             'caracter inicial = \'P\'',  
-                    
                             'logico exemplo = verdadeiro',
-                    
                             'escreva(altura)',
                         '}',
                     '}',
@@ -569,6 +563,32 @@ describe('Interpretador (Portugol Studio)', () => {
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(metodoVisitarExpressaoLimpa).toHaveBeenCalledTimes(1);
+                });
+            });
+
+            describe('Vetores', () => {
+                it("Atribuição", async () => {
+                    let _saidas: string[] = [];
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        _saidas.push(saida);
+                    }
+
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    inclua biblioteca Util --> util',
+                        '    funcao inicio() ',
+                        '    {',
+                        '        inteiro vetor[3]',
+                        '        vetor[0] = 1',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros).toHaveLength(0);
                 });
             });
 

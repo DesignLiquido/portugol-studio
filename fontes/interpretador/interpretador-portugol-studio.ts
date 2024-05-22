@@ -49,7 +49,7 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
      * @returns Promise com o resultado da leitura.
      */
     async visitarExpressaoLeia(expressao: Leia): Promise<any> {
-        return comum.visitarExpressaoLeiaComum(this.interfaceEntradaSaida, this.pilhaEscoposExecucao, expressao);
+        return comum.visitarExpressaoLeiaComum(this, this.interfaceEntradaSaida, expressao);
     }
 
     async visitarExpressaoMatriz(expressao: Matriz): Promise<any> {

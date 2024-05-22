@@ -1,11 +1,12 @@
-import { Construto, Variavel } from '@designliquido/delegua/construtos';
-import { Expressao, Importar, Leia } from '@designliquido/delegua/declaracoes';
-import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
+import { AcessoIndiceVariavel, Construto, Variavel } from '@designliquido/delegua/construtos';
+import { Declaracao, Expressao, Importar, Leia } from '@designliquido/delegua/declaracoes';
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
+import { VariavelInterface } from '@designliquido/delegua';
 
 import { VisitantePortugolStudioInterface } from '../interfaces';
 import { Matriz } from '../construtos/matriz';
+import { converterValor } from './inferenciador';
 
 import * as calendario from '../bibliotecas/calendario';
 import * as internet from '../bibliotecas/internet';
@@ -167,17 +168,25 @@ export async function visitarExpressaoImportarComum(expressao: Importar): Promis
     }
 }
 
+function desenveloparConstruto(expressao: Construto | Declaracao): Construto {
+    if (expressao instanceof Expressao) {
+        return desenveloparConstruto((<Expressao>expressao).expressao);
+    }
+
+    return expressao;
+}
+
 /**
  * Execução da leitura de valores da entrada configurada no
  * início da aplicação.
- * @param expressao Expressão do tipo Leia
- * @returns Promise com o resultado da leitura.
+ * @param {Leia} expressao Expressão do tipo Leia.
+ * @returns Não retorna valor.
  */
 export async function visitarExpressaoLeiaComum(
-    interfaceEntradaSaida: any,
-    pilhaEscoposExecucao: PilhaEscoposExecucaoInterface,
+    interpretador: VisitantePortugolStudioInterface, 
+    interfaceEntradaSaida: { question: (mensagem: string, funcaoResolucao: (resposta: any) => any) => void},
     expressao: Leia
-): Promise<any> {
+): Promise<void> {
     const mensagem = '> ';
     for (let argumento of expressao.argumentos) {
         const promessaLeitura: Function = () =>
@@ -188,11 +197,24 @@ export async function visitarExpressaoLeiaComum(
             );
 
         const valorLido = await promessaLeitura();
-        const simbolo =
-            argumento instanceof Expressao
-                ? (<Variavel>(<Expressao>argumento).expressao).simbolo
-                : (<Variavel>argumento).simbolo;
-        pilhaEscoposExecucao.definirVariavel(simbolo.lexema, valorLido);
+        const construtoVariavel = desenveloparConstruto(argumento);
+
+        if (construtoVariavel instanceof AcessoIndiceVariavel) {
+            // Aqui faz a mesma coisa que `AtribuicaoPorIndice`.
+            // Pode ser interessante modificar o avaliador sintático para emitir este
+            // construto e simplificar esta parte.
+            const promises = await Promise.all([
+                interpretador.avaliar(construtoVariavel.entidadeChamada),
+                interpretador.avaliar(construtoVariavel.indice)
+            ]);
+
+            const variavel: VariavelInterface = promises[0];
+            const indice: VariavelInterface = promises[1];
+
+            variavel.valor[indice.valor] = converterValor(variavel.subtipo, valorLido);
+        } else {
+            interpretador.pilhaEscoposExecucao.definirVariavel((construtoVariavel as any).simbolo.lexema, valorLido);
+        }
     }
 }
 
