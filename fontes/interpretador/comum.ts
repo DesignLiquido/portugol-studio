@@ -222,23 +222,53 @@ export async function visitarExpressaoMatrizComum(
     interpretador: VisitantePortugolStudioInterface, 
     expressao: Matriz
 ): Promise<any> {
-    return await resolverValoresMatriz(interpretador, expressao.valores);
+    if (expressao.valores && expressao.valores.length > 0) {
+        return await resolverValoresMatriz(interpretador, expressao.valores);
+    }
+
+    // Caso não existam valores de inicialização, cada dimensão é inicializada
+    // com valores padrão, de acordo com seu tipo.
+    return await inicializarDimensaoMatrizVazia(
+        interpretador, 
+        expressao.dimensoes, 
+        expressao.tipoDados
+    );
+}
+
+async function inicializarDimensaoMatrizVazia(
+    interpretador: VisitantePortugolStudioInterface, 
+    dimensoes: any[], 
+    tipoDeDados: string
+): Promise<any> {
+    const valoresResolvidos = [];
+    const copiaDimensoes = [...dimensoes];
+    const dimensaoAtual = copiaDimensoes.shift();
+    const tamanhoDimensao = await interpretador.avaliar(dimensaoAtual);
+
+    for (let i = 0; i < tamanhoDimensao; i++) {
+        if (copiaDimensoes.length > 0) {
+            valoresResolvidos.push(await inicializarDimensaoMatrizVazia(interpretador, copiaDimensoes, tipoDeDados));
+        } else {
+            valoresResolvidos.push(undefined);
+        }
+    }
+
+    return valoresResolvidos;
 }
 
 /**
- * Função recursiva que visita todos os valores de uma matriz.
+ * Função recursiva que visita todos os valores de uma matriz, quando os valores são conhecidos.
  * @param interpretador A instância do interpretador.
  * @param valores A matriz de valores das dimensões ainda não resolvidas.
  */
 async function resolverValoresMatriz(interpretador: VisitantePortugolStudioInterface, valores: any[]) {
     const valoresResolvidos = [];
-    if (valores && valores.length > 0) {
-        for (let i = 0; i < valores.length; i++) {
-            if (Array.isArray(valores[i])) {
-                valoresResolvidos.push(await resolverValoresMatriz(interpretador, valores[i]));
-            } else {
-                valoresResolvidos.push(await interpretador.avaliar(valores[i]));
-            }
+    
+    for (let i = 0; i < valores.length; i++) {
+        if (Array.isArray(valores[i])) {
+            valoresResolvidos.push(await resolverValoresMatriz(interpretador, valores[i]));
+        } else {
+            valoresResolvidos.push(await interpretador.avaliar(valores[i]));
         }
     }
     

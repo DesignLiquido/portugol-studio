@@ -5,12 +5,14 @@ export class Matriz implements Construto {
     linha: number;
     hashArquivo: number;
     dimensoes: Construto[];
+    tipoDados: string;
     valores: any;
 
-    constructor(hashArquivo: number, linha: number, dimensoes: Construto[], valores: any) {
+    constructor(hashArquivo: number, linha: number, dimensoes: Construto[], tipoDados: string, valores: any) {
         this.linha = linha;
         this.hashArquivo = hashArquivo;
         this.dimensoes = dimensoes;
+        this.tipoDados = tipoDados;
         this.valores = valores;
     }
 

@@ -597,7 +597,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         dimensoes: Construto[],
         tipoDados: string = 'inteiro'
     ) {
-        let valorInicializacao: Matriz = new Matriz(this.hashArquivo, Number(simboloTipo.linha), dimensoes, null);
+        let valorInicializacao: Matriz = new Matriz(this.hashArquivo, Number(simboloTipo.linha), dimensoes, tipoDados, null);
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
             valorInicializacao.valores = this.lerValoresAtribuicaoMatriz(dimensoes);
         }
