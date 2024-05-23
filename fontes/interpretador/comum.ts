@@ -244,8 +244,9 @@ async function inicializarDimensaoMatrizVazia(
     const copiaDimensoes = [...dimensoes];
     const dimensaoAtual = copiaDimensoes.shift();
     const tamanhoDimensao = await interpretador.avaliar(dimensaoAtual);
+    const valorTamanhoDimensao = tamanhoDimensao.hasOwnProperty('valor') ? tamanhoDimensao.valor : tamanhoDimensao;
 
-    for (let i = 0; i < tamanhoDimensao; i++) {
+    for (let i = 0; i < valorTamanhoDimensao; i++) {
         if (copiaDimensoes.length > 0) {
             valoresResolvidos.push(await inicializarDimensaoMatrizVazia(interpretador, copiaDimensoes, tipoDeDados));
         } else {
