@@ -198,26 +198,6 @@ export class LexadorPortugolStudio extends LexadorBase {
 
                 break;
 
-            /* case '&':
-                this.adicionarSimbolo(tiposDeSimbolos.BIT_AND);
-                this.avancar();
-                break;
-
-            case '~':
-                this.adicionarSimbolo(tiposDeSimbolos.BIT_NOT);
-                this.avancar();
-                break;
-
-            case '|':
-                this.adicionarSimbolo(tiposDeSimbolos.BIT_OR);
-                this.avancar();
-                break;
-
-            case '^':
-                this.adicionarSimbolo(tiposDeSimbolos.BIT_XOR);
-                this.avancar();
-                break; */
-
             case '<':
                 this.avancar();
                 if (this.simboloAtual() === '=') {

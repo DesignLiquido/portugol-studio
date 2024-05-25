@@ -250,7 +250,20 @@ async function inicializarDimensaoMatrizVazia(
         if (copiaDimensoes.length > 0) {
             valoresResolvidos.push(await inicializarDimensaoMatrizVazia(interpretador, copiaDimensoes, tipoDeDados));
         } else {
-            valoresResolvidos.push(undefined);
+            switch (tipoDeDados) {
+                case 'inteiro':
+                case 'real':
+                    valoresResolvidos.push(0);
+                    break;
+                case 'caracter':
+                case 'cadeia':
+                    valoresResolvidos.push('');
+                    break;
+                case 'logico':
+                case 'lógico':
+                    valoresResolvidos.push(false);
+                    break;
+            }
         }
     }
 

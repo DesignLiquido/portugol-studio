@@ -90,7 +90,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         );
     }
 
-    comparacaoIgualdade(): Construto {
+    override comparacaoIgualdade(): Construto {
         let expressao = this.comparar();
 
         while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.DIFERENTE, tiposDeSimbolos.IGUAL_IGUAL)) {
@@ -102,7 +102,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return expressao;
     }
 
-    primario(): Construto {
+    override primario(): Construto {
         const simboloAtual = this.simbolos[this.atual];
         switch (simboloAtual.tipo) {
             case tiposDeSimbolos.IDENTIFICADOR:
@@ -149,7 +149,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         }
     }
 
-    chamar(): Construto {
+    override chamar(): Construto {
         let expressao = this.primario();
 
         while (true) {
@@ -178,7 +178,31 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return expressao;
     }
 
-    atribuir(): Construto {
+    /**
+     * Se símbolo de operação é `+`, `-`, `+=` ou `-=`, monta objeto `Binario` para
+     * ser avaliado pelo Interpretador.
+     * @returns Um Construto, normalmente um `Binario`, ou `Unario` se houver alguma operação unária para ser avaliada.
+     */
+    override adicaoOuSubtracao(): Construto {
+        let expressao = this.multiplicar();
+
+        while (
+            this.verificarSeSimboloAtualEIgualA(
+                tiposDeSimbolos.SUBTRACAO,
+                tiposDeSimbolos.ADICAO,
+                tiposDeSimbolos.MAIS_IGUAL,
+                tiposDeSimbolos.MENOS_IGUAL
+            )
+        ) {
+            const operador = this.simbolos[this.atual - 1];
+            const direito = this.multiplicar();
+            expressao = new Binario(this.hashArquivo, expressao, operador, direito);
+        }
+
+        return expressao;
+    }
+
+    override atribuir(): Construto {
         const expressao = this.ou();
 
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
