@@ -6,6 +6,7 @@ import {
     Atribuir,
     Binario,
     Chamada,
+    Comentario,
     Construto,
     FuncaoConstruto,
     Literal,
@@ -55,6 +56,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     private validarEscopoProgramaEAvaliacaoSintatica(): void {
+        // Podem haver comentários antes da declaração do programa em si.
+        while ([tiposDeSimbolos.COMENTARIO, tiposDeSimbolos.LINHA_COMENTARIO].includes(this.simbolos[this.atual].tipo)) {
+            this.declaracoes.push(this.resolverDeclaracaoForaDeBloco());
+        }
+
         this.consumir(tiposDeSimbolos.PROGRAMA, "Esperada expressão 'programa' para inicializar programa.");
 
         this.consumir(
@@ -566,6 +572,32 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return inicializacoes;
     }
 
+    declaracaoComentarioMultilinha(): Comentario {
+        let simboloComentario: SimboloInterface;
+        const conteudos: string[] = [];
+        do {
+            simboloComentario = this.avancarEDevolverAnterior();
+            conteudos.push(simboloComentario.literal);
+        } while (simboloComentario.tipo === tiposDeSimbolos.LINHA_COMENTARIO);
+
+        return new Comentario(
+            simboloComentario.hashArquivo, 
+            simboloComentario.linha, 
+            conteudos, 
+            true
+        );
+    }
+
+    declaracaoComentarioUmaLinha(): Comentario {
+        const simboloComentario = this.avancarEDevolverAnterior();
+        return new Comentario(
+            simboloComentario.hashArquivo, 
+            simboloComentario.linha, 
+            simboloComentario.literal, 
+            false
+        );
+    }
+
     declaracaoExpressao(simboloAnterior?: SimboloInterface): Expressao {
         const expressao = this.expressao();
         // Ponto-e-vírgula é opcional aqui.
@@ -890,6 +922,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.CHAVE_ESQUERDA:
                 const simboloInicioBloco: SimboloInterface = this.simbolos[this.atual];
                 return new Bloco(simboloInicioBloco.hashArquivo, Number(simboloInicioBloco.linha), this.blocoEscopo());
+            case tiposDeSimbolos.COMENTARIO:
+                return this.declaracaoComentarioUmaLinha();
             case tiposDeSimbolos.CONSTANTE:
                 this.avancarEDevolverAnterior();
                 return this.declaracaoDeConstantes();
@@ -911,6 +945,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 return this.declaracaoLeia();
             case tiposDeSimbolos.LIMPA:
                 return this.expressaoLimpa();
+            case tiposDeSimbolos.LINHA_COMENTARIO:
+                return this.declaracaoComentarioMultilinha();
             case tiposDeSimbolos.LOGICO:
                 return this.declaracaoLogicos();
             case tiposDeSimbolos.PARA:

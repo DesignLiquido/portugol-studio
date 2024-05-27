@@ -78,6 +78,43 @@ export class LexadorPortugolStudio extends LexadorBase {
         this.adicionarSimbolo(tipo);
     }
 
+    comentarioMultilinha(): void {
+        let conteudo = '';
+        while (!this.eFinalDoCodigo()) {
+            this.avancar();
+            conteudo += this.codigo[this.linha].charAt(this.atual);
+            if (this.simboloAtual() === '*' && this.proximoSimbolo() === '/') {
+                const linhas = conteudo.split('\0');
+                for (let linha of linhas) {
+                    this.adicionarSimbolo(tiposDeSimbolos.LINHA_COMENTARIO, linha.trim());
+                }
+                
+                // Remove o asterisco da última linha
+                let lexemaUltimaLinha = this.simbolos[this.simbolos.length - 1].lexema;
+                lexemaUltimaLinha = lexemaUltimaLinha.substring(0, lexemaUltimaLinha.length - 1);
+                this.simbolos[this.simbolos.length - 1].lexema = lexemaUltimaLinha;
+                this.simbolos[this.simbolos.length - 1].literal = lexemaUltimaLinha;
+
+                this.avancar();
+                this.avancar();
+                break;
+            }
+        }
+    }
+
+    comentarioUmaLinha(): void {
+        this.avancar();
+        const linhaAtual = this.linha;
+        let ultimoAtual = this.atual;
+        while (linhaAtual === this.linha && !this.eFinalDoCodigo()) {
+            ultimoAtual = this.atual;
+            this.avancar();
+        }
+
+        const conteudo = this.codigo[linhaAtual].substring(this.inicioSimbolo + 2, ultimoAtual);
+        this.adicionarSimbolo(tiposDeSimbolos.COMENTARIO, conteudo.trim());
+    }
+
     analisarToken(): void {
         const caractere = this.simboloAtual();
 
@@ -222,10 +259,10 @@ export class LexadorPortugolStudio extends LexadorBase {
                 this.avancar();
                 switch (this.simboloAtual()) {
                     case '/':
-                        this.avancarParaProximaLinha();
+                        this.comentarioUmaLinha();
                         break;
                     case '*':
-                        this.encontrarFimComentarioAsterisco();
+                        this.comentarioMultilinha();
                         break;
                     case '=':
                         this.adicionarSimbolo(tiposDeSimbolos.DIVISAO_IGUAL);
