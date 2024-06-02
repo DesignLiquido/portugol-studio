@@ -581,9 +581,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         } while (simboloComentario.tipo === tiposDeSimbolos.LINHA_COMENTARIO);
 
         return new Comentario(
-            simboloComentario.hashArquivo, 
-            simboloComentario.linha, 
-            conteudos, 
+            simboloComentario.hashArquivo,
+            simboloComentario.linha,
+            conteudos,
             true
         );
     }
@@ -591,9 +591,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     declaracaoComentarioUmaLinha(): Comentario {
         const simboloComentario = this.avancarEDevolverAnterior();
         return new Comentario(
-            simboloComentario.hashArquivo, 
-            simboloComentario.linha, 
-            simboloComentario.literal, 
+            simboloComentario.hashArquivo,
+            simboloComentario.linha,
+            simboloComentario.literal,
             false
         );
     }
