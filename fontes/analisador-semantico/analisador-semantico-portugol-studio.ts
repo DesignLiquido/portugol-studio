@@ -4,8 +4,9 @@ import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designli
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
 import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/variavel-hipotetica-interface';
-import { PilhaVariaveis } from "./pilha-variaveis";
 import { Atribuir, Declaracao } from '@designliquido/delegua';
+
+import { PilhaVariaveis } from "./pilha-variaveis";
 
 export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
@@ -23,33 +24,37 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         this.diagnosticos = [];
     }
 
-    erro(simbolo: SimboloInterface, mensagem: string): void {
+    adicionarDiagnostico(
+        simbolo: SimboloInterface, 
+        mensagem: string, 
+        severidade: DiagnosticoSeveridade = DiagnosticoSeveridade.ERRO
+    ): void {
         this.diagnosticos.push({
             simbolo: simbolo,
             mensagem: mensagem,
             hashArquivo: simbolo.hashArquivo,
             linha: simbolo.linha,
-            severidade: DiagnosticoSeveridade.ERRO,
-        });
-    }
-
-    aviso(simbolo: SimboloInterface, mensagem: string): void {
-        this.diagnosticos.push({
-            simbolo: simbolo,
-            mensagem: mensagem,
-            hashArquivo: simbolo.hashArquivo,
-            linha: simbolo.linha,
-            severidade: DiagnosticoSeveridade.AVISO,
+            severidade: severidade,
         });
     }
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir<string>): Promise<any> {
-        console.log(expressao)
-        return Promise.resolve()
+        console.log(expressao);
+        return Promise.resolve();
     }
 
     analisar(declaracoes: Declaracao[]): RetornoAnalisadorSemantico {
-        throw new Error("Method not implemented.");
+        this.variaveis = {};
+        this.atual = 0;
+        this.diagnosticos = [];
+        while (this.atual < declaracoes.length) {
+            declaracoes[this.atual].aceitar(this);
+            this.atual++;
+        }
+
+        return {
+            diagnosticos: this.diagnosticos,
+        } as RetornoAnalisadorSemantico;
     }
 
 }
