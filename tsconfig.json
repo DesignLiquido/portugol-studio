@@ -2,11 +2,11 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@designliquido/delegua": ["node_modules/@designliquido/delegua/dist"],
-            "@designliquido/delegua/*": ["node_modules/@designliquido/delegua/dist/*"],
+            //"@designliquido/delegua": ["node_modules/@designliquido/delegua/dist"],
+            //"@designliquido/delegua/*": ["node_modules/@designliquido/delegua/dist/*"],
             // Para linkagem (`yarn link ...`), comente as linhas acima e descomente as linhas abaixo.
-            // "@designliquido/delegua": ["node_modules/@designliquido/delegua/fontes"],
-            // "@designliquido/delegua/*": ["node_modules/@designliquido/delegua/fontes/*"],
+            "@designliquido/delegua": ["node_modules/@designliquido/delegua/fontes"],
+            "@designliquido/delegua/*": ["node_modules/@designliquido/delegua/fontes/*"],
         },
         "outDir": "dist",
         "module": "CommonJS",
@@ -19,8 +19,8 @@
         "esModuleInterop": true
     },
     "exclude": [
-        "babel.config.js", 
-        "coverage", 
+        "babel.config.js",
+        "coverage",
         "dist",
         "docs",
         "jest.config.ts",

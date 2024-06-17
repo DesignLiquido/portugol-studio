@@ -1,13 +1,17 @@
+import {
+    Declaracao,
+    Escreva,
+    EscrevaMesmaLinha
+} from '@designliquido/delegua/declaracoes';
+
 import { AnalisadorSemanticoBase } from '@designliquido/delegua/analisador-semantico/analisador-semantico-base';
 import { SimboloInterface } from '@designliquido/delegua/interfaces';
 import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designliquido/delegua/interfaces/erros';
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
 import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/variavel-hipotetica-interface';
-import { Atribuir, Declaracao } from '@designliquido/delegua';
 
-import { PilhaVariaveis } from "./pilha-variaveis";
-
+import { PilhaVariaveis } from './pilha-variaveis';
 export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
     variaveis: { [nomeVariavel: string]: VariavelHipoteticaInterface };
@@ -25,8 +29,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     }
 
     adicionarDiagnostico(
-        simbolo: SimboloInterface, 
-        mensagem: string, 
+        simbolo: SimboloInterface,
+        mensagem: string,
         severidade: DiagnosticoSeveridade = DiagnosticoSeveridade.ERRO
     ): void {
         this.diagnosticos.push({
@@ -38,9 +42,15 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         });
     }
 
-    visitarExpressaoDeAtribuicao(expressao: Atribuir<string>): Promise<any> {
-        console.log(expressao);
-        return Promise.resolve();
+    visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any>{
+        console.log(declaracao)
+
+        return Promise.resolve()
+    }
+    visitarDeclaracaoEscreva(declaracao: Escreva): Promise<any>{
+        console.log(declaracao)
+
+        return Promise.resolve()
     }
 
     analisar(declaracoes: Declaracao[]): RetornoAnalisadorSemantico {
@@ -48,6 +58,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         this.atual = 0;
         this.diagnosticos = [];
         while (this.atual < declaracoes.length) {
+            console.log(declaracoes[this.atual])
             declaracoes[this.atual].aceitar(this);
             this.atual++;
         }
