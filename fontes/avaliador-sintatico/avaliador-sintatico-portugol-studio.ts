@@ -42,6 +42,7 @@ import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar'
 
 import { Matriz, Limpa } from '../construtos';
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
+import { Simbolo } from '@designliquido/delegua';
 
 /**
  * O avaliador sintático (_Parser_) é responsável por transformar os símbolos do Lexador em estruturas de alto nível.
@@ -56,6 +57,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     private validarEscopoProgramaEAvaliacaoSintatica(): void {
+        // Um programa completamente vazio é inválido.
+        if (this.simbolos.length === 0) {
+            throw this.erro(new Simbolo('VAZIO', '', '', -1, this.hashArquivo), "Esperada expressão 'programa' para inicializar programa.");
+        }
+
         // Podem haver comentários antes da declaração do programa em si.
         while ([tiposDeSimbolos.COMENTARIO, tiposDeSimbolos.LINHA_COMENTARIO].includes(this.simbolos[this.atual].tipo)) {
             this.declaracoes.push(this.resolverDeclaracaoForaDeBloco());
