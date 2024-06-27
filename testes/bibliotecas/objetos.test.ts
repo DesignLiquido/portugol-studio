@@ -181,7 +181,7 @@ describe('Biblioteca de Objetos', () => {
             expect(resultProp).toBe('Charlotte Wiltshire');
         });
     
-        it('Falha - Tipo Inválido', async () => {
+        it('Falha - Não é um vetor', async () => {
             const json = `
                 {
                     "characters": "notAnArray"
@@ -189,7 +189,7 @@ describe('Biblioteca de Objetos', () => {
             `;
             const vetor = await criar_objeto_via_json(json);
             await expect(obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 0))
-                .rejects.toThrow('Tipo Inválido');
+                .rejects.toThrow(/não é um vetor/);
         });
     
         it('Falha- Índice Inválido', async () => {
@@ -209,6 +209,18 @@ describe('Biblioteca de Objetos', () => {
             await expect(obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 1))
                 .rejects.toThrow(/índice de vetor inválido/);
         });
+            it('Falha - Tipo Inválido', async () => {
+        const json = `
+            {
+                "characters": [
+                    "notAnObject"
+                ]
+            }
+        `;
+        const vetor = await criar_objeto_via_json(json);
+        await expect(obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 0))
+            .rejects.toThrow('Tipo Inválido');
+    });
     });
         
     describe('Obter propriedade do tipo caracter em vetor', () => {
@@ -230,15 +242,21 @@ describe('Biblioteca de Objetos', () => {
             expect(terceiroCaracter).toBe('C');
         });
     
-        it('Falha - Tipo Inválido', async () => {
+        it('Falha - Não é um vetor', async () => {
             await atribuir_propriedade(endereco, 'caracteres', 'notAnArray');
             await expect(obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 0))
-                .rejects.toThrow('Tipo Inválido');
+                .rejects.toThrow(/não é um vetor/);
         });
     
         it('Falha- Índice Inválido', async () => {
             await expect(obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 3))
                 .rejects.toThrow(/índice de vetor inválido/);
+        });
+
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'caracteres', ['A', 'B', 1]);
+            await expect(obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 2))
+                .rejects.toThrow('Tipo Inválido');
         });
     });
         
@@ -258,15 +276,21 @@ describe('Biblioteca de Objetos', () => {
             expect(segundoLogico).toBe(false);
         });
     
-        it('Falha - Tipo Inválido', async () => {
+        it('Falha - Não é um vetor', async () => {
             await atribuir_propriedade(endereco, 'logicos', 'notAnArray');
             await expect(obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 0))
-                .rejects.toThrow('Tipo Inválido');
+                .rejects.toThrow(/não é um vetor/);
         });
     
         it('Falha- Índice Inválido', async () => {
             await expect(obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 2))
                 .rejects.toThrow(/índice de vetor inválido/);
+        });
+
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'logicos', [true, 'notBoolean']);
+            await expect(obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 1))
+                .rejects.toThrow('Tipo Inválido');
         });
     });
     
@@ -289,15 +313,21 @@ describe('Biblioteca de Objetos', () => {
             expect(terceiroReal).toBe(3.3);
         });
     
-        it('Falha - Tipo Inválido', async () => {
+        it('Falha - Não é um vetor', async () => {
             await atribuir_propriedade(endereco, 'reais', 'notAnArray');
             await expect(obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 0))
-                .rejects.toThrow('Tipo Inválido');
+                .rejects.toThrow(/não é um vetor/);
         });
     
         it('Falha- Índice Inválido', async () => {
             await expect(obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 3))
                 .rejects.toThrow(/índice de vetor inválido/);
+        });
+
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'reais', [1.1, 'notNumber', 3.3]);
+            await expect(obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 1))
+                .rejects.toThrow('Tipo Inválido');
         });
     });
     
@@ -320,16 +350,23 @@ describe('Biblioteca de Objetos', () => {
             expect(terceiroInteiro).toBe(3);
         });
     
-        it('Falha - Tipo Inválido', async () => {
+        it('Falha - Não é um vetor', async () => {
             await atribuir_propriedade(endereco, 'inteiros', 'notAnArray');
             await expect(obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 0))
-                .rejects.toThrow('Tipo Inválido');
+                .rejects.toThrow(/não é um vetor/);
         });
     
         it('Falha- Índice Inválido', async () => {
             await expect(obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 3))
                 .rejects.toThrow(/índice de vetor inválido/);
         });
+
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'inteiros', [1, 'notInteger', 3]);
+            await expect(obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 1))
+                .rejects.toThrow('Tipo Inválido');
+        });
+    
     });
     
     describe('Obter propriedade do tipo cadeia em vetor', () => {
@@ -351,15 +388,21 @@ describe('Biblioteca de Objetos', () => {
             expect(terceiraCadeia).toBe('três');
         });
     
-        it('Falha - Tipo Inválido', async () => {
+        it('Falha - Não é um vetor', async () => {
             await atribuir_propriedade(endereco, 'cadeias', 'notAnArray');
             await expect(obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 0))
-                .rejects.toThrow('Tipo Inválido');
+                .rejects.toThrow(/não é um vetor/);
         });
     
         it('Falha- Índice Inválido', async () => {
             await expect(obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 3))
                 .rejects.toThrow(/índice de vetor inválido/);
+        });
+
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'cadeias', ['um', 2, 'três']);
+            await expect(obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 1))
+                .rejects.toThrow('Tipo Inválido');
         });
     });
     
