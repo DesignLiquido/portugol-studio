@@ -155,7 +155,6 @@ describe('Biblioteca de Objetos', () => {
             expect(nestedProp).toBe('Charlotte Wiltshire');
         });
     });
-
     describe('Obter propriedade do tipo objeto em vetor', () => {
         it('Trivial', async () => {
             const json = `
@@ -181,106 +180,190 @@ describe('Biblioteca de Objetos', () => {
             const resultProp = await obter_propriedade_tipo_cadeia(retrievedSubEndereco, 'name');
             expect(resultProp).toBe('Charlotte Wiltshire');
         });
+    
+        it('Falha - Tipo Inválido', async () => {
+            const json = `
+                {
+                    "characters": "notAnArray"
+                }
+            `;
+            const vetor = await criar_objeto_via_json(json);
+            await expect(obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 0))
+                .rejects.toThrow('Tipo Inválido');
+        });
+    
+        it('Falha- Índice Inválido', async () => {
+            const json = `
+                {
+                    "characters": [
+                        {
+                            "id": 1,
+                            "name": "Charlotte Wiltshire",
+                            "position": "Lead Protagonist",
+                            "email": "charlotte.wiltshire@example.com"
+                        }
+                    ]
+                }
+            `;
+            const vetor = await criar_objeto_via_json(json);
+            await expect(obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 1))
+                .rejects.toThrow(/índice de vetor inválido/);
+        });
     });
-
+        
     describe('Obter propriedade do tipo caracter em vetor', () => {
-        let endereco: number;
-
+        let endereco;
+    
         beforeEach(async () => {
             endereco = await criar_objeto();
             await atribuir_propriedade(endereco, 'caracteres', ['A', 'B', 'C']);
         });
-
+    
         it('Trivial', async () => {
             const primeiroCaracter = await obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 0);
             expect(primeiroCaracter).toBe('A');
-
+    
             const segundoCaracter = await obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 1);
             expect(segundoCaracter).toBe('B');
-
+    
             const terceiroCaracter = await obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 2);
             expect(terceiroCaracter).toBe('C');
         });
+    
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'caracteres', 'notAnArray');
+            await expect(obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 0))
+                .rejects.toThrow('Tipo Inválido');
+        });
+    
+        it('Falha- Índice Inválido', async () => {
+            await expect(obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 3))
+                .rejects.toThrow(/índice de vetor inválido/);
+        });
     });
-
-    describe('Obter propriedade do tipo logico em vetorr', () => {
-        let endereco: number;
-
+        
+    describe('Obter propriedade do tipo logico em vetor', () => {
+        let endereco;
+    
         beforeEach(async () => {
             endereco = await criar_objeto();
             await atribuir_propriedade(endereco, 'logicos', [true, false]);
         });
-
+    
         it('Trivial', async () => {
             const primeiroLogico = await obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 0);
             expect(primeiroLogico).toBe(true);
-
+    
             const segundoLogico = await obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 1);
             expect(segundoLogico).toBe(false);
         });
+    
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'logicos', 'notAnArray');
+            await expect(obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 0))
+                .rejects.toThrow('Tipo Inválido');
+        });
+    
+        it('Falha- Índice Inválido', async () => {
+            await expect(obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 2))
+                .rejects.toThrow(/índice de vetor inválido/);
+        });
     });
-
+    
     describe('Obter propriedade do tipo real em vetor', () => {
-        let endereco: number;
-
+        let endereco;
+    
         beforeEach(async () => {
             endereco = await criar_objeto();
             await atribuir_propriedade(endereco, 'reais', [1.1, 2.2, 3.3]);
         });
-
+    
         it('Trivial', async () => {
             const primeiroReal = await obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 0);
             expect(primeiroReal).toBe(1.1);
-
+    
             const segundoReal = await obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 1);
             expect(segundoReal).toBe(2.2);
-
+    
             const terceiroReal = await obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 2);
             expect(terceiroReal).toBe(3.3);
         });
+    
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'reais', 'notAnArray');
+            await expect(obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 0))
+                .rejects.toThrow('Tipo Inválido');
+        });
+    
+        it('Falha- Índice Inválido', async () => {
+            await expect(obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 3))
+                .rejects.toThrow(/índice de vetor inválido/);
+        });
     });
-
+    
     describe('Obter propriedade do tipo inteiro em vetor', () => {
-        let endereco: number;
-
+        let endereco;
+    
         beforeEach(async () => {
             endereco = await criar_objeto();
             await atribuir_propriedade(endereco, 'inteiros', [1, 2, 3]);
         });
-
+    
         it('Trivial', async () => {
             const primeiroInteiro = await obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 0);
             expect(primeiroInteiro).toBe(1);
-
+    
             const segundoInteiro = await obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 1);
             expect(segundoInteiro).toBe(2);
-
+    
             const terceiroInteiro = await obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 2);
             expect(terceiroInteiro).toBe(3);
         });
+    
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'inteiros', 'notAnArray');
+            await expect(obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 0))
+                .rejects.toThrow('Tipo Inválido');
+        });
+    
+        it('Falha- Índice Inválido', async () => {
+            await expect(obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 3))
+                .rejects.toThrow(/índice de vetor inválido/);
+        });
     });
-
+    
     describe('Obter propriedade do tipo cadeia em vetor', () => {
-        let endereco: number;
-
+        let endereco;
+    
         beforeEach(async () => {
             endereco = await criar_objeto();
             await atribuir_propriedade(endereco, 'cadeias', ['um', 'dois', 'três']);
         });
-
+    
         it('Trivial', async () => {
             const primeiraCadeia = await obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 0);
             expect(primeiraCadeia).toBe('um');
-
+    
             const segundaCadeia = await obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 1);
             expect(segundaCadeia).toBe('dois');
-
+    
             const terceiraCadeia = await obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 2);
             expect(terceiraCadeia).toBe('três');
         });
+    
+        it('Falha - Tipo Inválido', async () => {
+            await atribuir_propriedade(endereco, 'cadeias', 'notAnArray');
+            await expect(obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 0))
+                .rejects.toThrow('Tipo Inválido');
+        });
+    
+        it('Falha- Índice Inválido', async () => {
+            await expect(obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 3))
+                .rejects.toThrow(/índice de vetor inválido/);
+        });
     });
-
-    describe('obter_tamanho_vetor_propriedade', () => {
+    
+    describe('Deve obter o tamanho do vetor', () => {
         let endereco: number;
 
         beforeEach(async () => {

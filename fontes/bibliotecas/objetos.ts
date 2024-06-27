@@ -84,8 +84,9 @@ export async function obter_propriedade_tipo_objeto_em_vetor(
     indice: number
 ): Promise<number> {
     const vetor = cacheObjetos[endereco][propriedade];
-    if (!Array.isArray(vetor) || typeof vetor[indice] !== 'object') {
-        throw new Error('Tipo ou índice inválido');
+    validateArray(vetor, indice);
+    if (typeof vetor[indice] !== 'object' || vetor[indice] === null) {
+        throw new Error('Tipo Inválido');
     }
     return cacheObjetos.push(vetor[indice]) - 1;
 }
@@ -96,8 +97,9 @@ export async function obter_propriedade_tipo_caracter_em_vetor(
     indice: number
 ): Promise<string> {
     const vetor = cacheObjetos[endereco][propriedade];
-    if (!Array.isArray(vetor) || typeof vetor[indice] !== 'string' || vetor[indice].length !== 1) {
-        throw new Error('Tipo ou índice inválido');
+    validateArray(vetor, indice);
+    if (typeof vetor[indice] !== 'string' || vetor[indice].length !== 1) {
+        throw new Error('Tipo Inválido');
     }
     return vetor[indice];
 }
@@ -108,8 +110,9 @@ export async function obter_propriedade_tipo_logico_em_vetor(
     indice: number
 ): Promise<boolean> {
     const vetor = cacheObjetos[endereco][propriedade];
-    if (!Array.isArray(vetor) || typeof vetor[indice] !== 'boolean') {
-        throw new Error('Tipo ou índice inválido');
+    validateArray(vetor, indice);
+    if (typeof vetor[indice] !== 'boolean') {
+        throw new Error('Tipo Inválido');
     }
     return vetor[indice];
 }
@@ -120,8 +123,9 @@ export async function obter_propriedade_tipo_real_em_vetor(
     indice: number
 ): Promise<number> {
     const vetor = cacheObjetos[endereco][propriedade];
-    if (!Array.isArray(vetor) || typeof vetor[indice] !== 'number') {
-        throw new Error('Tipo ou índice inválido');
+    validateArray(vetor, indice);
+    if (typeof vetor[indice] !== 'number' || !Number.isFinite(vetor[indice])) {
+        throw new Error('Tipo Inválido');
     }
     return vetor[indice];
 }
@@ -132,8 +136,9 @@ export async function obter_propriedade_tipo_inteiro_em_vetor(
     indice: number
 ): Promise<number> {
     const vetor = cacheObjetos[endereco][propriedade];
-    if (!Array.isArray(vetor) || typeof vetor[indice] !== 'number') {
-        throw new Error('Tipo ou índice inválido');
+    validateArray(vetor, indice);
+    if (typeof vetor[indice] !== 'number' || !Number.isInteger(vetor[indice])) {
+        throw new Error('Tipo Inválido');
     }
     return vetor[indice];
 }
@@ -144,8 +149,9 @@ export async function obter_propriedade_tipo_cadeia_em_vetor(
     indice: number
 ): Promise<string> {
     const vetor = cacheObjetos[endereco][propriedade];
-    if (!Array.isArray(vetor) || typeof vetor[indice] !== 'string') {
-        throw new Error('Tipo ou índice inválido');
+    validateArray(vetor, indice);
+    if (typeof vetor[indice] !== 'string') {
+        throw new Error('Tipo Inválido');
     }
     return vetor[indice];
 }
@@ -193,24 +199,38 @@ export async function tipo_propriedade(endereco: number, propriedade: string): P
     throw new Error('Tipo de propriedade desconhecida');
 }
 
-function parseXml(xmlString :string) {
-    let resultString = "";
-  
+function validateArray(vetor, indice) {
+    if (!Array.isArray(vetor)) {
+        throw new Error('Tipo Inválido');
+    }
+    if (indice < 0 || indice >= vetor.length) {
+        throw new Error(
+            'Você tentou acessar um índice de vetor inválido.\n' +
+                'O índice deve ser menor que o número de elementos que o vetor possui.\n' +
+                'Por exemplo, se foi declarado um vetor com 5 elementos (inteiro vetor[5]), o maior índice possível é 4.\n' +
+                'Além disso, o índice de um vetor não pode ser negativo.'
+        );
+    }
+}
+
+function parseXml(xmlString: string) {
+    let resultString = '';
+
     parseString(
-      xmlString,
-      {
-        explicitArray: false,
-        explicitRoot: false,
-        mergeAttrs: true,
-      },
-      (err, result) => {
-        if (err) {
-          console.error("Erro processando XML:", err);
-          resultString = "Erro processando XML";
-        } else {
-          resultString = JSON.stringify(result);
+        xmlString,
+        {
+            explicitArray: false,
+            explicitRoot: false,
+            mergeAttrs: true,
+        },
+        (err, result) => {
+            if (err) {
+                console.error('Erro processando XML:', err);
+                resultString = 'Erro processando XML';
+            } else {
+                resultString = JSON.stringify(result);
+            }
         }
-      }
     );
     return resultString;
-  }
+}
