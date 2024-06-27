@@ -26,7 +26,8 @@
     "dependencies": {
         "@designliquido/delegua": "^0.35.2",
         "lodash": "^4.17.21",
-        "node-fetch": "2"
+        "node-fetch": "2",
+        "xml2js": "^0.6.2"
     },
     "devDependencies": {
         "@types/estree": "^1.0.5",
