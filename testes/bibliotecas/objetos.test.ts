@@ -20,21 +20,15 @@ import {
     obter_json,
     contem_propriedade,
     tipo_propriedade,
-    TIPO_INTEIRO,
-    TIPO_CADEIA,
-    TIPO_CARACTER,
-    TIPO_REAL,
-    TIPO_LOGICO,
-    TIPO_OBJETO,
-    TIPO_VETOR,
+    TIPO_INTEIRO
 } from './../../fontes/bibliotecas/objetos';
-
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 describe('Biblioteca de Objetos', () => {
     describe('Criar objeto via JSON', () => {
         it('Trivial', async () => {
             const json = '{"nome": "Charlotte"}';
-            const index = await criar_objeto_via_json(json);
-            const nome = await obter_propriedade_tipo_cadeia(index, 'nome');
+            const index = await criar_objeto_via_json({} as InterpretadorInterface, json);
+            const nome = await obter_propriedade_tipo_cadeia({} as InterpretadorInterface, index, 'nome');
             expect(nome).toBe('Charlotte');
         });
     });
@@ -42,8 +36,8 @@ describe('Biblioteca de Objetos', () => {
     describe('Criar objeto via XML', () => {
         it('Trivial', async () => {
             const xml = '<root><nome>Charlotte</nome></root>';
-            const index = await criar_objeto_via_xml(xml);
-            const nome = await obter_propriedade_tipo_cadeia(index, 'nome');
+            const index = await criar_objeto_via_xml({} as InterpretadorInterface, xml);
+            const nome = await obter_propriedade_tipo_cadeia({} as InterpretadorInterface, index, 'nome');
             expect(nome).toBe('Charlotte');
         });
     });
@@ -63,8 +57,8 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'idade', 25);
-            const idade = await obter_propriedade_tipo_inteiro(endereco, 'idade');
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'idade', 25);
+            const idade = await obter_propriedade_tipo_inteiro({} as InterpretadorInterface, endereco, 'idade');
             expect(idade).toBe(25);
         });
     });
@@ -77,14 +71,16 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'idade', 25);
-            const idade = await obter_propriedade_tipo_inteiro(endereco, 'idade');
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'idade', 25);
+            const idade = await obter_propriedade_tipo_inteiro({} as InterpretadorInterface, endereco, 'idade');
             expect(idade).toBe(25);
         });
 
         it('Falha - Tipo Inválido', async () => {
-            await atribuir_propriedade(endereco, 'idade', 'texto em vez de inteiro');
-            await expect(obter_propriedade_tipo_inteiro(endereco, 'idade')).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'idade', 'texto em vez de inteiro');
+            await expect(
+                obter_propriedade_tipo_inteiro({} as InterpretadorInterface, endereco, 'idade')
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -98,14 +94,14 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'altura', 1.75);
-            const altura = await obter_propriedade_tipo_real(endereco, 'altura');
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'altura', 1.75);
+            const altura = await obter_propriedade_tipo_real({} as InterpretadorInterface, endereco, 'altura');
             expect(altura).toBe(1.75);
         });
 
         it('Falha - Tipo Inválido', async () => {
-            await atribuir_propriedade(endereco, 'altura', 'texto em vez de real');
-            await expect(obter_propriedade_tipo_real(endereco, 'altura')).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'altura', 'texto em vez de real');
+            await expect(obter_propriedade_tipo_real({} as InterpretadorInterface, endereco, 'altura')).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -119,14 +115,16 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'isAdmin', true);
-            const isAdmin = await obter_propriedade_tipo_logico(endereco, 'isAdmin');
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'isAdmin', true);
+            const isAdmin = await obter_propriedade_tipo_logico({} as InterpretadorInterface, endereco, 'isAdmin');
             expect(isAdmin).toBe(true);
         });
 
         it('Falha - Tipo Inválido', async () => {
-            await atribuir_propriedade(endereco, 'isAdmin', 'texto em vez de booleano');
-            await expect(obter_propriedade_tipo_logico(endereco, 'isAdmin')).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'isAdmin', 'texto em vez de booleano');
+            await expect(
+                obter_propriedade_tipo_logico({} as InterpretadorInterface, endereco, 'isAdmin')
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -140,14 +138,16 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'inicial', 'A');
-            const inicial = await obter_propriedade_tipo_caracter(endereco, 'inicial');
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'inicial', 'A');
+            const inicial = await obter_propriedade_tipo_caracter({} as InterpretadorInterface, endereco, 'inicial');
             expect(inicial).toBe('A');
         });
 
         it('Falha - Tipo Inválido', async () => {
-            await atribuir_propriedade(endereco, 'inicial', 123); // Not a character
-            await expect(obter_propriedade_tipo_caracter(endereco, 'inicial')).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'inicial', 123); // Not a character
+            await expect(
+                obter_propriedade_tipo_caracter({} as InterpretadorInterface, endereco, 'inicial')
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -161,14 +161,14 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'nome', 'Charlotte');
-            const nome = await obter_propriedade_tipo_cadeia(endereco, 'nome');
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'nome', 'Charlotte');
+            const nome = await obter_propriedade_tipo_cadeia({} as InterpretadorInterface, endereco, 'nome');
             expect(nome).toBe('Charlotte');
         });
 
         it('Falha - Tipo Inválido', async () => {
-            await atribuir_propriedade(endereco, 'nome', { object: 'instead of string' });
-            await expect(obter_propriedade_tipo_cadeia(endereco, 'nome')).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'nome', { object: 'instead of string' });
+            await expect(obter_propriedade_tipo_cadeia({} as InterpretadorInterface, endereco, 'nome')).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -185,9 +185,17 @@ describe('Biblioteca de Objetos', () => {
                     "email": "charlotte.wiltshire@example.com"
                 }
             }`;
-            const index = await criar_objeto_via_json(json);
-            const retrievedSubEndereco = await obter_propriedade_tipo_objeto(index, 'character');
-            const resultProp = await obter_propriedade_tipo_cadeia(retrievedSubEndereco, 'name');
+            const index = await criar_objeto_via_json({} as InterpretadorInterface, json);
+            const retrievedSubEndereco = await obter_propriedade_tipo_objeto(
+                {} as InterpretadorInterface,
+                index,
+                'character'
+            );
+            const resultProp = await obter_propriedade_tipo_cadeia(
+                {} as InterpretadorInterface,
+                retrievedSubEndereco,
+                'name'
+            );
             expect(resultProp).toBe('Charlotte Wiltshire');
         });
 
@@ -196,8 +204,10 @@ describe('Biblioteca de Objetos', () => {
             {
                 "character": "notAnObject"
             }`;
-            const index = await criar_objeto_via_json(json);
-            await expect(obter_propriedade_tipo_objeto(index, 'character')).rejects.toThrow(
+            const index = await criar_objeto_via_json({} as InterpretadorInterface, json);
+            await expect(
+                obter_propriedade_tipo_objeto({} as InterpretadorInterface, index, 'character')
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -222,9 +232,18 @@ describe('Biblioteca de Objetos', () => {
                     ]
                 }
             `;
-            const vetor = await criar_objeto_via_json(json);
-            const retrievedSubEndereco = await obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 0);
-            const resultProp = await obter_propriedade_tipo_cadeia(retrievedSubEndereco, 'name');
+            const vetor = await criar_objeto_via_json({} as InterpretadorInterface, json);
+            const retrievedSubEndereco = await obter_propriedade_tipo_objeto_em_vetor(
+                {} as InterpretadorInterface,
+                vetor,
+                'characters',
+                0
+            );
+            const resultProp = await obter_propriedade_tipo_cadeia(
+                {} as InterpretadorInterface,
+                retrievedSubEndereco,
+                'name'
+            );
             expect(resultProp).toBe('Charlotte Wiltshire');
         });
 
@@ -234,10 +253,10 @@ describe('Biblioteca de Objetos', () => {
                     "characters": "notAnArray"
                 }
             `;
-            const vetor = await criar_objeto_via_json(json);
-            await expect(obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 0)).rejects.toThrow(
-                /não é um vetor/
-            );
+            const vetor = await criar_objeto_via_json({} as InterpretadorInterface, json);
+            await expect(
+                obter_propriedade_tipo_objeto_em_vetor({} as InterpretadorInterface, vetor, 'characters', 0)
+            ).rejects.toThrow(/não é um vetor/);
         });
 
         it('Falha- Índice Inválido', async () => {
@@ -253,10 +272,10 @@ describe('Biblioteca de Objetos', () => {
                     ]
                 }
             `;
-            const vetor = await criar_objeto_via_json(json);
-            await expect(obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 1)).rejects.toThrow(
-                /índice de vetor inválido/
-            );
+            const vetor = await criar_objeto_via_json({} as InterpretadorInterface, json);
+            await expect(
+                obter_propriedade_tipo_objeto_em_vetor({} as InterpretadorInterface, vetor, 'characters', 1)
+            ).rejects.toThrow(/índice de vetor inválido/);
         });
         it('Falha - Tipo Ínvalido"', async () => {
             const json = `
@@ -266,8 +285,10 @@ describe('Biblioteca de Objetos', () => {
                 ]
             }
         `;
-            const vetor = await criar_objeto_via_json(json);
-            await expect(obter_propriedade_tipo_objeto_em_vetor(vetor, 'characters', 0)).rejects.toThrow(
+            const vetor = await criar_objeto_via_json({} as InterpretadorInterface, json);
+            await expect(
+                obter_propriedade_tipo_objeto_em_vetor({} as InterpretadorInterface, vetor, 'characters', 0)
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -278,36 +299,53 @@ describe('Biblioteca de Objetos', () => {
 
         beforeEach(async () => {
             endereco = await criar_objeto();
-            await atribuir_propriedade(endereco, 'caracteres', ['A', 'B', 'C']);
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'caracteres', ['A', 'B', 'C']);
         });
 
         it('Trivial', async () => {
-            const primeiroCaracter = await obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 0);
+            const primeiroCaracter = await obter_propriedade_tipo_caracter_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'caracteres',
+                0
+            );
             expect(primeiroCaracter).toBe('A');
 
-            const segundoCaracter = await obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 1);
+            const segundoCaracter = await obter_propriedade_tipo_caracter_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'caracteres',
+                1
+            );
             expect(segundoCaracter).toBe('B');
 
-            const terceiroCaracter = await obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 2);
+            const terceiroCaracter = await obter_propriedade_tipo_caracter_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'caracteres',
+                2
+            );
             expect(terceiroCaracter).toBe('C');
         });
 
         it('Falha - Não é um vetor', async () => {
-            await atribuir_propriedade(endereco, 'caracteres', 'notAnArray');
-            await expect(obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 0)).rejects.toThrow(
-                /não é um vetor/
-            );
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'caracteres', 'notAnArray');
+            await expect(
+                obter_propriedade_tipo_caracter_em_vetor({} as InterpretadorInterface, endereco, 'caracteres', 0)
+            ).rejects.toThrow(/não é um vetor/);
         });
 
         it('Falha- Índice Inválido', async () => {
-            await expect(obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 3)).rejects.toThrow(
-                /índice de vetor inválido/
-            );
+            await expect(
+                obter_propriedade_tipo_caracter_em_vetor({} as InterpretadorInterface, endereco, 'caracteres', 3)
+            ).rejects.toThrow(/índice de vetor inválido/);
         });
 
         it('Falha - Tipo Ínvalido', async () => {
-            await atribuir_propriedade(endereco, 'caracteres', ['A', 'B', 1]);
-            await expect(obter_propriedade_tipo_caracter_em_vetor(endereco, 'caracteres', 2)).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'caracteres', ['A', 'B', 1]);
+            await expect(
+                obter_propriedade_tipo_caracter_em_vetor({} as InterpretadorInterface, endereco, 'caracteres', 2)
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -318,33 +356,45 @@ describe('Biblioteca de Objetos', () => {
 
         beforeEach(async () => {
             endereco = await criar_objeto();
-            await atribuir_propriedade(endereco, 'logicos', [true, false]);
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'logicos', [true, false]);
         });
 
         it('Trivial', async () => {
-            const primeiroLogico = await obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 0);
+            const primeiroLogico = await obter_propriedade_tipo_logico_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'logicos',
+                0
+            );
             expect(primeiroLogico).toBe(true);
 
-            const segundoLogico = await obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 1);
+            const segundoLogico = await obter_propriedade_tipo_logico_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'logicos',
+                1
+            );
             expect(segundoLogico).toBe(false);
         });
 
         it('Falha - Não é um vetor', async () => {
-            await atribuir_propriedade(endereco, 'logicos', 'notAnArray');
-            await expect(obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 0)).rejects.toThrow(
-                /não é um vetor/
-            );
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'logicos', 'notAnArray');
+            await expect(
+                obter_propriedade_tipo_logico_em_vetor({} as InterpretadorInterface, endereco, 'logicos', 0)
+            ).rejects.toThrow(/não é um vetor/);
         });
 
         it('Falha- Índice Inválido', async () => {
-            await expect(obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 2)).rejects.toThrow(
-                /índice de vetor inválido/
-            );
+            await expect(
+                obter_propriedade_tipo_logico_em_vetor({} as InterpretadorInterface, endereco, 'logicos', 2)
+            ).rejects.toThrow(/índice de vetor inválido/);
         });
 
         it('Falha - Tipo Ínvalido', async () => {
-            await atribuir_propriedade(endereco, 'logicos', [true, 'notBoolean']);
-            await expect(obter_propriedade_tipo_logico_em_vetor(endereco, 'logicos', 1)).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'logicos', [true, 'notBoolean']);
+            await expect(
+                obter_propriedade_tipo_logico_em_vetor({} as InterpretadorInterface, endereco, 'logicos', 1)
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -355,34 +405,53 @@ describe('Biblioteca de Objetos', () => {
 
         beforeEach(async () => {
             endereco = await criar_objeto();
-            await atribuir_propriedade(endereco, 'reais', [1.1, 2.2, 3.3]);
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'reais', [1.1, 2.2, 3.3]);
         });
 
         it('Trivial', async () => {
-            const primeiroReal = await obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 0);
+            const primeiroReal = await obter_propriedade_tipo_real_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'reais',
+                0
+            );
             expect(primeiroReal).toBe(1.1);
 
-            const segundoReal = await obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 1);
+            const segundoReal = await obter_propriedade_tipo_real_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'reais',
+                1
+            );
             expect(segundoReal).toBe(2.2);
 
-            const terceiroReal = await obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 2);
+            const terceiroReal = await obter_propriedade_tipo_real_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'reais',
+                2
+            );
             expect(terceiroReal).toBe(3.3);
         });
 
         it('Falha - Não é um vetor', async () => {
-            await atribuir_propriedade(endereco, 'reais', 'notAnArray');
-            await expect(obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 0)).rejects.toThrow(/não é um vetor/);
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'reais', 'notAnArray');
+            await expect(
+                obter_propriedade_tipo_real_em_vetor({} as InterpretadorInterface, endereco, 'reais', 0)
+            ).rejects.toThrow(/não é um vetor/);
         });
 
         it('Falha- Índice Inválido', async () => {
-            await expect(obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 3)).rejects.toThrow(
-                /índice de vetor inválido/
-            );
+            await expect(
+                obter_propriedade_tipo_real_em_vetor({} as InterpretadorInterface, endereco, 'reais', 3)
+            ).rejects.toThrow(/índice de vetor inválido/);
         });
 
         it('Falha - Tipo Ínvalido', async () => {
-            await atribuir_propriedade(endereco, 'reais', [1.1, 'notNumber', 3.3]);
-            await expect(obter_propriedade_tipo_real_em_vetor(endereco, 'reais', 1)).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'reais', [1.1, 'notNumber', 3.3]);
+            await expect(
+                obter_propriedade_tipo_real_em_vetor({} as InterpretadorInterface, endereco, 'reais', 1)
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -393,36 +462,53 @@ describe('Biblioteca de Objetos', () => {
 
         beforeEach(async () => {
             endereco = await criar_objeto();
-            await atribuir_propriedade(endereco, 'inteiros', [1, 2, 3]);
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'inteiros', [1, 2, 3]);
         });
 
         it('Trivial', async () => {
-            const primeiroInteiro = await obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 0);
+            const primeiroInteiro = await obter_propriedade_tipo_inteiro_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'inteiros',
+                0
+            );
             expect(primeiroInteiro).toBe(1);
 
-            const segundoInteiro = await obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 1);
+            const segundoInteiro = await obter_propriedade_tipo_inteiro_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'inteiros',
+                1
+            );
             expect(segundoInteiro).toBe(2);
 
-            const terceiroInteiro = await obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 2);
+            const terceiroInteiro = await obter_propriedade_tipo_inteiro_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'inteiros',
+                2
+            );
             expect(terceiroInteiro).toBe(3);
         });
 
         it('Falha - Não é um vetor', async () => {
-            await atribuir_propriedade(endereco, 'inteiros', 'notAnArray');
-            await expect(obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 0)).rejects.toThrow(
-                /não é um vetor/
-            );
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'inteiros', 'notAnArray');
+            await expect(
+                obter_propriedade_tipo_inteiro_em_vetor({} as InterpretadorInterface, endereco, 'inteiros', 0)
+            ).rejects.toThrow(/não é um vetor/);
         });
 
         it('Falha- Índice Inválido', async () => {
-            await expect(obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 3)).rejects.toThrow(
-                /índice de vetor inválido/
-            );
+            await expect(
+                obter_propriedade_tipo_inteiro_em_vetor({} as InterpretadorInterface, endereco, 'inteiros', 3)
+            ).rejects.toThrow(/índice de vetor inválido/);
         });
 
         it('Falha - Tipo Ínvalido', async () => {
-            await atribuir_propriedade(endereco, 'inteiros', [1, 'notInteger', 3]);
-            await expect(obter_propriedade_tipo_inteiro_em_vetor(endereco, 'inteiros', 1)).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'inteiros', [1, 'notInteger', 3]);
+            await expect(
+                obter_propriedade_tipo_inteiro_em_vetor({} as InterpretadorInterface, endereco, 'inteiros', 1)
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -433,36 +519,53 @@ describe('Biblioteca de Objetos', () => {
 
         beforeEach(async () => {
             endereco = await criar_objeto();
-            await atribuir_propriedade(endereco, 'cadeias', ['um', 'dois', 'três']);
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'cadeias', ['um', 'dois', 'três']);
         });
 
         it('Trivial', async () => {
-            const primeiraCadeia = await obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 0);
+            const primeiraCadeia = await obter_propriedade_tipo_cadeia_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'cadeias',
+                0
+            );
             expect(primeiraCadeia).toBe('um');
 
-            const segundaCadeia = await obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 1);
+            const segundaCadeia = await obter_propriedade_tipo_cadeia_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'cadeias',
+                1
+            );
             expect(segundaCadeia).toBe('dois');
 
-            const terceiraCadeia = await obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 2);
+            const terceiraCadeia = await obter_propriedade_tipo_cadeia_em_vetor(
+                {} as InterpretadorInterface,
+                endereco,
+                'cadeias',
+                2
+            );
             expect(terceiraCadeia).toBe('três');
         });
 
         it('Falha - Não é um vetor', async () => {
-            await atribuir_propriedade(endereco, 'cadeias', 'notAnArray');
-            await expect(obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 0)).rejects.toThrow(
-                /não é um vetor/
-            );
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'cadeias', 'notAnArray');
+            await expect(
+                obter_propriedade_tipo_cadeia_em_vetor({} as InterpretadorInterface, endereco, 'cadeias', 0)
+            ).rejects.toThrow(/não é um vetor/);
         });
 
         it('Falha- Índice Inválido', async () => {
-            await expect(obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 3)).rejects.toThrow(
-                /índice de vetor inválido/
-            );
+            await expect(
+                obter_propriedade_tipo_cadeia_em_vetor({} as InterpretadorInterface, endereco, 'cadeias', 3)
+            ).rejects.toThrow(/índice de vetor inválido/);
         });
 
         it('Falha - Tipo Ínvalido', async () => {
-            await atribuir_propriedade(endereco, 'cadeias', ['um', 2, 'três']);
-            await expect(obter_propriedade_tipo_cadeia_em_vetor(endereco, 'cadeias', 1)).rejects.toThrow(
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'cadeias', ['um', 2, 'três']);
+            await expect(
+                obter_propriedade_tipo_cadeia_em_vetor({} as InterpretadorInterface, endereco, 'cadeias', 1)
+            ).rejects.toThrow(
                 '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
             );
         });
@@ -473,11 +576,11 @@ describe('Biblioteca de Objetos', () => {
 
         beforeEach(async () => {
             endereco = await criar_objeto();
-            await atribuir_propriedade(endereco, 'numeros', [1, 2, 3]);
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'numeros', [1, 2, 3]);
         });
 
         it('Trivial', async () => {
-            const tamanho = await obter_tamanho_vetor_propriedade(endereco, 'numeros');
+            const tamanho = await obter_tamanho_vetor_propriedade({} as InterpretadorInterface, endereco, 'numeros');
             expect(tamanho).toBe(3);
         });
     });
@@ -490,8 +593,8 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await liberar_objeto(endereco);
-            await expect(obter_json(endereco)).rejects.toThrow();
+            await liberar_objeto({} as InterpretadorInterface, endereco);
+            await expect(obter_json({} as InterpretadorInterface, endereco)).rejects.toThrow();
         });
     });
 
@@ -503,8 +606,8 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'nome', 'Charlotte');
-            const json = await obter_json(endereco);
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'nome', 'Charlotte');
+            const json = await obter_json({} as InterpretadorInterface, endereco);
             expect(json).toBe(JSON.stringify({ nome: 'Charlotte' }));
         });
     });
@@ -517,8 +620,8 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'nome', 'Charlotte');
-            const exists = await contem_propriedade(endereco, 'nome');
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'nome', 'Charlotte');
+            const exists = await contem_propriedade({} as InterpretadorInterface, endereco, 'nome');
             expect(exists).toBe(true);
         });
     });
@@ -531,8 +634,8 @@ describe('Biblioteca de Objetos', () => {
         });
 
         it('Trivial', async () => {
-            await atribuir_propriedade(endereco, 'idade', 25);
-            const tipo = await tipo_propriedade(endereco, 'idade');
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'idade', 25);
+            const tipo = await tipo_propriedade({} as InterpretadorInterface, endereco, 'idade');
             expect(tipo).toBe(TIPO_INTEIRO);
         });
     });
