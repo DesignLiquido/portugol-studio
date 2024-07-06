@@ -446,9 +446,9 @@ describe('Interpretador (Portugol Studio)', () => {
                     const retornoLexador = lexador.mapear([
                         `programa {`,
                         `    funcao inicio() {`,
-                        `      inteiro numeros = 3`,
+                        `      const inteiro numeros = 3`,
                         `      inteiro listaNumeros[numeros]`,
-                        `      escreva(listaNumeros)`,
+                        `      escreva(listaNumeros[0])`,
                         `    }`,
                         `}`
                     ], -1);
@@ -457,7 +457,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
-                    expect(_saidas).toContain('[]');
+                    expect(_saidas).toContain('0');
                 });
 
                 it('Operações Básicas', async () => {
