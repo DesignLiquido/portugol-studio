@@ -1,5 +1,5 @@
 import { ErroAvaliadorSintatico } from "@designliquido/delegua/avaliador-sintatico";
-import { FuncaoDeclaracao } from "@designliquido/delegua";
+import { FuncaoDeclaracao } from "@designliquido/delegua/declaracoes";
 
 import { AvaliadorSintaticoPortugolStudio } from "../fontes";
 import { LexadorPortugolStudio } from "../fontes/lexador/lexador-portugol-studio";

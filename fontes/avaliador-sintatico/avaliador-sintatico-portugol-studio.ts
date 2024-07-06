@@ -42,7 +42,7 @@ import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar'
 
 import { Matriz, Limpa } from '../construtos';
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
-import { Simbolo } from '@designliquido/delegua';
+import { Simbolo } from '@designliquido/delegua/lexador';
 
 /**
  * O avaliador sintático (_Parser_) é responsável por transformar os símbolos do Lexador em estruturas de alto nível.
