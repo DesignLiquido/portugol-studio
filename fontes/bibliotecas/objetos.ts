@@ -128,7 +128,7 @@ export async function obter_propriedade_tipo_objeto_em_vetor(
     indice: number
 ): Promise<number> {
     const vetor = cacheObjetos[endereco][propriedade];
-    validateArray(vetor, indice, propriedade);
+    validarVetor(vetor, indice, propriedade);
     if (typeof vetor[indice] !== 'object' || vetor[indice] === null) {
         throw new Error(
             '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
@@ -144,7 +144,7 @@ export async function obter_propriedade_tipo_caracter_em_vetor(
     indice: number
 ): Promise<string> {
     const vetor = cacheObjetos[endereco][propriedade];
-    validateArray(vetor, indice, propriedade);
+    validarVetor(vetor, indice, propriedade);
     if (typeof vetor[indice] !== 'string' || vetor[indice].length !== 1) {
         throw new Error(
             '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
@@ -160,7 +160,7 @@ export async function obter_propriedade_tipo_logico_em_vetor(
     indice: number
 ): Promise<boolean> {
     const vetor = cacheObjetos[endereco][propriedade];
-    validateArray(vetor, indice, propriedade);
+    validarVetor(vetor, indice, propriedade);
     if (typeof vetor[indice] !== 'boolean') {
         throw new Error(
             '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
@@ -176,7 +176,7 @@ export async function obter_propriedade_tipo_real_em_vetor(
     indice: number
 ): Promise<number> {
     const vetor = cacheObjetos[endereco][propriedade];
-    validateArray(vetor, indice, propriedade);
+    validarVetor(vetor, indice, propriedade);
     if (typeof vetor[indice] !== 'number' || !Number.isFinite(vetor[indice])) {
         throw new Error(
             '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
@@ -192,7 +192,7 @@ export async function obter_propriedade_tipo_inteiro_em_vetor(
     indice: number
 ): Promise<number> {
     const vetor = cacheObjetos[endereco][propriedade];
-    validateArray(vetor, indice, propriedade);
+    validarVetor(vetor, indice, propriedade);
     if (typeof vetor[indice] !== 'number' || !Number.isInteger(vetor[indice])) {
         throw new Error(
             '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
@@ -208,7 +208,7 @@ export async function obter_propriedade_tipo_cadeia_em_vetor(
     indice: number
 ): Promise<string> {
     const vetor = cacheObjetos[endereco][propriedade];
-    validateArray(vetor, indice, propriedade);
+    validarVetor(vetor, indice, propriedade);
     if (typeof vetor[indice] !== 'string') {
         throw new Error(
             '"O tipo da propriedade informada não corresponde ao tipo identificado na função.\nAltere a função de chamada para o tipo correto."'
@@ -234,6 +234,7 @@ export async function obter_tamanho_vetor_propriedade(
 export async function liberar_objeto(interpretador: InterpretadorInterface, endereco: number): Promise<void> {
     delete cacheObjetos[endereco];
 }
+
 export async function obter_json(interpretador: InterpretadorInterface, endereco: number): Promise<string> {
     const objeto = cacheObjetos[endereco];
     if (!objeto) {
@@ -274,10 +275,11 @@ export async function tipo_propriedade(
     throw new Error('Tipo de propriedade desconhecida');
 }
 
-function validateArray(vetor, indice: number, propriedade: string) {
+function validarVetor(vetor: any, indice: number, propriedade: string) {
     if (!Array.isArray(vetor)) {
         throw new Error('A propriedade "' + propriedade + '" não é um vetor.');
     }
+    
     if (indice < 0 || indice >= vetor.length) {
         throw new Error(
             'Você tentou acessar um índice de vetor inválido.\n' +

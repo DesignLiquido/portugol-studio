@@ -11,6 +11,7 @@ import { converterValor } from './inferenciador';
 import * as calendario from '../bibliotecas/calendario';
 import * as internet from '../bibliotecas/internet';
 import * as matematica from '../bibliotecas/matematica';
+import * as objetos from '../bibliotecas/objetos';
 import * as texto from '../bibliotecas/texto';
 import * as tipos from '../bibliotecas/tipos';
 import * as util from '../bibliotecas/util';
@@ -64,6 +65,36 @@ function carregarBibliotecaMatematica(): DeleguaModulo {
     const objetoMatematica = new DeleguaModulo('Matematica');
     objetoMatematica.componentes = metodos;
     return objetoMatematica;
+}
+
+function carregarBibliotecaObjetos(): DeleguaModulo {
+    const metodos: { [nome: string]: FuncaoPadrao } = {
+        atribuir_propriedade: new FuncaoPadrao(3, objetos.atribuir_propriedade),
+        contem_propriedade: new FuncaoPadrao(2, objetos.contem_propriedade),
+        criar_objeto: new FuncaoPadrao(0, objetos.criar_objeto),
+        criar_objeto_via_json: new FuncaoPadrao(1, objetos.criar_objeto_via_json),
+        criar_objeto_via_xml: new FuncaoPadrao(1, objetos.criar_objeto_via_xml),
+        liberar_objeto: new FuncaoPadrao(1, objetos.liberar_objeto),
+        obter_json: new FuncaoPadrao(1, objetos.obter_json),
+        obter_propriedade_tipo_cadeia: new FuncaoPadrao(2, objetos.obter_propriedade_tipo_cadeia),
+        obter_propriedade_tipo_cadeia_em_vetor: new FuncaoPadrao(3, objetos.obter_propriedade_tipo_cadeia_em_vetor),
+        obter_propriedade_tipo_caracter: new FuncaoPadrao(2, objetos.obter_propriedade_tipo_caracter),
+        obter_propriedade_tipo_caracter_em_vetor: new FuncaoPadrao(3, objetos.obter_propriedade_tipo_caracter_em_vetor),
+        obter_propriedade_tipo_inteiro: new FuncaoPadrao(2, objetos.obter_propriedade_tipo_inteiro),
+        obter_propriedade_tipo_inteiro_em_vetor: new FuncaoPadrao(3, objetos.obter_propriedade_tipo_inteiro_em_vetor),
+        obter_propriedade_tipo_logico: new FuncaoPadrao(2, objetos.obter_propriedade_tipo_logico),
+        obter_propriedade_tipo_logico_em_vetor: new FuncaoPadrao(3, objetos.obter_propriedade_tipo_logico_em_vetor),
+        obter_propriedade_tipo_objeto: new FuncaoPadrao(2, objetos.obter_propriedade_tipo_objeto),
+        obter_propriedade_tipo_objeto_em_vetor: new FuncaoPadrao(3, objetos.obter_propriedade_tipo_objeto_em_vetor),
+        obter_propriedade_tipo_real: new FuncaoPadrao(2, objetos.obter_propriedade_tipo_real),
+        obter_propriedade_tipo_real_em_vetor: new FuncaoPadrao(3, objetos.obter_propriedade_tipo_real_em_vetor),
+        obter_tamanho_vetor_propriedade: new FuncaoPadrao(2, objetos.obter_tamanho_vetor_propriedade),
+        tipo_propriedade: new FuncaoPadrao(2, objetos.tipo_propriedade),
+    };
+
+    const objetoObjetos = new DeleguaModulo('Objetos');
+    objetoObjetos.componentes = metodos;
+    return objetoObjetos;
 }
 
 function carregarBibliotecaTexto(): DeleguaModulo {
@@ -157,6 +188,8 @@ export async function visitarExpressaoImportarComum(expressao: Importar): Promis
             return carregarBibliotecaInternet();
         case 'Matematica':
             return carregarBibliotecaMatematica();
+        case 'Objetos':
+            return carregarBibliotecaObjetos();
         case 'Texto':
             return carregarBibliotecaTexto();
         case 'Tipos':
