@@ -27,6 +27,7 @@ describe('Analisador sêmantico', () => {
             const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
             const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
+
             expect(retornoAnalisadorSemantico).toBeTruthy();
             expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
         });
@@ -57,7 +58,6 @@ describe('Analisador sêmantico', () => {
                         'x = "25"',
                         'y = "6x"',
                         'l = 24',
-                        'a = "isto é uma cadeia de caracter"',
                     '}',
                 '}'
             ], -1);
@@ -65,7 +65,7 @@ describe('Analisador sêmantico', () => {
             const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
             expect(retornoAnalisadorSemantico).toBeTruthy();
-            expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(4);
+            expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(3);
         });
 
         it('Atribuição por indice', () => {
@@ -73,14 +73,14 @@ describe('Analisador sêmantico', () => {
                 'programa {',
                     'funcao inicio() {',
                       'inteiro numeros[10]',
-                      'numeros[1] = 5',
+                      'numeros[1] = "5"',
                     '}',
                 '}'
             ], -1);
             const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
             const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
-            console.log(retornoAnalisadorSemantico)
+
             expect(retornoAnalisadorSemantico).toBeTruthy();
             expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
         });
@@ -104,7 +104,7 @@ describe('Analisador sêmantico', () => {
                 'programa',
                 '{',
                     'funcao inicio() {',
-                        'saudacao("4")',
+                        'saudacao(4)',
                     '}',
                     'funcao saudacao(cadeia message) {',
                         'escreva(message)',

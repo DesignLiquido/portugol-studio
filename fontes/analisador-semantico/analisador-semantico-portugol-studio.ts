@@ -26,12 +26,14 @@ import {
     Variavel,
     Vetor,
 } from '@designliquido/delegua/construtos';
+import { inferirTipoVariavel } from 'fontes/interpretador/inferenciador';
 export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
     variaveis: { [nomeVariavel: string]: VariavelHipoteticaInterface };
     funcoes: { [nomeFuncao: string]: FuncaoHipoteticaInterface };
     atual: number;
     diagnosticos: DiagnosticoAnalisadorSemantico[];
+    corpoMetodoPrincipal = []
 
     constructor() {
         super();
@@ -85,7 +87,6 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         this.funcoes[declaracao.simbolo.lexema] = {
             valor: declaracao.funcao,
         };
-        console.log(this.funcoes)
         return Promise.resolve()
     }
 
@@ -115,7 +116,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         const { simbolo, valor } = expressao;
         let variavel = this.variaveis[simbolo.lexema];
         if (!variavel) {
-            this.adicionarDiagnostico(simbolo, `Variável ${simbolo.lexema} ainda não foi declarada.`);
+            this.adicionarDiagnostico(simbolo, `Variável não declarada: ${simbolo.lexema}.`);
             return Promise.resolve();
         }
 
@@ -128,26 +129,17 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         }
 
         if (variavel.tipo) {
-            if (valor instanceof Literal && variavel.tipo.includes('[]')) {
-                this.adicionarDiagnostico(simbolo, `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`);
-                return Promise.resolve();
-            }
-            if (valor instanceof Vetor && !variavel.tipo.includes('[]')) {
-                this.adicionarDiagnostico(simbolo, `Atribuição inválida, esperado tipo '${variavel.tipo}' na atribuição.`);
-                return Promise.resolve();
-            }
-
             if (valor instanceof Literal) {
                 let valorLiteral = typeof (valor as Literal).valor;
                 if (valorLiteral === 'string') {
-                    if (variavel.tipo.toLowerCase() != 'caractere') {
+                    if (!['cadeia', 'caracter'].includes(variavel.tipo.toLowerCase())) {
                         this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
                         return Promise.resolve();
                     }
                 }
                 if (valorLiteral === 'number') {
-                    if (!['inteiro', 'real'].includes(variavel.tipo.toLowerCase())) {
-                        this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
+                    if (!['inteiro', 'real'].includes(variavel.tipo.replace("[]", "").toLowerCase())) {
+                        this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo.replace("[]", "")}' na atribuição.`);
                         return Promise.resolve();
                     }
                 }
@@ -160,7 +152,6 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     }
 
     visitarExpressaoDeChamada(expressao: Chamada): Promise<any> {
-        console.log(expressao)
         if (expressao.entidadeChamada instanceof Variavel) {
             const variavel = expressao.entidadeChamada as Variavel;
             const funcaoChamada = this.variaveis[variavel.simbolo.lexema] || this.funcoes[variavel.simbolo.lexema];
@@ -180,31 +171,39 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
             for (let [indice, argumento] of expressao.argumentos.entries()) {
                 const parametroCorrespondente = funcao.parametros[indice];
-                const tipoDadoParametro = parametroCorrespondente.tipoDado.tipo.toLowerCase();
+                if (parametroCorrespondente.tipoDado) {
+                    const tipoDadoParametro = parametroCorrespondente.tipoDado.tipo.toLowerCase();
 
-                if (argumento instanceof Variavel) {
-                    const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
-                    const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();
+                    if (argumento instanceof Variavel) {
+                        const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
+                        const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();
 
-                    if (tipoVariavelCorrespondente !== tipoDadoParametro) {
-                        this.adicionarDiagnostico(
-                            variavel.simbolo,
-                            `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (${tipoVariavelCorrespondente}) é diferente do esperado pela função (${tipoDadoParametro}).`
-                        );
+                        if (tipoVariavelCorrespondente !== tipoDadoParametro) {
+                            this.adicionarDiagnostico(
+                                variavel.simbolo,
+                                `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (${tipoVariavelCorrespondente}) é diferente do esperado pela função (${tipoDadoParametro}).`
+                            );
+                        }
+                    }
+
+                    if (argumento instanceof Literal) {
+                        switch (argumento.valor.constructor.name) {
+                            case 'Number':
+                                if (!['inteiro', 'real'].includes(tipoDadoParametro)) {
+                                    this.adicionarDiagnostico(
+                                        variavel.simbolo,
+                                        `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (inteiro ou real) é diferente do esperado pela função (${tipoDadoParametro}).`
+                                    );
+                                }
+                                break;
+                        }
                     }
                 }
-
-                if (argumento instanceof Literal) {
-                    switch (argumento.valor.constructor.name) {
-                        case 'Number':
-                            if (!['inteiro', 'real'].includes(tipoDadoParametro)) {
-                                this.adicionarDiagnostico(
-                                    variavel.simbolo,
-                                    `O tipo do valor passado para o parâmetro '${parametroCorrespondente.nome.lexema}' (inteiro ou real) é diferente do esperado pela função (${tipoDadoParametro}).`
-                                );
-                            }
-                            break;
-                    }
+                else {
+                    this.adicionarDiagnostico(
+                        variavel.simbolo,
+                        "Tipo de dados não especificado"
+                    );
                 }
             }
         }
@@ -212,16 +211,10 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         return Promise.resolve();
     }
 
-    visitarDeclaracaoEscreva(declaracao: Escreva): Promise<any> {
-        console.log(declaracao)
-
-        return Promise.resolve()
-    }
-
     visitarExpressaoAtribuicaoPorIndice(expressao: AtribuicaoPorIndice): Promise<any> {
         const atribuir = new Atribuir(
             expressao.hashArquivo,
-            expressao.objeto,
+            expressao.objeto.simbolo,
             expressao.valor,
             expressao.indice
         )
@@ -271,27 +264,43 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         this.variaveis = {};
         this.atual = 0;
         this.diagnosticos = [];
-        const declaracao = declaracoes[0] as FuncaoDeclaracao
+        this.corpoMetodoPrincipal = [];
+
+        const declaracaoMetodoPrincipal = declaracoes.find(declaracao =>
+            declaracao instanceof FuncaoDeclaracao && declaracao.simbolo.lexema === "inicio"
+        );
+
+
+        if (declaracaoMetodoPrincipal) {
+            this.corpoMetodoPrincipal = (declaracaoMetodoPrincipal as FuncaoDeclaracao).funcao.corpo;
+        }
+
+        for (const declaracao of declaracoes) {
+            if (declaracao instanceof FuncaoDeclaracao) {
+                if (declaracao.simbolo.lexema !== "inicio") {
+                    declaracao.aceitar(this)
+                }
+            }
+        }
+        while (this.atual < this.corpoMetodoPrincipal.length) {
+            this.corpoMetodoPrincipal[this.atual].aceitar(this)
+            this.atual++;
+        }
+
+        /* const declaracao = declaracoes[0] as FuncaoDeclaracao
         const funcao = declaracao.funcao as FuncaoConstruto
 
         for (const declaracao of declaracoes) {
             if (declaracao instanceof FuncaoDeclaracao) {
                 if (declaracao.simbolo.lexema !== "inicio") {
-                    funcao.corpo.push(declaracao)
+                    funcao.corpo.unshift(declaracao)
                 }
             }
         }
-
-        //console.log(funcao.corpo)
-        /* for (let i = funcao.corpo.length - 1; i >= 0; i--) {
-            funcao.corpo[i].aceitar(this);
-        } */
-
         while (this.atual < funcao.corpo.length) {
             funcao.corpo[this.atual].aceitar(this)
             this.atual++;
-        }
-
+        } */
         return {
             diagnosticos: this.diagnosticos,
         } as RetornoAnalisadorSemantico;
