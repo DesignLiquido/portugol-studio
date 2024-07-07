@@ -286,21 +286,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             this.corpoMetodoPrincipal[this.atual].aceitar(this)
             this.atual++;
         }
-
-        /* const declaracao = declaracoes[0] as FuncaoDeclaracao
-        const funcao = declaracao.funcao as FuncaoConstruto
-
-        for (const declaracao of declaracoes) {
-            if (declaracao instanceof FuncaoDeclaracao) {
-                if (declaracao.simbolo.lexema !== "inicio") {
-                    funcao.corpo.unshift(declaracao)
-                }
-            }
-        }
-        while (this.atual < funcao.corpo.length) {
-            funcao.corpo[this.atual].aceitar(this)
-            this.atual++;
-        } */
+        
         return {
             diagnosticos: this.diagnosticos,
         } as RetornoAnalisadorSemantico;
