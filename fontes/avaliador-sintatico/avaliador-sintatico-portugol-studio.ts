@@ -42,7 +42,8 @@ import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar'
 
 import { Matriz, Limpa } from '../construtos';
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
-import { Simbolo } from '@designliquido/delegua';
+import { Simbolo } from '@designliquido/delegua/lexador';
+import tiposDeDados from '../tipos-de-dados';
 
 /**
  * O avaliador sintático (_Parser_) é responsável por transformar os símbolos do Lexador em estruturas de alto nível.
@@ -436,6 +437,31 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         }
     }
 
+    simboloAtual(): SimboloInterface {
+        return this.simbolos[this.atual];
+    }
+
+    verificarDefinicaoTipo(lexema: string): TipoDadosElementar {
+        const tipos = [...Object.values(tiposDeDados)];
+        const contemTipo = tipos.find((tipo) => tipo === lexema);
+        if (contemTipo && this.verificarTipoProximoSimbolo(tiposDeSimbolos.COLCHETE_ESQUERDO)) {
+            const tiposVetores = ['inteiro[]', 'numero[]', 'número[]', 'real[]', 'texto[]'];
+            this.avancarEDevolverAnterior();
+
+            if (!this.verificarTipoProximoSimbolo(tiposDeSimbolos.COLCHETE_DIREITO)) {
+                throw this.erro(this.simbolos[this.atual], "Esperado símbolo de fechamento do vetor ']'.");
+            }
+
+            const contemTipoVetor = tiposVetores.find((tipo) => tipo === `${lexema}[]`);
+
+            this.avancarEDevolverAnterior();
+
+            return contemTipoVetor as TipoDadosElementar;
+        }
+
+        return contemTipo as TipoDadosElementar;
+    }
+
     protected logicaComumParametros(): ParametroInterface[] {
         const parametros: ParametroInterface[] = [];
 
@@ -461,6 +487,14 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                     'Esperado tipo de parâmetro válido para declaração de função.'
                 );
             }
+
+            const lexema = this.simbolos[this.atual - 1].lexema
+            let tipoDadoParametro = this.verificarDefinicaoTipo(lexema);
+            parametro.tipoDado = {
+                nome: this.simbolos[this.atual - 1].lexema,
+                tipo: tipoDadoParametro,
+                tipoInvalido: !tipoDadoParametro ? this.simboloAtual().lexema : null,
+            };
 
             parametro.nome = this.consumir(tiposDeSimbolos.IDENTIFICADOR, 'Esperado nome do parâmetro.');
 
@@ -587,9 +621,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         } while (simboloComentario.tipo === tiposDeSimbolos.LINHA_COMENTARIO);
 
         return new Comentario(
-            simboloComentario.hashArquivo, 
-            simboloComentario.linha, 
-            conteudos, 
+            simboloComentario.hashArquivo,
+            simboloComentario.linha,
+            conteudos,
             true
         );
     }
@@ -597,9 +631,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     declaracaoComentarioUmaLinha(): Comentario {
         const simboloComentario = this.avancarEDevolverAnterior();
         return new Comentario(
-            simboloComentario.hashArquivo, 
-            simboloComentario.linha, 
-            simboloComentario.literal, 
+            simboloComentario.hashArquivo,
+            simboloComentario.linha,
+            simboloComentario.literal,
             false
         );
     }
