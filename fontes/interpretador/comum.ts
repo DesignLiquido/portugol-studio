@@ -8,6 +8,7 @@ import { VisitantePortugolStudioInterface } from '../interfaces';
 import { Matriz } from '../construtos/matriz';
 import { converterValor } from './inferenciador';
 
+import * as arquivos from '../bibliotecas/arquivos';
 import * as calendario from '../bibliotecas/calendario';
 import * as internet from '../bibliotecas/internet';
 import * as matematica from '../bibliotecas/matematica';
@@ -15,6 +16,27 @@ import * as objetos from '../bibliotecas/objetos';
 import * as texto from '../bibliotecas/texto';
 import * as tipos from '../bibliotecas/tipos';
 import * as util from '../bibliotecas/util';
+
+function carregarBibliotecaArquivos(): DeleguaModulo {
+    const metodos: { [nome: string]: FuncaoPadrao } = {
+        abrir_arquivo: new FuncaoPadrao(2, arquivos.abrir_arquivo),
+        fechar_arquivo: new FuncaoPadrao(1, arquivos.fechar_arquivo),
+        fim_arquivo: new FuncaoPadrao(1, arquivos.fim_arquivo),
+        ler_linha: new FuncaoPadrao(1, arquivos.ler_linha),
+        escrever_linha: new FuncaoPadrao(2, arquivos.escrever_linha),
+        substituir_texto: new FuncaoPadrao(4, arquivos.substituir_texto),
+        arquivo_existe: new FuncaoPadrao(1, arquivos.arquivo_existe),
+        apagar_arquivo: new FuncaoPadrao(1, arquivos.apagar_arquivo),
+        criar_pasta: new FuncaoPadrao(1, arquivos.criar_pasta),
+        listar_pastas: new FuncaoPadrao(2, arquivos.listar_pastas),
+        listar_arquivos: new FuncaoPadrao(2, arquivos.listar_arquivos),
+        listar_arquivos_por_tipo: new FuncaoPadrao(3, arquivos.listar_arquivos_por_tipo),
+    };
+
+    const objetoArquivos = new DeleguaModulo('Arquivos');
+    objetoArquivos.componentes = metodos;
+    return objetoArquivos;
+}
 
 function carregarBibliotecaCalendario(): DeleguaModulo {
     const metodos: { [nome: string]: FuncaoPadrao } = {
@@ -182,6 +204,8 @@ export async function avaliarArgumentosEscreva(interpretador: VisitantePortugolS
 
 export async function visitarExpressaoImportarComum(expressao: Importar): Promise<any> {
     switch (expressao.caminho.valor) {
+        case 'Arquivos':
+            return carregarBibliotecaArquivos();
         case 'Calendario':
             return carregarBibliotecaCalendario();
         case 'Internet':
