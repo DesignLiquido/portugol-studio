@@ -17,7 +17,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
         });
 
         describe('Casos de Sucesso', () => {
-            it('Sucesso - Olá Mundo', () => {
+            it('Olá Mundo', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'programa',
@@ -36,7 +36,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(2);
             });
 
-            it('Sucesso - Estruturas de dados', () => {
+            it('Estruturas de dados', () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'programa',
@@ -62,7 +62,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThanOrEqual(2);
             });
 
-            it('Sucesso - Agrupamento', async () => {
+            it('Agrupamento', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
@@ -87,29 +87,59 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('Sucesso - Leia', () => {
-                const retornoLexador = lexador.mapear(
-                    [
-                        'programa',
-                        '{',
-                        '    funcao inicio()',
-                        '    {',
-                        '        inteiro numero1, numero2, numero3, numero4, numero5',
-                        '        leia(numero1, numero2, numero3, numero4, numero5)',
-                        '        escreva(numero1 + numero2 + numero3 + numero4 + numero5)',
-                        '    }',
-                        '}',
-                    ],
-                    -1
-                );
+            it('Escolha', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa {',
+                    '    funcao calculadora (){ ',
+                    '        inteiro opcao',
+                    '        faca {',
+                    '            escreva("Escolha uma opção\n")',
+                    '            escreva("1 - Soma\n 2 - Subtração\n 0 - Sair")',
+                    '            leia(opcao)',
+                    '            escolha (opcao){',
+                    '                caso 1:',
+                    '                somar ()',
+                    '                pare',
+                    '                caso 2:',
+                    '                subtrair ()',
+                    '                pare ',
+                    '                caso 0:',
+                    '                escreva("Saindo da calculadora...\n")',
+                    '                pare',
+                    '                caso contrario:',
+                    '                escreva ("Opção invalida")',
+                    '            } ',
+                    '        } enquanto(opcao!=0)',
+                    '    }',
+                    '    funcao somar (){',
+                    '        real num1,num2',
+                    '        escreva("Informe o primeiro numero: ")',
+                    '        leia (num1)',
+                    '        escreva("Informe o segundo numero: ")',
+                    '        leia (num2)',
+                    '        escreva(" A Soma é: ",num1 + num2)',
+                    '    } ',
+                    '    funcao subtrair (){',
+                    '        real num1,num2',
+                    '        escreva("Informe o primeiro numero: ")',
+                    '        leia (num1)',
+                    '        escreva("Informe o segundo numero: ")',
+                    '        leia (num2)',
+                    '        escreva(" A Soma é: ",num1 - num2)',
+                    '    }',
+                    '    funcao inicio(){',
+                    '            calculadora ()',
+                    '    }',
+                    '}'
+                ], -1);
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
-                expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
+                expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
             });
 
-            it('Sucesso - Funções', () => {
+            it('Funções', () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
@@ -153,6 +183,28 @@ describe('Avaliador sintático (Portugol Studio)', () => {
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
+            });
+
+            it('Leia', () => {
+                const retornoLexador = lexador.mapear(
+                    [
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        '        inteiro numero1, numero2, numero3, numero4, numero5',
+                        '        leia(numero1, numero2, numero3, numero4, numero5)',
+                        '        escreva(numero1 + numero2 + numero3 + numero4 + numero5)',
+                        '    }',
+                        '}',
+                    ],
+                    -1
+                );
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
             it('Estrutura condicional - se e senao.', () => {

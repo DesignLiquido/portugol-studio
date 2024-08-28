@@ -374,7 +374,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                         caminhoPadrao = {
                             declaracoes,
                         };
-                        break;
+                        continue;
                     }
 
                     const caminhoCondicoes = [this.expressao()];

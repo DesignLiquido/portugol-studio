@@ -326,35 +326,103 @@ describe('Interpretador (Portugol Studio)', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Escolha', async () => {
-                const retornoLexador = lexador.mapear([
-                    'programa',
-                    '{',
-                        'funcao inicio()',
+            describe('Escolha', () => {
+                it('Trivial', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'programa',
                         '{',
-                            'escolha (77)',
+                            'funcao inicio()',
                             '{',
-                                'caso 1:',
-                                    'escreva ("Voce é lindo(a)!")',
-                                    'pare',   // Impede que as instruções do caso 2 sejam executadas
-                                 'caso 2:',
-                                    'escreva ("Voce é um monstro!")',
-                                    'pare',   // Impede que as instruções do caso 2 sejam executadas
-                                 'caso 3:',
-                                    'escreva ("Tchau!")',
-                                    'pare',
-                                 'caso contrario:', // Será executado para qualquer opção diferente de 1, 2 ou 3
-                                    'escreva ("Opção Inválida !")',
+                                'escolha (77)',
+                                '{',
+                                    'caso 1:',
+                                        'escreva ("Voce é lindo(a)!")',
+                                        'pare',   // Impede que as instruções do caso 2 sejam executadas
+                                     'caso 2:',
+                                        'escreva ("Voce é um monstro!")',
+                                        'pare',   // Impede que as instruções do caso 2 sejam executadas
+                                     'caso 3:',
+                                        'escreva ("Tchau!")',
+                                        'pare',
+                                     'caso contrario:', // Será executado para qualquer opção diferente de 1, 2 ou 3
+                                        'escreva ("Opção Inválida !")',
+                                '}',
+                                'escreva("\n")',
                             '}',
-                            'escreva("\n")',
                         '}',
-                    '}',
-                ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
 
-                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+                it('Com valores de entrada', async () => {
+                    // Aqui vamos simular a resposta para uma variável de `leia()`.
+                    const respostas = ['1', '3', '7', '0'];
+                    interpretador.interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.shift());
+                        },
+                    };
 
-                expect(retornoInterpretador.erros).toHaveLength(0);
+                    const retornoLexador = lexador.mapear([
+                        'programa {',
+                        '    funcao calculadora (){ ',
+                        '        inteiro opcao',
+                        '        faca {',
+                        '            escreva("Escolha uma opção\n")',
+                        '            escreva("1 - Soma\n 2 - Subtração\n 0 - Sair")',
+                        '            leia(opcao)',
+                        '            escolha (opcao){',
+                        '                caso 1:',
+                        '                somar ()',
+                        '                pare',
+                        '                caso 2:',
+                        '                subtrair ()',
+                        '                pare ',
+                        '                caso 0:',
+                        '                escreva("Saindo da calculadora...\n")',
+                        '                pare',
+                        '                caso contrario:',
+                        '                escreva ("Opção invalida")',
+                        '            } ',
+                        '        } enquanto(opcao!=0)',
+                        '    }',
+                        '    funcao somar (){',
+                        '        real num1,num2',
+                        '        escreva("Informe o primeiro numero: ")',
+                        '        leia (num1)',
+                        '        escreva("Informe o segundo numero: ")',
+                        '        leia (num2)',
+                        '        escreva(" A Soma é: ",num1 + num2)',
+                        '    } ',
+                        '    funcao subtrair (){',
+                        '        real num1,num2',
+                        '        escreva("Informe o primeiro numero: ")',
+                        '        leia (num1)',
+                        '        escreva("Informe o segundo numero: ")',
+                        '        leia (num2)',
+                        '        escreva(" A Soma é: ",num1 - num2)',
+                        '    }',
+                        '    funcao inicio(){',
+                        '            calculadora ()',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    let _saidas = "";
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        _saidas += saida;
+                    }
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+    
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toContain('A Soma é:  10');
+                });
             });
 
             it('Leia', async () => {
