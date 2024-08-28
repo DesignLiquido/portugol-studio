@@ -360,7 +360,7 @@ describe('Interpretador (Portugol Studio)', () => {
 
                 it('Com valores de entrada', async () => {
                     // Aqui vamos simular a resposta para uma variável de `leia()`.
-                    const respostas = ['1', '3', '7', '0'];
+                    const respostas = ['1', '3', '7', '2', '10', '4', '0'];
                     interpretador.interfaceEntradaSaida = {
                         question: (mensagem: string, callback: Function) => {
                             callback(respostas.shift());
@@ -422,6 +422,7 @@ describe('Interpretador (Portugol Studio)', () => {
     
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas).toContain('A Soma é:  10');
+                    expect(_saidas).toContain('A Soma é:  6');
                 });
             });
 

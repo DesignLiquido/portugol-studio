@@ -76,8 +76,10 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
 
     definirVariavel(nomeVariavel: string, valor: any, tipo?: string) {
         let variavel: VariavelInterface;
+        let profundidadeVariavel: number = 0;
         for (let i = 1; i <= this.pilha.length; i++) {
-            const ambiente = this.pilha[this.pilha.length - i].ambiente;
+            profundidadeVariavel = this.pilha.length - i;
+            const ambiente = this.pilha[profundidadeVariavel].ambiente;
             if (ambiente.valores[nomeVariavel] !== undefined) {
                 variavel = ambiente.valores[nomeVariavel];
                 break;
@@ -102,7 +104,8 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
             imutavel: false,
         };
 
-        this.pilha[this.pilha.length - 1].ambiente.valores[nomeVariavel] = elementoAlvo;
+        const profundadeResolvida = profundidadeVariavel > 0 ? profundidadeVariavel : this.pilha.length - 1;
+        this.pilha[profundadeResolvida].ambiente.valores[nomeVariavel] = elementoAlvo;
     }
 
     atribuirVariavelEm(distancia: number, simbolo: any, valor: any): void {
