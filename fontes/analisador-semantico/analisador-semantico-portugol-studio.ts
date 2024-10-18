@@ -26,7 +26,8 @@ import {
     Variavel,
     Vetor,
 } from '@designliquido/delegua/construtos';
-import { inferirTipoVariavel } from 'fontes/interpretador/inferenciador';
+import { inferirTipoVariavel } from '../interpretador/inferenciador';
+import tiposDeDados from '../tipos-de-dados';
 export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
     variaveis: { [nomeVariavel: string]: VariavelHipoteticaInterface };
@@ -130,18 +131,26 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
         if (variavel.tipo) {
             if (valor instanceof Literal) {
-                let valorLiteral = typeof (valor as Literal).valor;
-                if (valorLiteral === 'string') {
-                    if (!['cadeia', 'caracter'].includes(variavel.tipo.toLowerCase())) {
-                        this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo}' na atribuição.`);
-                        return Promise.resolve();
+                const tipoInferido = inferirTipoVariavel(valor.valor)
+                if (tipoInferido !== variavel.tipo) {
+                    switch (variavel.tipo) {
+                        case tiposDeDados.CADEIA:
+                            if (tipoInferido !== tiposDeDados.CARACTER) {
+                                this.adicionarDiagnostico(simbolo, `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`);
+                                return Promise.resolve();
+                            }
+                            break;
+                        case tiposDeDados.REAL:
+                            if (tipoInferido !== tiposDeDados.INTEIRO) {
+                                this.adicionarDiagnostico(simbolo, `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`);
+                                return Promise.resolve();
+                            }
+                            break;
+                        default:
+                            this.adicionarDiagnostico(simbolo, `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`);
+                            return Promise.resolve();
                     }
-                }
-                if (valorLiteral === 'number') {
-                    if (!['inteiro', 'real'].includes(variavel.tipo.replace("[]", "").toLowerCase())) {
-                        this.adicionarDiagnostico(simbolo, `Esperado tipo '${variavel.tipo.replace("[]", "")}' na atribuição.`);
-                        return Promise.resolve();
-                    }
+
                 }
             }
         }

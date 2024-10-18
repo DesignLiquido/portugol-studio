@@ -1,42 +1,31 @@
 export type TipoInferencia =
-    | 'texto'
-    | 'número'
-    | 'longo'
-    | 'vetor'
-    | 'dicionário'
-    | 'nulo'
+    | 'cadeia'
+    | 'caracter'
+    | 'inteiro'
     | 'lógico'
-    | 'função'
-    | 'símbolo'
-    | 'objeto'
-    | 'módulo';
+    | 'real'
+    | 'vazio';
 
 export function inferirTipoVariavel(
     variavel: string | number | Array<any> | boolean | null | undefined
 ): TipoInferencia {
-    const tipo = typeof variavel;
-    switch (tipo) {
+    switch (typeof variavel) {
         case 'string':
-            return 'texto';
+            if (variavel.length === 1) {
+                return 'caracter';
+            }
+            if (variavel.length === 1) {
+                console.log("Olha eu a voltar aqui")
+            }
+            return 'cadeia';
         case 'number':
-            return 'número';
-        case 'bigint':
-            return 'longo';
+            if (Number.isInteger(variavel))
+                return 'inteiro';
+            return 'real';
         case 'boolean':
             return 'lógico';
-        case 'undefined':
-            return 'nulo';
-        case 'object':
-            if (Array.isArray(variavel)) return 'vetor';
-            if (variavel === null) return 'nulo';
-            if (variavel.constructor.name === 'DeleguaFuncao') return 'função';
-            if (variavel.constructor.name === 'DeleguaModulo') return 'módulo';
-            if (variavel.constructor.name === 'Classe') return 'objeto';
-            return 'dicionário';
-        case 'function':
-            return 'função';
-        case 'symbol':
-            return 'símbolo';
+        default:
+            return 'vazio';
     }
 }
 
