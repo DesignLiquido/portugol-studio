@@ -325,21 +325,6 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
-            it('teste', () => {
-                const resultado = lexador.mapear([
-                    'programa {',
-                    '    funcao inicio() {',
-                    '        cadeia a = "ola mundo"',
-                    '        escreva(a)',
-                    '    }',
-                    '}'
-                ], -1);
-
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
-                console.log(retornoAvaliadorSintatico)/*
-                expect(retornoAvaliadorSintatico).toBeTruthy();
-                expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2); */
-            });
 
             it('Atribuição de Vetores', () => {
                 const resultado = lexador.mapear([
@@ -519,7 +504,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 const t = () => {
                     avaliadorSintatico.analisar(retornoLexador, -1);
                 }
-                console.log(t())
+
                 expect(t).toThrow(ErroAvaliadorSintatico);
             });
         });

@@ -102,7 +102,6 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                     : undefined,
             valorDefinido: true
         };
-        console.log(this.variaveis[declaracao.simbolo.lexema])
         return Promise.resolve();
     }
 
@@ -258,7 +257,6 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                     : undefined,
             valorDefinido: true
         };
-        console.log(this.variaveis[declaracao.simbolo.lexema])
         return Promise.resolve();
     }
 
