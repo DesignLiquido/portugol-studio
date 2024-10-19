@@ -54,10 +54,14 @@ describe('Analisador sêmantico', () => {
                         'real x',
                         'inteiro y',
                         'caracter a',
+                        'cadeia b',
                         'logico l',
                         'x = "25"',
                         'y = "6x"',
                         'l = 24',
+                        'b = 34',
+                        'x = 25',
+                        'y = 25.4',
                     '}',
                 '}'
             ], -1);
@@ -65,7 +69,12 @@ describe('Analisador sêmantico', () => {
             const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
             expect(retornoAnalisadorSemantico).toBeTruthy();
-            expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(3);
+            expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(5);
+            expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toEqual("Não é possível atribuir um valor do tipo 'cadeia' a uma variável do tipo 'real'.");
+            expect(retornoAnalisadorSemantico.diagnosticos[1].mensagem).toEqual("Não é possível atribuir um valor do tipo 'cadeia' a uma variável do tipo 'inteiro'.");
+            expect(retornoAnalisadorSemantico.diagnosticos[2].mensagem).toEqual("Não é possível atribuir um valor do tipo 'inteiro' a uma variável do tipo 'lógico'.");
+            expect(retornoAnalisadorSemantico.diagnosticos[3].mensagem).toEqual("Não é possível atribuir um valor do tipo 'inteiro' a uma variável do tipo 'cadeia'.");
+            expect(retornoAnalisadorSemantico.diagnosticos[4].mensagem).toEqual("Não é possível atribuir um valor do tipo 'real' a uma variável do tipo 'inteiro'.");
         });
 
         it('Atribuição por indice', () => {

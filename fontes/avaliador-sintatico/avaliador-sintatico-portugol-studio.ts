@@ -548,7 +548,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.INTEIRO:
                 const identificador = this.consumir(
                     tiposDeSimbolos.IDENTIFICADOR,
-                    "Esperado identificador após palavra reservada 'inteiro'."
+                    `Esperado identificador após palavra reservada '${tiposDeDados.INTEIRO}'.`
                 );
                 this.consumir(tiposDeSimbolos.IGUAL, 'Esperado símbolo igual para inicialização de variável.');
                 const literalInicializacao = this.consumir(
@@ -579,9 +579,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             const dimensoes = this.logicaComumDimensoesMatrizes();
 
             if (dimensoes.length > 0) {
-                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloCadeia, identificador, dimensoes, 'texto'));
+                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloCadeia, identificador, dimensoes, tiposDeDados.CADEIA));
             } else {
-                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloCadeia, identificador, 'texto'));
+                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloCadeia, identificador, tiposDeDados.CADEIA));
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
@@ -595,17 +595,17 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         do {
             const identificador = this.consumir(
                 tiposDeSimbolos.IDENTIFICADOR,
-                "Esperado identificador após palavra reservada 'caracter'."
+                `Esperado identificador após palavra reservada '${tiposDeDados.CARACTER}'.`
             );
 
             const dimensoes = this.logicaComumDimensoesMatrizes();
 
             if (dimensoes.length > 0) {
                 inicializacoes.push(
-                    this.declaracaoVetorOuMatriz(simboloCaracter, identificador, dimensoes, 'caracter')
+                    this.declaracaoVetorOuMatriz(simboloCaracter, identificador, dimensoes, tiposDeDados.CARACTER)
                 );
             } else {
-                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloCaracter, identificador, 'caracter'));
+                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloCaracter, identificador, tiposDeDados.CARACTER));
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
@@ -878,15 +878,15 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         do {
             const identificador = this.consumir(
                 tiposDeSimbolos.IDENTIFICADOR,
-                "Esperado identificador após palavra reservada 'real'."
+                `Esperado identificador após palavra reservada '${tiposDeDados.REAL}'.`
             );
 
             const dimensoes = this.logicaComumDimensoesMatrizes();
 
             if (dimensoes.length > 0) {
-                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloReal, identificador, dimensoes, 'real'));
+                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloReal, identificador, dimensoes, tiposDeDados.REAL));
             } else {
-                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloReal, identificador, 'real'));
+                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloReal, identificador, tiposDeDados.REAL));
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 

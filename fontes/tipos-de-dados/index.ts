@@ -9,5 +9,6 @@ export default {
     REAL: 'real',
     TEXTO: 'texto',
     VETOR: 'vetor',
-    CADEIA: 'cadeia'
+    CADEIA: 'cadeia',
+    CARACTER: 'caracter'
 };

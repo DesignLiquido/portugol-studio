@@ -392,7 +392,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 ], -1);
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                
+
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
@@ -411,7 +411,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 ], -1);
 
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-                
+
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
                 const declaracaoFuncao = retornoAvaliadorSintatico.declaracoes[0];
