@@ -12,7 +12,7 @@ import { Limpa } from '../construtos';
 import * as comum from './comum';
 
 export class InterpretadorPortugolStudio extends InterpretadorBase implements VisitantePortugolStudioInterface {
-    funcaoLimpa: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
+    funcaoLimpa: Function = () => { console.warn('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
 
     constructor(diretorioBase: string, performance = false, funcaoDeRetorno: Function = null, funcaoLimpa: Function = null) {
         super(diretorioBase, performance, funcaoDeRetorno);

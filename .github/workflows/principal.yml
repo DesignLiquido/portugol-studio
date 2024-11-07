@@ -24,6 +24,8 @@ jobs:
     - name: Testes unitários
       run: |
         sudo npm run testes-unitarios
+    # Alternativa mais simples de cobertura de código, quando o Jest Coverage 
+    # Report Action deixa de funcionar.
     - name: Cobertura de Código
       uses: MishaKav/jest-coverage-comment@main
     # Os pacotes abaixo continuam dando o seguinte problema:

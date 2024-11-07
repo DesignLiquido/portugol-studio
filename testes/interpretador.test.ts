@@ -38,6 +38,37 @@ describe('Interpretador (Portugol Studio)', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
+            describe('Para', () => {
+                it('Condição de parada como variável', async () => {
+                    const _saidas: string[] = [];
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        '        inteiro passos = 10',
+                        '        inteiro passos_inicial = 0',
+                        '        para (inteiro passo = passos_inicial; passo < passos; passo++)',
+                        '        {',
+                        '            escreva("Olá")',
+                        '        }',
+                        '	}',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        _saidas.push(saida);
+                    }
+
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toHaveLength(10);
+                });
+            })
+
             describe('Leia', () => {
                 it('Trivial', async () => {
                     // Aqui vamos simular a resposta para cinco variáveis de `leia()`.
@@ -153,7 +184,7 @@ describe('Interpretador (Portugol Studio)', () => {
                 expect(retornoInterpretador.erros).toHaveLength(0);
             });
 
-            it('Faca', async () => {
+            it('Faça', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
