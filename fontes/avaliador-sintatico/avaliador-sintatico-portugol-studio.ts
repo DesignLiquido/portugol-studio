@@ -53,6 +53,19 @@ import tiposDeDados from '../tipos-de-dados';
 export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     private declaracoes: Declaracao[] = [];
 
+    verificarTipoSimboloAtual(tipo: string) {
+        return this.simbolos[this.atual].tipo === tipo;
+    }
+
+    avancarEDevolverAnterior() {
+        this.atual += 1;
+        return this.simbolos[this.atual - 1];
+    }
+
+    estaNoFinal(): boolean {
+        return (this.blocos === 1 && this.simbolos[this.atual].tipo === tiposDeSimbolos.CHAVE_DIREITA) || this.atual === this.simbolos.length;
+    }
+
     declaracaoEscreva(): Escreva {
         throw new Error('Método não implementado.');
     }
@@ -75,6 +88,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             "Esperada chave esquerda após expressão 'programa' para inicializar programa."
         );
 
+        this.blocos += 1;
+
         while (!this.estaNoFinal()) {
             const declaracaoOuVetor: any = this.resolverDeclaracaoForaDeBloco();
             if (Array.isArray(declaracaoOuVetor)) {
@@ -84,8 +99,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             }
         }
 
-        if (this.simbolos[this.atual - 1].tipo !== tiposDeSimbolos.CHAVE_DIREITA) {
-            throw this.erro(this.simbolos[this.atual - 1], 'Esperado chave direita final para término do programa.');
+        this.consumir(tiposDeSimbolos.CHAVE_DIREITA, 'Esperado chave direita final para término do programa.');
+
+        // Podem haver comentários depois da declaração do programa em si.
+        while (this.simbolos[this.atual] && [tiposDeSimbolos.COMENTARIO, tiposDeSimbolos.LINHA_COMENTARIO].includes(this.simbolos[this.atual].tipo)) {
+            this.declaracoes.push(this.resolverDeclaracaoForaDeBloco());
         }
 
         const encontrarDeclaracaoInicio = this.declaracoes.filter(
@@ -288,6 +306,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
     blocoEscopo(): Declaracao[] {
         this.consumir(tiposDeSimbolos.CHAVE_ESQUERDA, "Esperado '}' antes do bloco.");
+        this.blocos += 1;
 
         let declaracoes: Array<RetornoDeclaracao> = [];
 
@@ -301,6 +320,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         }
 
         this.consumir(tiposDeSimbolos.CHAVE_DIREITA, "Esperado '}' após o bloco.");
+        this.blocos -= 1;
         return declaracoes;
     }
 
@@ -339,10 +359,10 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     declaracaoEscolha(): Escolha {
         try {
             this.avancarEDevolverAnterior();
-            this.blocos += 1;
 
             const condicao = this.expressao();
             this.consumir(tiposDeSimbolos.CHAVE_ESQUERDA, "Esperado '{' antes do escopo do 'escolha'.");
+            this.blocos += 1;
 
             const caminhos = [];
             let caminhoPadrao = null;
@@ -613,12 +633,15 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     declaracaoComentarioMultilinha(): Comentario {
-        let simboloComentario: SimboloInterface;
         const conteudos: string[] = [];
+        let simboloComentario: SimboloInterface;
+        let simboloAtual: SimboloInterface;
+
         do {
             simboloComentario = this.avancarEDevolverAnterior();
             conteudos.push(simboloComentario.literal);
-        } while (simboloComentario.tipo === tiposDeSimbolos.LINHA_COMENTARIO);
+            simboloAtual = this.simbolos[this.atual];
+        } while (simboloAtual && simboloAtual.tipo === tiposDeSimbolos.LINHA_COMENTARIO);
 
         return new Comentario(
             simboloComentario.hashArquivo,
@@ -660,6 +683,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             tiposDeSimbolos.CHAVE_ESQUERDA,
             'Esperado chave esquerda após sinal de igual em lado direito da atribuição de vetor.'
         );
+        // Neste caso, chave esquerda não é bloco.
 
         const valores = [];
         do {

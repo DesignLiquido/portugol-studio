@@ -36,6 +36,27 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(2);
             });
 
+            it('Comentários', () => {
+                const retornoLexador = lexador.mapear(
+                    [
+                        '/* Teste */',
+                        'programa ',
+                        '{ ',
+                        '	funcao inicio () ',
+                        '	{',
+                        '		escreva("Olá Mundo!\n")',
+                        '	} ',
+                        '}',
+                        '/* Outro teste */',
+                    ],
+                    -1
+                );
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
+            });
+
             it('Estruturas de dados', () => {
                 const retornoLexador = lexador.mapear(
                     [
