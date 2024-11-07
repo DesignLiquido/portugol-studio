@@ -313,21 +313,45 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('Estruturas de repetição - Para', () => {
-                const resultado = lexador.mapear([
-                    'programa {',
-                    '    funcao inicio() {',
-                    '      para (inteiro i = 1; i <= 10; i++) {',
-                    '        escreva(i)',
-                    '      }',
-                    '    }',
-                    '  }'
-                ], -1);
+            describe('Estruturas de repetição - Para', () => {
+                it('Trivial', () => {
+                    const resultado = lexador.mapear([
+                        'programa {',
+                        '    funcao inicio() {',
+                        '      para (inteiro i = 1; i <= 10; i++) {',
+                        '        escreva(i)',
+                        '      }',
+                        '    }',
+                        '  }'
+                    ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+    
+                    expect(retornoAvaliadorSintatico).toBeTruthy();
+                    expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
+                });
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
-
-                expect(retornoAvaliadorSintatico).toBeTruthy();
-                expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
+                it('Condição de parada como variável', () => {
+                    const resultado = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        '        inteiro passos = 10',
+                        '        inteiro passos_inicial = 0',
+                        '        para (inteiro passo = passos_inicial; passo < passos; passo++)',
+                        '        {',
+                        '            escreva("Olá")',
+                        '        }',
+                        '	}',
+                        '}'
+                        ], -1);
+    
+                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+    
+                    expect(retornoAvaliadorSintatico).toBeTruthy();
+                    expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
+                });
             });
 
             it('Atribuição de Variáveis', () => {

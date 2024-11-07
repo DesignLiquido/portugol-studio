@@ -54,7 +54,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     private declaracoes: Declaracao[] = [];
 
     verificarTipoSimboloAtual(tipo: string) {
-        return this.simbolos[this.atual].tipo === tipo;
+        return this.simbolos[this.atual] && this.simbolos[this.atual].tipo === tipo;
     }
 
     avancarEDevolverAnterior() {
@@ -570,15 +570,28 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                     tiposDeSimbolos.IDENTIFICADOR,
                     `Esperado identificador após palavra reservada '${tiposDeDados.INTEIRO}'.`
                 );
+
                 this.consumir(tiposDeSimbolos.IGUAL, 'Esperado símbolo igual para inicialização de variável.');
-                const literalInicializacao = this.consumir(
-                    tiposDeSimbolos.INTEIRO,
-                    'Esperado literal inteiro após símbolo de igual em declaração de variável.'
-                );
-                const valorInicializacao = Number(literalInicializacao.literal);
+
+                let inicializador: Construto;
+                switch (this.simbolos[this.atual].tipo) {
+                    case tiposDeSimbolos.INTEIRO:
+                        const literalInicializacao = this.avancarEDevolverAnterior();
+                        const valorInicializacao = Number(literalInicializacao.literal);
+                        inicializador = new Literal(this.hashArquivo, Number(literalInicializacao.linha), valorInicializacao);
+                        break;
+                    case tiposDeSimbolos.IDENTIFICADOR:
+                        // TODO: Montar escopo de variáveis conhecidas e verificar o tipo e existência até aqui.
+                        const variavelInicializacao = this.avancarEDevolverAnterior();
+                        inicializador = new Variavel(this.hashArquivo, variavelInicializacao);
+                        break;
+                    default:
+                        throw this.erro(this.simbolos[this.atual], `Esperado literal ou identificador inteiro para atribuição de variável. Tipo atual: ${this.simbolos[this.atual].lexema}.`);
+                }
+                
                 return new Var(
                     identificador,
-                    new Literal(this.hashArquivo, Number(literalInicializacao.linha), valorInicializacao)
+                    inicializador
                 );
         }
     }
