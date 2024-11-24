@@ -1,10 +1,4 @@
-export type TipoInferencia =
-    | 'cadeia'
-    | 'caracter'
-    | 'inteiro'
-    | 'lógico'
-    | 'real'
-    | 'vazio';
+export type TipoInferencia = 'cadeia' | 'caracter' | 'inteiro' | 'lógico' | 'real' | 'vazio';
 
 export function inferirTipoVariavel(
     variavel: string | number | Array<any> | boolean | null | undefined
@@ -15,12 +9,11 @@ export function inferirTipoVariavel(
                 return 'caracter';
             }
             if (variavel.length === 1) {
-                console.log("Olha eu a voltar aqui")
+                console.log('Olha eu a voltar aqui');
             }
             return 'cadeia';
         case 'number':
-            if (Number.isInteger(variavel))
-                return 'inteiro';
+            if (Number.isInteger(variavel)) return 'inteiro';
             return 'real';
         case 'boolean':
             return 'lógico';

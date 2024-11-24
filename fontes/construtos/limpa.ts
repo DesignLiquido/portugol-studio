@@ -1,6 +1,6 @@
-import { Construto } from "@designliquido/delegua";
+import { Construto } from '@designliquido/delegua';
 
-import { VisitantePortugolStudioInterface } from "../interfaces";
+import { VisitantePortugolStudioInterface } from '../interfaces';
 
 export class Limpa implements Construto {
     linha: number;

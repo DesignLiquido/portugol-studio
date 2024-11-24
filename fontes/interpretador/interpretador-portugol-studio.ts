@@ -12,9 +12,16 @@ import { Limpa } from '../construtos';
 import * as comum from './comum';
 
 export class InterpretadorPortugolStudio extends InterpretadorBase implements VisitantePortugolStudioInterface {
-    funcaoLimpa: Function = () => { console.warn('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
+    funcaoLimpa: Function = () => {
+        console.warn('Função "limpa()" não está ligada a uma interface de entrada e saída.');
+    };
 
-    constructor(diretorioBase: string, performance = false, funcaoDeRetorno: Function = null, funcaoLimpa: Function = null) {
+    constructor(
+        diretorioBase: string,
+        performance = false,
+        funcaoDeRetorno: Function = null,
+        funcaoLimpa: Function = null
+    ) {
         super(diretorioBase, performance, funcaoDeRetorno);
 
         if (funcaoLimpa !== null) {
@@ -37,7 +44,7 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
         this.funcaoLimpa();
         return Promise.resolve();
     }
-    
+
     async visitarDeclaracaoImportar(declaracao: Importar): Promise<DeleguaModulo> {
         return comum.visitarExpressaoImportarComum(declaracao);
     }

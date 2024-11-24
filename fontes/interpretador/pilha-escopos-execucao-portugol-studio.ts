@@ -1,12 +1,12 @@
-import { EscopoExecucao } from "@designliquido/delegua/interfaces/escopo-execucao";
-import { PilhaEscoposExecucaoInterface } from "@designliquido/delegua/interfaces/pilha-escopos-execucao-interface";
-import { SimboloInterface, VariavelInterface } from "@designliquido/delegua/interfaces";
-import { Simbolo } from "@designliquido/delegua/lexador";
-import { ErroEmTempoDeExecucao } from "@designliquido/delegua/excecoes";
-import { DescritorTipoClasse, DeleguaFuncao } from "@designliquido/delegua/estruturas";
-import { EspacoVariaveis } from "@designliquido/delegua/espaco-variaveis";
+import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
+import { PilhaEscoposExecucaoInterface } from '@designliquido/delegua/interfaces/pilha-escopos-execucao-interface';
+import { SimboloInterface, VariavelInterface } from '@designliquido/delegua/interfaces';
+import { Simbolo } from '@designliquido/delegua/lexador';
+import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
+import { DescritorTipoClasse, DeleguaFuncao } from '@designliquido/delegua/estruturas';
+import { EspacoVariaveis } from '@designliquido/delegua/espaco-variaveis';
 
-import { TipoInferencia, inferirTipoVariavel, converterValor } from "./inferenciador";
+import { TipoInferencia, inferirTipoVariavel, converterValor } from './inferenciador';
 
 export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoInterface {
     pilha: EscopoExecucao[];
@@ -55,9 +55,9 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
 
         let tipoConstante;
         if (constante && constante.hasOwnProperty('tipo')) {
-            tipoConstante = constante.tipo
+            tipoConstante = constante.tipo;
         } else if (tipo) {
-            tipoConstante = tipo
+            tipoConstante = tipo;
         } else {
             tipoConstante = inferirTipoVariavel(valor);
         }
@@ -131,7 +131,9 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
                         `Constante '${simbolo.lexema}' não pode receber novos valores.`
                     );
                 }
-                const tipo = (variavel && variavel.hasOwnProperty('tipo') ? variavel.tipo : inferirTipoVariavel(valor)).toLowerCase() as TipoInferencia;
+                const tipo = (
+                    variavel && variavel.hasOwnProperty('tipo') ? variavel.tipo : inferirTipoVariavel(valor)
+                ).toLowerCase() as TipoInferencia;
 
                 const valorResolvido = converterValor(tipo, valor);
                 ambiente.valores[simbolo.lexema] = {

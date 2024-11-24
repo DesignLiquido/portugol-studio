@@ -279,7 +279,7 @@ function validarVetor(vetor: any, indice: number, propriedade: string) {
     if (!Array.isArray(vetor)) {
         throw new Error('A propriedade "' + propriedade + '" não é um vetor.');
     }
-    
+
     if (indice < 0 || indice >= vetor.length) {
         throw new Error(
             'Você tentou acessar um índice de vetor inválido.\n' +

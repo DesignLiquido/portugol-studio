@@ -1,5 +1,5 @@
-import { Construto } from "@designliquido/delegua/construtos";
-import { VisitantePortugolStudioInterface } from "../interfaces";
+import { Construto } from '@designliquido/delegua/construtos';
+import { VisitantePortugolStudioInterface } from '../interfaces';
 
 export class Matriz implements Construto {
     linha: number;

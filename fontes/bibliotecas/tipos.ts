@@ -1,4 +1,4 @@
-import { InterpretadorInterface } from "@designliquido/delegua/interfaces";
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 
 const PADRAO_INTEIRO_NOTACAO_HEXADECIMAL: RegExp = /^(0x|0X)?([0-9]|[a-f]|[A-F])+$/;
 const PADRAO_INTEIRO_NOTACAO_BINARIA: RegExp = /^(0b|0B)?[0-1]+$/;
@@ -6,11 +6,7 @@ const PADRAO_INTEIRO_NOTACAO_DECIMAL: RegExp = /^-?\d+$/;
 const PADRAO_REAL: RegExp = /^-?\d+\.\d+$/;
 const PADRAO_LOGICO: RegExp = /^verdadeiro|falso$/;
 
-export function cadeia_e_inteiro(
-    interpretador: InterpretadorInterface, 
-    cad: string, 
-    base: number
-): boolean {
+export function cadeia_e_inteiro(interpretador: InterpretadorInterface, cad: string, base: number): boolean {
     switch (base) {
         case 2:
             return PADRAO_INTEIRO_NOTACAO_BINARIA.test(cad);

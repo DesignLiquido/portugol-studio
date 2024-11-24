@@ -1,4 +1,4 @@
-import { InterpretadorInterface } from "@designliquido/delegua/interfaces";
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 
 export async function dia_mes_atual(): Promise<number> {
     const data = new Date();
@@ -51,7 +51,7 @@ export async function milisegundo_atual(): Promise<number> {
 }
 
 export async function dia_semana_completo(
-    interpretador: InterpretadorInterface, 
+    interpretador: InterpretadorInterface,
     numero_dia: number,
     caixa_alta: boolean,
     caixa_baixa: boolean
@@ -76,15 +76,15 @@ export async function dia_semana_completo(
         }
 
         return dia;
-    } 
-        
+    }
+
     throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
 }
 
 export async function dia_semana_curto(
-    interpretador: InterpretadorInterface, 
-    numero_dia: number, 
-    caixa_alta: boolean, 
+    interpretador: InterpretadorInterface,
+    numero_dia: number,
+    caixa_alta: boolean,
     caixa_baixa: boolean
 ): Promise<string> {
     const dias: string[] = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];
@@ -99,13 +99,13 @@ export async function dia_semana_curto(
         }
 
         return dia;
-    } 
-        
+    }
+
     throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
 }
 
 export async function dia_semana_abreviado(
-    interpretador: InterpretadorInterface, 
+    interpretador: InterpretadorInterface,
     numero_dia: number,
     caixa_alta: boolean,
     caixa_baixa: boolean
@@ -123,6 +123,6 @@ export async function dia_semana_abreviado(
 
         return dia;
     }
-        
+
     throw new Error(`'${numero_dia}' não corresponde a um dia da semana válido.`);
 }

@@ -7,7 +7,7 @@ export async function obter_diretorio_usuario(): Promise<string> {
     try {
         return os.homedir();
     } catch (error) {
-        throw new Error("Não foi possível obter o diretório do usuário");
+        throw new Error('Não foi possível obter o diretório do usuário');
     }
 }
 
@@ -26,8 +26,8 @@ export async function numero_colunas(interpretador: InterpretadorInterface, matr
 export async function sorteia(interpretador: InterpretadorInterface, minimo: number, maximo: number): Promise<number> {
     if (minimo > maximo) {
         throw new Error(`O valor mínimo (${minimo}) é maior do que o valor máximo (${maximo})`);
-    } 
-    
+    }
+
     if (minimo === maximo) {
         throw new Error(`Os valores mínimo e máximo são iguais: ${minimo}`);
     }
@@ -36,7 +36,7 @@ export async function sorteia(interpretador: InterpretadorInterface, minimo: num
 }
 
 export async function aguarde(interpretador: InterpretadorInterface, intervalo: number): Promise<void> {
-    await new Promise(resolve => setTimeout(resolve, intervalo));
+    await new Promise((resolve) => setTimeout(resolve, intervalo));
 }
 
 export async function tempo_decorrido(): Promise<number> {

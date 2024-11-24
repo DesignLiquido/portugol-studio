@@ -5,7 +5,7 @@ import {
     EscrevaMesmaLinha,
     Expressao,
     FuncaoDeclaracao,
-    Var
+    Var,
 } from '@designliquido/delegua/declaracoes';
 
 import { AnalisadorSemanticoBase } from '@designliquido/delegua/analisador-semantico/analisador-semantico-base';
@@ -34,7 +34,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     funcoes: { [nomeFuncao: string]: FuncaoHipoteticaInterface };
     atual: number;
     diagnosticos: DiagnosticoAnalisadorSemantico[];
-    corpoMetodoPrincipal = []
+    corpoMetodoPrincipal = [];
 
     constructor() {
         super();
@@ -63,21 +63,21 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         declaracao.argumentos.forEach((argumento) => {
             if (argumento instanceof Variavel) {
                 if (!this.variaveis[argumento.simbolo.lexema]) {
-                    this.adicionarDiagnostico(
-                        argumento.simbolo,
-                        `Variável não declarada: ${argumento.simbolo.lexema}`
-                    )
+                    this.adicionarDiagnostico(argumento.simbolo, `Variável não declarada: ${argumento.simbolo.lexema}`);
                     //return Promise.resolve();
                 }
             }
         });
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<any> {
         for (let parametro of declaracao.funcao.parametros) {
             if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado.tipo) {
-                this.adicionarDiagnostico(declaracao.simbolo, `O tipo '${parametro.tipoDado.tipoInvalido}' não é valido`);
+                this.adicionarDiagnostico(
+                    declaracao.simbolo,
+                    `O tipo '${parametro.tipoDado.tipoInvalido}' não é valido`
+                );
             }
         }
 
@@ -88,7 +88,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         this.funcoes[declaracao.simbolo.lexema] = {
             valor: declaracao.funcao,
         };
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     visitarDeclaracaoVar(declaracao: Var): Promise<any> {
@@ -101,7 +101,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                         ? declaracao.inicializador.valor
                         : declaracao.inicializador
                     : undefined,
-            valorDefinido: true
+            valorDefinido: true,
         };
         return Promise.resolve();
     }
@@ -110,7 +110,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         /* TODO - Atualmente o tipo "caracter vem como instância de variável,
         causando assim erros como reportado na issue #31
          */
-        return Promise.resolve()
+        return Promise.resolve();
     }
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
@@ -122,35 +122,40 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         }
 
         if (variavel.imutavel) {
-            this.adicionarDiagnostico(
-                simbolo,
-                "Não é possível alterar o valor de uma constante."
-            );
+            this.adicionarDiagnostico(simbolo, 'Não é possível alterar o valor de uma constante.');
             return Promise.resolve();
         }
 
         if (variavel.tipo) {
             if (valor instanceof Literal) {
-                const tipoInferido = inferirTipoVariavel(valor.valor)
+                const tipoInferido = inferirTipoVariavel(valor.valor);
                 if (tipoInferido !== variavel.tipo) {
                     switch (variavel.tipo) {
                         case tiposDeDados.CADEIA:
                             if (tipoInferido !== tiposDeDados.CARACTER) {
-                                this.adicionarDiagnostico(simbolo, `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`);
+                                this.adicionarDiagnostico(
+                                    simbolo,
+                                    `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`
+                                );
                                 return Promise.resolve();
                             }
                             break;
                         case tiposDeDados.REAL:
                             if (tipoInferido !== tiposDeDados.INTEIRO) {
-                                this.adicionarDiagnostico(simbolo, `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`);
+                                this.adicionarDiagnostico(
+                                    simbolo,
+                                    `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`
+                                );
                                 return Promise.resolve();
                             }
                             break;
                         default:
-                            this.adicionarDiagnostico(simbolo, `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`);
+                            this.adicionarDiagnostico(
+                                simbolo,
+                                `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`
+                            );
                             return Promise.resolve();
                     }
-
                 }
             }
         }
@@ -173,7 +178,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             if (funcao.parametros.length != expressao.argumentos.length) {
                 this.adicionarDiagnostico(
                     variavel.simbolo,
-                    `Esperava ${funcao.parametros.length} ${funcao.parametros.length > 1 ? 'parâmetros' : 'parâmetro'
+                    `Esperava ${funcao.parametros.length} ${
+                        funcao.parametros.length > 1 ? 'parâmetros' : 'parâmetro'
                     }, mas foi passado ${expressao.argumentos.length}.`
                 );
             }
@@ -185,7 +191,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
                     if (argumento instanceof Variavel) {
                         const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
-                        const tipoVariavelCorrespondente = this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();
+                        const tipoVariavelCorrespondente =
+                            this.variaveis[lexemaVariavelCorrespondente].tipo.toLowerCase();
 
                         if (tipoVariavelCorrespondente !== tipoDadoParametro) {
                             this.adicionarDiagnostico(
@@ -207,12 +214,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                                 break;
                         }
                     }
-                }
-                else {
-                    this.adicionarDiagnostico(
-                        variavel.simbolo,
-                        "Tipo de dados não especificado"
-                    );
+                } else {
+                    this.adicionarDiagnostico(variavel.simbolo, 'Tipo de dados não especificado');
                 }
             }
         }
@@ -226,10 +229,10 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             expressao.objeto.simbolo,
             expressao.valor,
             expressao.indice
-        )
+        );
 
-        this.visitarExpressaoDeAtribuicao(atribuir)
-        return Promise.resolve()
+        this.visitarExpressaoDeAtribuicao(atribuir);
+        return Promise.resolve();
     }
 
     visitarDeclaracaoDeExpressao(declaracao: Expressao) {
@@ -264,7 +267,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                         ? declaracao.inicializador.valor
                         : declaracao.inicializador
                     : undefined,
-            valorDefinido: true
+            valorDefinido: true,
         };
         return Promise.resolve();
     }
@@ -275,10 +278,9 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         this.diagnosticos = [];
         this.corpoMetodoPrincipal = [];
 
-        const declaracaoMetodoPrincipal = declaracoes.find(declaracao =>
-            declaracao instanceof FuncaoDeclaracao && declaracao.simbolo.lexema === "inicio"
+        const declaracaoMetodoPrincipal = declaracoes.find(
+            (declaracao) => declaracao instanceof FuncaoDeclaracao && declaracao.simbolo.lexema === 'inicio'
         );
-
 
         if (declaracaoMetodoPrincipal) {
             this.corpoMetodoPrincipal = (declaracaoMetodoPrincipal as FuncaoDeclaracao).funcao.corpo;
@@ -286,13 +288,13 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
         for (const declaracao of declaracoes) {
             if (declaracao instanceof FuncaoDeclaracao) {
-                if (declaracao.simbolo.lexema !== "inicio") {
-                    declaracao.aceitar(this)
+                if (declaracao.simbolo.lexema !== 'inicio') {
+                    declaracao.aceitar(this);
                 }
             }
         }
         while (this.atual < this.corpoMetodoPrincipal.length) {
-            this.corpoMetodoPrincipal[this.atual].aceitar(this)
+            this.corpoMetodoPrincipal[this.atual].aceitar(this);
             this.atual++;
         }
 
@@ -300,5 +302,4 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             diagnosticos: this.diagnosticos,
         } as RetornoAnalisadorSemantico;
     }
-
 }

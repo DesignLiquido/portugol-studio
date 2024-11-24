@@ -10,5 +10,5 @@ export default {
     TEXTO: 'texto',
     VETOR: 'vetor',
     CADEIA: 'cadeia',
-    CARACTER: 'caracter'
+    CARACTER: 'caracter',
 };

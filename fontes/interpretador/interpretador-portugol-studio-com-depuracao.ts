@@ -9,11 +9,21 @@ import { Limpa } from '../construtos';
 
 import * as comum from './comum';
 
-export class InterpretadorPortugolStudioComDepuracao extends InterpretadorComDepuracao implements VisitantePortugolStudioInterface {
+export class InterpretadorPortugolStudioComDepuracao
+    extends InterpretadorComDepuracao
+    implements VisitantePortugolStudioInterface
+{
     mensagemPrompt: string;
-    funcaoLimpa: Function = () => { console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.') };
+    funcaoLimpa: Function = () => {
+        console.log('Função "limpa()" não está ligada a uma interface de entrada e saída.');
+    };
 
-    constructor(diretorioBase: string, funcaoDeRetorno: Function = null, funcaoDeRetornoMesmaLinha: Function = null, funcaoLimpa: Function = null) {
+    constructor(
+        diretorioBase: string,
+        funcaoDeRetorno: Function = null,
+        funcaoDeRetornoMesmaLinha: Function = null,
+        funcaoLimpa: Function = null
+    ) {
         super(diretorioBase, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
 
         if (funcaoLimpa !== null) {

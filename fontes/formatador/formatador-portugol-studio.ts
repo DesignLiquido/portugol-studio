@@ -82,14 +82,14 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         if (declaracao.multilinha) {
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}/`;
 
-            for (let linhaConteudo of (declaracao.conteudo as string[])) {
-                this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}* ${linhaConteudo.replace(/\s+/g, " ")}${this.quebraLinha}`;
+            for (let linhaConteudo of declaracao.conteudo as string[]) {
+                this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}* ${linhaConteudo.replace(/\s+/g, ' ')}${this.quebraLinha}`;
             }
 
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)} */${this.quebraLinha}`;
         } else {
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}// `;
-            this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, " ");
+            this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, ' ');
             this.codigoFormatado += `${this.quebraLinha}`;
         }
     }
@@ -123,7 +123,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
                     declaracao.simbolo.lexema
                 }`;
                 this.codigoFormatado += ` = `;
-                        
+
                 this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
             }
         }
@@ -132,11 +132,11 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             this.codigoFormatado += this.quebraLinha;
         }
     }
-    
+
     visitarDeclaracaoConstMultiplo(declaracao: ConstMultiplo): Promise<any> {
         throw new Error('Método não implementado');
     }
-    
+
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
         if (
             expressao.valor instanceof Binario &&
@@ -242,7 +242,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado += `${this.quebraLinha}${' '.repeat(this.indentacaoAtual)}faca${this.quebraLinha}`;
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}{${this.quebraLinha}`;
         this.indentacaoAtual += this.tamanhoIndentacao;
-        
+
         for (let declaracaoBloco of declaracao.caminhoFazer.declaracoes) {
             this.formatarDeclaracaoOuConstruto(declaracaoBloco);
         }
@@ -321,7 +321,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}} senao {${this.quebraLinha}`;
             this.formatarDeclaracaoOuConstruto(declaracao.caminhoSenao);
         }
-        
+
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}}${this.quebraLinha}`;
     }
 
@@ -355,7 +355,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
                 if (declaracao.inicializador instanceof Vetor) {
                     this.codigoFormatado += `[${declaracao.inicializador.valores.length}]`;
                 }
-    
+
                 this.codigoFormatado += ` = `;
                 this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
                 if (this.devePularLinha) {

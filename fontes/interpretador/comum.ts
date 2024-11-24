@@ -62,7 +62,7 @@ function carregarBibliotecaInternet(): DeleguaModulo {
         definir_tempo_limite: new FuncaoPadrao(1, internet.definir_tempo_limite),
         obter_texto: new FuncaoPadrao(1, internet.obter_texto),
         baixar_imagem: new FuncaoPadrao(2, internet.baixar_imagem),
-        endereco_disponivel: new FuncaoPadrao(1, internet.endereco_disponivel)
+        endereco_disponivel: new FuncaoPadrao(1, internet.endereco_disponivel),
     };
 
     const objetoInternet = new DeleguaModulo('Internet');
@@ -159,7 +159,7 @@ function carregarBibliotecaTipos(): DeleguaModulo {
         logico_para_cadeia: new FuncaoPadrao(1, tipos.logico_para_cadeia),
         logico_para_inteiro: new FuncaoPadrao(1, tipos.logico_para_inteiro),
         logico_para_caracter: new FuncaoPadrao(1, tipos.logico_para_caracter),
-        real_para_inteiro: new FuncaoPadrao(1, tipos.real_para_inteiro)
+        real_para_inteiro: new FuncaoPadrao(1, tipos.real_para_inteiro),
     };
 
     const objetoTipos = new DeleguaModulo('Tipos');
@@ -175,7 +175,7 @@ function carregarBibliotecaUtil(): DeleguaModulo {
         numero_colunas: new FuncaoPadrao(1, util.numero_colunas),
         sorteia: new FuncaoPadrao(2, util.sorteia),
         aguarde: new FuncaoPadrao(1, util.aguarde),
-        tempo_decorrido: new FuncaoPadrao(0, util.tempo_decorrido)
+        tempo_decorrido: new FuncaoPadrao(0, util.tempo_decorrido),
     };
 
     const objetoUtil = new DeleguaModulo('Util');
@@ -190,7 +190,10 @@ function carregarBibliotecaUtil(): DeleguaModulo {
  * @param argumentos Os argumentos.
  * @returns {string} O texto formatado.
  */
-export async function avaliarArgumentosEscreva(interpretador: VisitantePortugolStudioInterface, argumentos: Construto[]): Promise<string> {
+export async function avaliarArgumentosEscreva(
+    interpretador: VisitantePortugolStudioInterface,
+    argumentos: Construto[]
+): Promise<string> {
     let formatoTexto: string = '';
 
     for (const argumento of argumentos) {
@@ -240,8 +243,8 @@ function desenveloparConstruto(expressao: Construto | Declaracao): Construto {
  * @returns Não retorna valor.
  */
 export async function visitarExpressaoLeiaComum(
-    interpretador: VisitantePortugolStudioInterface, 
-    interfaceEntradaSaida: { question: (mensagem: string, funcaoResolucao: (resposta: any) => any) => void},
+    interpretador: VisitantePortugolStudioInterface,
+    interfaceEntradaSaida: { question: (mensagem: string, funcaoResolucao: (resposta: any) => any) => void },
     expressao: Leia
 ): Promise<void> {
     const mensagem = '> ';
@@ -262,7 +265,7 @@ export async function visitarExpressaoLeiaComum(
             // construto e simplificar esta parte.
             const promises = await Promise.all([
                 interpretador.avaliar(construtoVariavel.entidadeChamada),
-                interpretador.avaliar(construtoVariavel.indice)
+                interpretador.avaliar(construtoVariavel.indice),
             ]);
 
             const variavel: VariavelInterface = promises[0];
@@ -276,7 +279,7 @@ export async function visitarExpressaoLeiaComum(
 }
 
 export async function visitarExpressaoMatrizComum(
-    interpretador: VisitantePortugolStudioInterface, 
+    interpretador: VisitantePortugolStudioInterface,
     expressao: Matriz
 ): Promise<any> {
     if (expressao.valores && expressao.valores.length > 0) {
@@ -285,16 +288,12 @@ export async function visitarExpressaoMatrizComum(
 
     // Caso não existam valores de inicialização, cada dimensão é inicializada
     // com valores padrão, de acordo com seu tipo.
-    return await inicializarDimensaoMatrizVazia(
-        interpretador, 
-        expressao.dimensoes, 
-        expressao.tipoDados
-    );
+    return await inicializarDimensaoMatrizVazia(interpretador, expressao.dimensoes, expressao.tipoDados);
 }
 
 async function inicializarDimensaoMatrizVazia(
-    interpretador: VisitantePortugolStudioInterface, 
-    dimensoes: any[], 
+    interpretador: VisitantePortugolStudioInterface,
+    dimensoes: any[],
     tipoDeDados: string
 ): Promise<any> {
     const valoresResolvidos = [];
@@ -334,7 +333,7 @@ async function inicializarDimensaoMatrizVazia(
  */
 async function resolverValoresMatriz(interpretador: VisitantePortugolStudioInterface, valores: any[]) {
     const valoresResolvidos = [];
-    
+
     for (let i = 0; i < valores.length; i++) {
         if (Array.isArray(valores[i])) {
             valoresResolvidos.push(await resolverValoresMatriz(interpretador, valores[i]));
@@ -342,6 +341,6 @@ async function resolverValoresMatriz(interpretador: VisitantePortugolStudioInter
             valoresResolvidos.push(await interpretador.avaliar(valores[i]));
         }
     }
-    
+
     return valoresResolvidos;
 }

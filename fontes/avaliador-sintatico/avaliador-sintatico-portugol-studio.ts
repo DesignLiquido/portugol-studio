@@ -63,7 +63,10 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     estaNoFinal(): boolean {
-        return (this.blocos === 1 && this.simbolos[this.atual].tipo === tiposDeSimbolos.CHAVE_DIREITA) || this.atual === this.simbolos.length;
+        return (
+            (this.blocos === 1 && this.simbolos[this.atual].tipo === tiposDeSimbolos.CHAVE_DIREITA) ||
+            this.atual === this.simbolos.length
+        );
     }
 
     declaracaoEscreva(): Escreva {
@@ -73,11 +76,16 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     private validarEscopoProgramaEAvaliacaoSintatica(): void {
         // Um programa completamente vazio é inválido.
         if (this.simbolos.length === 0) {
-            throw this.erro(new Simbolo('VAZIO', '', '', -1, this.hashArquivo), "Esperada expressão 'programa' para inicializar programa.");
+            throw this.erro(
+                new Simbolo('VAZIO', '', '', -1, this.hashArquivo),
+                "Esperada expressão 'programa' para inicializar programa."
+            );
         }
 
         // Podem haver comentários antes da declaração do programa em si.
-        while ([tiposDeSimbolos.COMENTARIO, tiposDeSimbolos.LINHA_COMENTARIO].includes(this.simbolos[this.atual].tipo)) {
+        while (
+            [tiposDeSimbolos.COMENTARIO, tiposDeSimbolos.LINHA_COMENTARIO].includes(this.simbolos[this.atual].tipo)
+        ) {
             this.declaracoes.push(this.resolverDeclaracaoForaDeBloco());
         }
 
@@ -102,7 +110,10 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         this.consumir(tiposDeSimbolos.CHAVE_DIREITA, 'Esperado chave direita final para término do programa.');
 
         // Podem haver comentários depois da declaração do programa em si.
-        while (this.simbolos[this.atual] && [tiposDeSimbolos.COMENTARIO, tiposDeSimbolos.LINHA_COMENTARIO].includes(this.simbolos[this.atual].tipo)) {
+        while (
+            this.simbolos[this.atual] &&
+            [tiposDeSimbolos.COMENTARIO, tiposDeSimbolos.LINHA_COMENTARIO].includes(this.simbolos[this.atual].tipo)
+        ) {
             this.declaracoes.push(this.resolverDeclaracaoForaDeBloco());
         }
 
@@ -508,7 +519,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 );
             }
 
-            const lexema = this.simbolos[this.atual - 1].lexema
+            const lexema = this.simbolos[this.atual - 1].lexema;
             let tipoDadoParametro = this.verificarDefinicaoTipo(lexema);
             parametro.tipoDado = {
                 nome: this.simbolos[this.atual - 1].lexema,
@@ -578,7 +589,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                     case tiposDeSimbolos.INTEIRO:
                         const literalInicializacao = this.avancarEDevolverAnterior();
                         const valorInicializacao = Number(literalInicializacao.literal);
-                        inicializador = new Literal(this.hashArquivo, Number(literalInicializacao.linha), valorInicializacao);
+                        inicializador = new Literal(
+                            this.hashArquivo,
+                            Number(literalInicializacao.linha),
+                            valorInicializacao
+                        );
                         break;
                     case tiposDeSimbolos.IDENTIFICADOR:
                         // TODO: Montar escopo de variáveis conhecidas e verificar o tipo e existência até aqui.
@@ -586,13 +601,13 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                         inicializador = new Variavel(this.hashArquivo, variavelInicializacao);
                         break;
                     default:
-                        throw this.erro(this.simbolos[this.atual], `Esperado literal ou identificador inteiro para atribuição de variável. Tipo atual: ${this.simbolos[this.atual].lexema}.`);
+                        throw this.erro(
+                            this.simbolos[this.atual],
+                            `Esperado literal ou identificador inteiro para atribuição de variável. Tipo atual: ${this.simbolos[this.atual].lexema}.`
+                        );
                 }
-                
-                return new Var(
-                    identificador,
-                    inicializador
-                );
+
+                return new Var(identificador, inicializador);
         }
     }
 
@@ -612,9 +627,13 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             const dimensoes = this.logicaComumDimensoesMatrizes();
 
             if (dimensoes.length > 0) {
-                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloCadeia, identificador, dimensoes, tiposDeDados.CADEIA));
+                inicializacoes.push(
+                    this.declaracaoVetorOuMatriz(simboloCadeia, identificador, dimensoes, tiposDeDados.CADEIA)
+                );
             } else {
-                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloCadeia, identificador, tiposDeDados.CADEIA));
+                inicializacoes.push(
+                    this.declaracaoVariavelSemDimensoes(simboloCadeia, identificador, tiposDeDados.CADEIA)
+                );
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
@@ -638,7 +657,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                     this.declaracaoVetorOuMatriz(simboloCaracter, identificador, dimensoes, tiposDeDados.CARACTER)
                 );
             } else {
-                inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloCaracter, identificador, tiposDeDados.CARACTER));
+                inicializacoes.push(
+                    this.declaracaoVariavelSemDimensoes(simboloCaracter, identificador, tiposDeDados.CARACTER)
+                );
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
@@ -656,22 +677,12 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             simboloAtual = this.simbolos[this.atual];
         } while (simboloAtual && simboloAtual.tipo === tiposDeSimbolos.LINHA_COMENTARIO);
 
-        return new Comentario(
-            simboloComentario.hashArquivo,
-            simboloComentario.linha,
-            conteudos,
-            true
-        );
+        return new Comentario(simboloComentario.hashArquivo, simboloComentario.linha, conteudos, true);
     }
 
     declaracaoComentarioUmaLinha(): Comentario {
         const simboloComentario = this.avancarEDevolverAnterior();
-        return new Comentario(
-            simboloComentario.hashArquivo,
-            simboloComentario.linha,
-            simboloComentario.literal,
-            false
-        );
+        return new Comentario(simboloComentario.hashArquivo, simboloComentario.linha, simboloComentario.literal, false);
     }
 
     declaracaoExpressao(simboloAnterior?: SimboloInterface): Expressao {
@@ -730,7 +741,13 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         dimensoes: Construto[],
         tipoDados: string = 'inteiro'
     ) {
-        let valorInicializacao: Matriz = new Matriz(this.hashArquivo, Number(simboloTipo.linha), dimensoes, tipoDados, null);
+        let valorInicializacao: Matriz = new Matriz(
+            this.hashArquivo,
+            Number(simboloTipo.linha),
+            dimensoes,
+            tipoDados,
+            null
+        );
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
             valorInicializacao.valores = this.lerValoresAtribuicaoMatriz(dimensoes);
         }
@@ -921,7 +938,9 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             const dimensoes = this.logicaComumDimensoesMatrizes();
 
             if (dimensoes.length > 0) {
-                inicializacoes.push(this.declaracaoVetorOuMatriz(simboloReal, identificador, dimensoes, tiposDeDados.REAL));
+                inicializacoes.push(
+                    this.declaracaoVetorOuMatriz(simboloReal, identificador, dimensoes, tiposDeDados.REAL)
+                );
             } else {
                 inicializacoes.push(this.declaracaoVariavelSemDimensoes(simboloReal, identificador, tiposDeDados.REAL));
             }
@@ -936,8 +955,14 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
     expressaoLimpa(): Limpa {
         const simboloLimpa = this.avancarEDevolverAnterior();
-        this.consumir(tiposDeSimbolos.PARENTESE_ESQUERDO, 'Esperado parêntese esquerdo após palavra reservada "limpa".');
-        this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, 'Esperado parêntese direito após parêntese esquerdo que acompanha palavra reservada "limpa".');
+        this.consumir(
+            tiposDeSimbolos.PARENTESE_ESQUERDO,
+            'Esperado parêntese esquerdo após palavra reservada "limpa".'
+        );
+        this.consumir(
+            tiposDeSimbolos.PARENTESE_DIREITO,
+            'Esperado parêntese direito após parêntese esquerdo que acompanha palavra reservada "limpa".'
+        );
         return new Limpa(simboloLimpa.hashArquivo, simboloLimpa.linha);
     }
 

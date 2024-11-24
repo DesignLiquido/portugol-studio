@@ -35,7 +35,11 @@ export async function obter_texto(interpretador: InterpretadorInterface, caminho
     }
 }
 
-export async function baixar_imagem(interpretador: InterpretadorInterface, endereco: string, caminho: string): Promise<string> {
+export async function baixar_imagem(
+    interpretador: InterpretadorInterface,
+    endereco: string,
+    caminho: string
+): Promise<string> {
     let tipoDaImagem: string;
     let headerDaRequisicao: string;
     let imagemObtida: Buffer;
@@ -50,7 +54,7 @@ export async function baixar_imagem(interpretador: InterpretadorInterface, ender
         } else if (headerDaRequisicao.includes('image/jpeg') || headerDaRequisicao.includes('image/jpg')) {
             tipoDaImagem = 'jpg';
         }
-        
+
         const responseImage = await fetch_com_timeout(endereco, { method: 'GET' });
         const arrayBuffer = await responseImage.arrayBuffer();
         imagemObtida = Buffer.from(arrayBuffer);
@@ -59,7 +63,7 @@ export async function baixar_imagem(interpretador: InterpretadorInterface, ender
     }
 
     arquivo = resolve(caminho + `.${tipoDaImagem}`);
-    try {    
+    try {
         await new Promise((resolve, reject) => {
             const stream = createWriteStream(arquivo);
             stream.on('finish', resolve);

@@ -1,4 +1,4 @@
-import { InterpretadorInterface } from "@designliquido/delegua/interfaces";
+import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 
 export const PI = Math.PI;
 
@@ -10,13 +10,17 @@ export async function raiz(interpretador: InterpretadorInterface, radicando: num
     return Promise.resolve(Math.pow(radicando, 1 / indice));
 }
 
-export async function arredondar(interpretador: InterpretadorInterface, numero: number, casas: number): Promise<number> {
+export async function arredondar(
+    interpretador: InterpretadorInterface,
+    numero: number,
+    casas: number
+): Promise<number> {
     let fator = 1;
-        
+
     for (let i = 1; i <= casas; i++) {
         fator *= 10;
     }
-            
+
     return Promise.resolve(Math.round(numero * fator) / fator);
 }
 
@@ -36,14 +40,14 @@ export async function tangente(interpretador: InterpretadorInterface, angulo: nu
     return Promise.resolve(Math.tan(angulo));
 }
 
-export async function valor_absoluto(interpretador: InterpretadorInterface, numero: number){
+export async function valor_absoluto(interpretador: InterpretadorInterface, numero: number) {
     return Promise.resolve(Math.abs(numero));
 }
 
-export async function maior_numero(interpretador: InterpretadorInterface, numeroA: number, numeroB: number){
+export async function maior_numero(interpretador: InterpretadorInterface, numeroA: number, numeroB: number) {
     return Promise.resolve(Math.max(numeroA, numeroB));
 }
 
-export async function menor_numero(interpretador: InterpretadorInterface, numeroA: number, numeroB: number){
+export async function menor_numero(interpretador: InterpretadorInterface, numeroA: number, numeroB: number) {
     return Promise.resolve(Math.min(numeroA, numeroB));
 }
