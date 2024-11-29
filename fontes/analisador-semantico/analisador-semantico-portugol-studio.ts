@@ -226,7 +226,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     visitarExpressaoAtribuicaoPorIndice(expressao: AtribuicaoPorIndice): Promise<any> {
         const atribuir = new Atribuir(
             expressao.hashArquivo,
-            expressao.objeto.simbolo,
+            (expressao.objeto as any).simbolo, // TODO: Aqui normalmente é um literal ou identificador, mas precisa 
+                                               // ocorrer uma correta verificação do tipo.
             expressao.valor,
             expressao.indice
         );
