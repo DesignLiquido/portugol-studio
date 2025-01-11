@@ -113,9 +113,47 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         return Promise.resolve();
     }
 
+    private validarCompatibilidadeTipos(tipoInferido: string, tipoEsperado: string): string | null {
+        switch (tipoEsperado) {
+            case tiposDeDados.CADEIA:
+                if (tipoInferido !== tiposDeDados.CARACTER) {
+                    return `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${tipoEsperado}'.`;
+                }
+                break;
+            case tiposDeDados.REAL:
+                if (tipoInferido !== tiposDeDados.INTEIRO) {
+                    return `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${tipoEsperado}'.`;
+                }
+                break;
+            default:
+                return `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${tipoEsperado}'.`;
+        }
+        return null;
+    }
+
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
         const { simbolo, valor } = expressao;
-        let variavel = this.variaveis[simbolo.lexema];
+        const variavel = this.variaveis[simbolo.lexema];
+
+        if (valor instanceof Variavel) {
+            const { simbolo: simboloVariavel } = valor;
+            const variavelExistente = this.variaveis[simboloVariavel.lexema];
+
+            if (!variavelExistente) {
+                this.adicionarDiagnostico(simboloVariavel, `Variável não declarada: ${simboloVariavel.lexema}.`);
+                return Promise.resolve();
+            }
+
+            const tipoInferido = inferirTipoVariavel(variavelExistente.valor);
+            if (tipoInferido !== variavelExistente.tipo) {
+                const erroTipo = this.validarCompatibilidadeTipos(variavelExistente.tipo, tipoInferido);
+                if (erroTipo) {
+                    this.adicionarDiagnostico(simbolo, erroTipo);
+                    return Promise.resolve();
+                }
+            }
+        }
+
         if (!variavel) {
             this.adicionarDiagnostico(simbolo, `Variável não declarada: ${simbolo.lexema}.`);
             return Promise.resolve();
@@ -126,43 +164,19 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             return Promise.resolve();
         }
 
-        if (variavel.tipo) {
-            if (valor instanceof Literal) {
-                const tipoInferido = inferirTipoVariavel(valor.valor);
-                if (tipoInferido !== variavel.tipo) {
-                    switch (variavel.tipo) {
-                        case tiposDeDados.CADEIA:
-                            if (tipoInferido !== tiposDeDados.CARACTER) {
-                                this.adicionarDiagnostico(
-                                    simbolo,
-                                    `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`
-                                );
-                                return Promise.resolve();
-                            }
-                            break;
-                        case tiposDeDados.REAL:
-                            if (tipoInferido !== tiposDeDados.INTEIRO) {
-                                this.adicionarDiagnostico(
-                                    simbolo,
-                                    `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`
-                                );
-                                return Promise.resolve();
-                            }
-                            break;
-                        default:
-                            this.adicionarDiagnostico(
-                                simbolo,
-                                `Não é possível atribuir um valor do tipo '${tipoInferido}' a uma variável do tipo '${variavel.tipo}'.`
-                            );
-                            return Promise.resolve();
-                    }
+        if (variavel.tipo && valor instanceof Literal) {
+            const tipoInferido = inferirTipoVariavel(valor.valor);
+            if (tipoInferido !== variavel.tipo) {
+                const erroTipo = this.validarCompatibilidadeTipos(tipoInferido, variavel.tipo);
+                if (erroTipo) {
+                    this.adicionarDiagnostico(simbolo, erroTipo);
+                    return Promise.resolve();
                 }
             }
         }
 
-        if (variavel) {
-            this.variaveis[simbolo.lexema].valor = valor;
-        }
+        this.variaveis[simbolo.lexema].valor = valor;
+
     }
 
     visitarExpressaoDeChamada(expressao: Chamada): Promise<any> {
@@ -178,8 +192,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             if (funcao.parametros.length != expressao.argumentos.length) {
                 this.adicionarDiagnostico(
                     variavel.simbolo,
-                    `Esperava ${funcao.parametros.length} ${
-                        funcao.parametros.length > 1 ? 'parâmetros' : 'parâmetro'
+                    `Esperava ${funcao.parametros.length} ${funcao.parametros.length > 1 ? 'parâmetros' : 'parâmetro'
                     }, mas foi passado ${expressao.argumentos.length}.`
                 );
             }
@@ -226,8 +239,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     visitarExpressaoAtribuicaoPorIndice(expressao: AtribuicaoPorIndice): Promise<any> {
         const atribuir = new Atribuir(
             expressao.hashArquivo,
-            (expressao.objeto as any).simbolo, // TODO: Aqui normalmente é um literal ou identificador, mas precisa 
-                                               // ocorrer uma correta verificação do tipo.
+            (expressao.objeto as any).simbolo, // TODO: Aqui normalmente é um literal ou identificador, mas precisa
+            // ocorrer uma correta verificação do tipo.
             expressao.valor,
             expressao.indice
         );
