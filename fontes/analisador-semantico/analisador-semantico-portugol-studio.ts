@@ -92,17 +92,41 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     }
 
     visitarDeclaracaoVar(declaracao: Var): Promise<any> {
-        this.variaveis[declaracao.simbolo.lexema] = {
+        const { simbolo, inicializador } = declaracao;
+        if (inicializador instanceof Variavel) {
+            const { simbolo: simboloInicializador } = inicializador;
+            const variavelExistente = this.variaveis[simboloInicializador.lexema];
+
+            if (!variavelExistente) {
+                this.adicionarDiagnostico(
+                    simboloInicializador,
+                    `Variável não declarada: ${simboloInicializador.lexema}.`
+                );
+                return Promise.resolve();
+            }
+
+            const tipoInferido = inferirTipoVariavel(variavelExistente.valor);
+            if (tipoInferido !== declaracao.tipo) {
+                const erroTipo = this.validarCompatibilidadeTipos(tipoInferido, declaracao.tipo);
+                if (erroTipo) {
+                    this.adicionarDiagnostico(simbolo, erroTipo);
+                    return Promise.resolve();
+                }
+            }
+        }
+
+        this.variaveis[simbolo.lexema] = {
             imutavel: false,
             tipo: declaracao.tipo,
             valor:
-                declaracao.inicializador !== null
-                    ? declaracao.inicializador.valor !== undefined
-                        ? declaracao.inicializador.valor
-                        : declaracao.inicializador
+                inicializador !== null
+                    ? inicializador.valor !== undefined
+                        ? inicializador.valor
+                        : inicializador
                     : undefined,
             valorDefinido: true,
         };
+
         return Promise.resolve();
     }
 
