@@ -325,7 +325,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         }
 
         for (const declaracao of declaracoes) {
-            if (declaracao instanceof FuncaoDeclaracao) {
+            if (declaracao instanceof FuncaoDeclaracao  || declaracao instanceof Var) {
                 if (declaracao.simbolo.lexema !== 'inicio') {
                     declaracao.aceitar(this);
                 }
