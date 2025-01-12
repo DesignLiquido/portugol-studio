@@ -53,6 +53,26 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
             });
 
+            it('Reconhece e utiliza variável global corretamente', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'inteiro totalGolsMarcados = 0',
+                    'funcao inicio() {',
+                    'escreva(totalGolsMarcados)',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                // Espera que não haja diagnósticos de erro
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
+
+
         });
 
         describe('Casos de Falha', () => {

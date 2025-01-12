@@ -78,7 +78,7 @@ describe('Interpretador (Portugol Studio)', () => {
                             callback(respostas.pop());
                         }
                     };
-    
+
                     const retornoLexador = lexador.mapear([
                         'programa',
                         '{',
@@ -90,18 +90,18 @@ describe('Interpretador (Portugol Studio)', () => {
                         '    }',
                         '}'
                     ], -1);
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-    
+
                     interpretador.funcaoDeRetorno = (saida: string) => {
                         expect(saida).toEqual("15")
                     }
-    
+
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-    
+
                     expect(retornoInterpretador.erros).toHaveLength(0);
                 });
-    
+
                 it('Leia com condicional se', async () => {
                     const respostas = [1];
                     interpretador.interfaceEntradaSaida = {
@@ -109,7 +109,7 @@ describe('Interpretador (Portugol Studio)', () => {
                             callback(respostas.pop());
                         }
                     };
-    
+
                     const retornoLexador = lexador.mapear([
                         'programa',
                         '{',
@@ -126,15 +126,15 @@ describe('Interpretador (Portugol Studio)', () => {
                         '    }',
                         '}'
                     ], -1);
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
-    
+
                     interpretador.funcaoDeRetorno = (saida: any) => {
                         expect(saida).toEqual("É igual a 1")
                     }
-    
+
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-    
+
                     expect(retornoInterpretador.erros).toHaveLength(0);
                 });
             });
@@ -237,14 +237,14 @@ describe('Interpretador (Portugol Studio)', () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{  ',
-                        //variável global do tipo inteiro  
+                        //variável global do tipo inteiro
                         'inteiro variavel',
                         'funcao inicio()',
                         '{  ',
                             'inteiro outra_variavel',
-                            'real altura = 1.79',  
+                            'real altura = 1.79',
                             'cadeia frase = "Isso é uma variável do tipo cadeia"',
-                            'caracter inicial = \'P\'',  
+                            'caracter inicial = \'P\'',
                             'logico exemplo = verdadeiro',
                             'escreva(altura)',
                         '}',
@@ -288,7 +288,7 @@ describe('Interpretador (Portugol Studio)', () => {
                             'senao se (posicao == 2)',
                             '{',
                                 'retorne 1',
-                            '}',                    
+                            '}',
                             'retorne fibonacci(posicao - 1) + fibonacci(posicao - 2)',
                         '}',
                     '}',
@@ -312,7 +312,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     'programa',
                     '{',
                         'funcao inicio ()',
-                        '{	',                            
+                        '{	',
 
                             'const real PRECO_PARAFUSO = 1.50',
                             'const real PRECO_ARRUELA  = 2.00',
@@ -324,10 +324,10 @@ describe('Interpretador (Portugol Studio)', () => {
 
                             'escreva("Digite seu nome: ")',
                             'leia(nome)',
-                            
+
                             'escreva("\nDigite a quantidade de parafusos que deseja comprar: ")',
                             'leia(quantidade_parafusos)',
-                            
+
                             'escreva("Digite a quantidade de arruelas que deseja comprar: ")',
                             'leia(quantidade_arruelas)',
 
@@ -337,9 +337,9 @@ describe('Interpretador (Portugol Studio)', () => {
                             'total_parafusos = PRECO_PARAFUSO * quantidade_parafusos',
                             'total_arruelas = PRECO_ARRUELA * quantidade_arruelas',
                             'total_porcas = PRECO_PORCA * quantidade_porcas',
-                            
+
                             'total_pagar = total_parafusos + total_porcas + total_arruelas',
-                            
+
                             'escreva("Cliente: ", nome, "\n")',
                             'escreva("===============================\n")',
                             'escreva("Parafusos: ", quantidade_parafusos, "\n")',
@@ -382,10 +382,10 @@ describe('Interpretador (Portugol Studio)', () => {
                             '}',
                         '}',
                     ], -1);
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-    
+
                     expect(retornoInterpretador.erros).toHaveLength(0);
                 });
 
@@ -447,10 +447,10 @@ describe('Interpretador (Portugol Studio)', () => {
                     interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
                         _saidas += saida;
                     }
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-    
+
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas).toContain('A Soma é:  10');
                     expect(_saidas).toContain('A Soma é:  6');
@@ -468,7 +468,7 @@ describe('Interpretador (Portugol Studio)', () => {
 
                 const retornoLexador = lexador.mapear([
                     `programa`,
-                    `{`, 
+                    `{`,
                     `    inteiro numero,a1,a2,a3,a4`,
                     `    funcao inicio()`,
                     `    {`,
@@ -542,7 +542,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
                         _saidas += saida;
                     }
-    
+
                     const retornoLexador = lexador.mapear([
                         `programa {`,
                         `    funcao inicio() {`,
@@ -555,7 +555,7 @@ describe('Interpretador (Portugol Studio)', () => {
 
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-    
+
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas).toContain('0');
                 });
@@ -565,7 +565,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
                         _saidas += saida;
                     }
-    
+
                     const retornoLexador = lexador.mapear([
                         'programa',
                         '{',
@@ -574,25 +574,25 @@ describe('Interpretador (Portugol Studio)', () => {
                         '        //Declaração de uma matriz de inteiros',
                         '        // de duas linhas e duas colunas já inicializado.',
                         '        inteiro matriz[2][2] = {{15,22},{10,11}}',
-    
+
                         '        //Atribui -1 na primeira linha e segunda',
                         '        // coluna da matriz.',
                         '        matriz[0][1] = -1',
-                        
+
                         '        //Imprime o valor 15 correspondente ',
                         '        // a primeira linha e primeira coluna da matriz.',
                         '        inteiro i = 0',
                         '        escreva(matriz[i][0])',
                         '        escreva("\n")',
-                        
+
                         '        //Imprime o valor 11 correspondente  ',
                         '        // a última linha e última coluna da matriz.',
                         '        escreva(matriz[1][1])',
-                        
+
                         '        //Declaração de uma matriz de reais de ',
                         '        // duas linhas e quatro colunas.',
                         '        real outra_matriz[2][4]',
-                        
+
                         '        //Declaração de uma matriz de caracteres onde o tamanho',
                         '        // de linhas e colunas são definidos pela inicialização',
                         `        caracter jogo_velha[][] = {{'X','O','X'}`,
@@ -601,10 +601,10 @@ describe('Interpretador (Portugol Studio)', () => {
                         '    }',
                         '}'
                     ], -1);
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-    
+
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas.length).toBeGreaterThanOrEqual(4);
                 });
@@ -619,7 +619,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         'programa',
                         '{',
                         '    funcao inicio()',
-                        '    {', 
+                        '    {',
                         '        cadeia nome[] = { "João", "Ana" , "Tiago", "Luiz", "Carlos" }',
                         '        real altura[] = { 5.7, 8.8, 9.75, 1.32, 9.93 }',
                         '        // Cria o cabeçalho da tabela',
@@ -627,7 +627,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '        escreva ("       TABELA       \n")',
                         '        escreva ("--------------------\n")',
                         '        para (inteiro posicao = 0; posicao < 5; posicao++)',
-                        '        {', 
+                        '        {',
                         '            escreva (nome[posicao], "\t\t", altura [posicao], "\n")',
                         '        }',
                         '    }',
@@ -636,7 +636,7 @@ describe('Interpretador (Portugol Studio)', () => {
 
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-    
+
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas.length).toBeGreaterThan(0);
                 });
@@ -657,10 +657,10 @@ describe('Interpretador (Portugol Studio)', () => {
                         '    }',
                         '}'
                     ], -1);
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
-    
+
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(metodoVisitarExpressaoLimpa).toHaveBeenCalledTimes(1);
                 });
@@ -726,7 +726,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '    }',
                         '}'
                     ], -1);
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -734,6 +734,32 @@ describe('Interpretador (Portugol Studio)', () => {
                     expect(_saidas).toHaveLength(22);
                 });
             });
+
+            it('Reconhece variável global e a utiliza corretamente', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    inteiro totalGolsMarcados = 8',
+                    '    funcao inicio()',
+                    '    {',
+                    '        escreva(totalGolsMarcados)',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+
+                let saida = "";
+                interpretador.funcaoDeRetorno = (resultado: string) => {
+                    saida = resultado;
+                };
+
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+                expect(saida).toBe("0");
+            });
+
         });
     });
 });
