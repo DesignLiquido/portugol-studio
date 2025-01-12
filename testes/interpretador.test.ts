@@ -750,14 +750,15 @@ describe('Interpretador (Portugol Studio)', () => {
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
 
                 let saida = "";
-                interpretador.funcaoDeRetorno = (resultado: string) => {
+                interpretador.funcaoDeRetornoMesmaLinha = (resultado: string) => {
+                    console.log(resultado)
                     saida = resultado;
                 };
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
-                expect(saida).toBe("0");
+                expect(saida).toBe("8");
             });
 
         });
