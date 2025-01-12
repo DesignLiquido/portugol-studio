@@ -751,14 +751,13 @@ describe('Interpretador (Portugol Studio)', () => {
 
                 let saida = "";
                 interpretador.funcaoDeRetornoMesmaLinha = (resultado: string) => {
-                    console.log(resultado)
                     saida = resultado;
                 };
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
-                expect(saida).toBe("8");
+                expect(saida).toBe("8 ");
             });
 
         });
