@@ -33,6 +33,7 @@ import {
 import {
     AcessoIndiceVariavel,
     AcessoMetodoOuPropriedade,
+    AcessoPropriedade,
     Agrupamento,
     AtribuicaoPorIndice,
     Atribuir,
@@ -76,6 +77,14 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado = '';
         this.devePularLinha = true;
         this.deveIndentar = true;
+    }
+
+    visitarExpressaoAcessoMetodoOuPropriedade(expressao: AcessoMetodoOuPropriedade): Promise<any> | void {
+        throw new Error('Método não implementado.');
+    }
+
+    visitarExpressaoAcessoPropriedade(expressao: AcessoPropriedade): Promise<any> | void {
+        throw new Error('Método não implementado.');
     }
 
     visitarDeclaracaoComentario(declaracao: Comentario): void | Promise<any> {
@@ -149,7 +158,8 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         ) {
             this.visitarExpressaoBinaria(expressao.valor);
         } else {
-            this.codigoFormatado += `${expressao.simbolo.lexema} = `;
+            const alvo = this.formatarDeclaracaoOuConstruto(expressao.alvo);
+            this.codigoFormatado += `${alvo} = `;
             this.formatarDeclaracaoOuConstruto(expressao.valor);
         }
 

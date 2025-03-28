@@ -115,7 +115,7 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
         }
         ambienteAncestral.valores[simbolo.lexema] = {
             valor,
-            tipo: inferirTipoVariavel(valor),
+            tipo: inferirTipoVariavel(valor) as any,
             imutavel: false,
         };
     }
@@ -138,7 +138,7 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
                 const valorResolvido = converterValor(tipo, valor);
                 ambiente.valores[simbolo.lexema] = {
                     valor: valorResolvido,
-                    tipo,
+                    tipo: tipo as any,
                     imutavel: false,
                 };
                 return;

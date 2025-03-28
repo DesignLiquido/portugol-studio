@@ -20,14 +20,14 @@ import {
     AtribuicaoPorIndice,
     Atribuir,
     Chamada,
-    FormatacaoEscrita,
     FuncaoConstruto,
     Literal,
-    Variavel,
-    Vetor,
+    Variavel
 } from '@designliquido/delegua/construtos';
 import { inferirTipoVariavel } from '../interpretador/inferenciador';
 import tiposDeDados from '../tipos-de-dados';
+import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
+
 export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
     variaveis: { [nomeVariavel: string]: VariavelHipoteticaInterface };
@@ -61,22 +61,20 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
     visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
         declaracao.argumentos.forEach((argumento) => {
-            if (argumento instanceof Variavel) {
-                if (!this.variaveis[argumento.simbolo.lexema]) {
-                    this.adicionarDiagnostico(argumento.simbolo, `Variável não declarada: ${argumento.simbolo.lexema}`);
-                    //return Promise.resolve();
-                }
+            if (argumento instanceof Variavel && !this.variaveis[argumento.simbolo.lexema]) {
+                this.adicionarDiagnostico(argumento.simbolo, `Variável não declarada: ${argumento.simbolo.lexema}`);
             }
         });
+
         return Promise.resolve();
     }
 
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<any> {
         for (let parametro of declaracao.funcao.parametros) {
-            if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado.tipo) {
+            if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado) {
                 this.adicionarDiagnostico(
                     declaracao.simbolo,
-                    `O tipo '${parametro.tipoDado.tipoInvalido}' não é valido`
+                    `O tipo '${parametro.tipoDado}' não é valido`
                 );
             }
         }
@@ -117,7 +115,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
         this.variaveis[simbolo.lexema] = {
             imutavel: false,
-            tipo: declaracao.tipo,
+            tipo: declaracao.tipo as TipoDadosElementar,
             valor:
                 inicializador !== null
                     ? inicializador.valor !== undefined
@@ -156,15 +154,24 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     }
 
     visitarExpressaoDeAtribuicao(expressao: Atribuir) {
-        const { simbolo, valor } = expressao;
-        const variavel = this.variaveis[simbolo.lexema];
+        const { valor, alvo } = expressao;
+        let simboloAlvo: SimboloInterface | null = null;
+        let nomeVariavel: string | null = null;
+        switch (alvo.constructor.name) {
+            case 'Variavel':
+                const alvoVariavel = alvo as Variavel;
+                simboloAlvo = alvoVariavel.simbolo;
+                nomeVariavel = simboloAlvo.lexema;
+                break;
+            default:
+                return Promise.reject('Terminar');
+        }
 
         if (valor instanceof Variavel) {
-            const { simbolo: simboloVariavel } = valor;
-            const variavelExistente = this.variaveis[simboloVariavel.lexema];
+            const variavelExistente = this.variaveis[valor.simbolo.lexema];
 
             if (!variavelExistente) {
-                this.adicionarDiagnostico(simboloVariavel, `Variável não declarada: ${simboloVariavel.lexema}.`);
+                this.adicionarDiagnostico(valor.simbolo, `Variável não declarada: ${valor.simbolo.lexema}.`);
                 return Promise.resolve();
             }
 
@@ -172,19 +179,20 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             if (tipoInferido !== variavelExistente.tipo) {
                 const erroTipo = this.validarCompatibilidadeTipos(variavelExistente.tipo, tipoInferido);
                 if (erroTipo) {
-                    this.adicionarDiagnostico(simbolo, erroTipo);
+                    this.adicionarDiagnostico(valor.simbolo, erroTipo);
                     return Promise.resolve();
                 }
             }
         }
 
+        const variavel = this.variaveis[nomeVariavel];
         if (!variavel) {
-            this.adicionarDiagnostico(simbolo, `Variável não declarada: ${simbolo.lexema}.`);
+            this.adicionarDiagnostico(simboloAlvo, `Variável não declarada: ${simboloAlvo.lexema}.`);
             return Promise.resolve();
         }
 
         if (variavel.imutavel) {
-            this.adicionarDiagnostico(simbolo, 'Não é possível alterar o valor de uma constante.');
+            this.adicionarDiagnostico(simboloAlvo, 'Não é possível alterar o valor de uma constante.');
             return Promise.resolve();
         }
 
@@ -193,14 +201,13 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             if (tipoInferido !== variavel.tipo) {
                 const erroTipo = this.validarCompatibilidadeTipos(tipoInferido, variavel.tipo);
                 if (erroTipo) {
-                    this.adicionarDiagnostico(simbolo, erroTipo);
+                    this.adicionarDiagnostico(simboloAlvo, erroTipo);
                     return Promise.resolve();
                 }
             }
         }
 
-        this.variaveis[simbolo.lexema].valor = valor;
-
+        this.variaveis[nomeVariavel].valor = valor;
     }
 
     visitarExpressaoDeChamada(expressao: Chamada): Promise<any> {
@@ -224,7 +231,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             for (let [indice, argumento] of expressao.argumentos.entries()) {
                 const parametroCorrespondente = funcao.parametros[indice];
                 if (parametroCorrespondente.tipoDado) {
-                    const tipoDadoParametro = parametroCorrespondente.tipoDado.tipo.toLowerCase();
+                    const tipoDadoParametro = parametroCorrespondente.tipoDado.toLowerCase();
 
                     if (argumento instanceof Variavel) {
                         const lexemaVariavelCorrespondente = (argumento as Variavel).simbolo.lexema;
@@ -263,8 +270,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     visitarExpressaoAtribuicaoPorIndice(expressao: AtribuicaoPorIndice): Promise<any> {
         const atribuir = new Atribuir(
             expressao.hashArquivo,
-            (expressao.objeto as any).simbolo, // TODO: Aqui normalmente é um literal ou identificador, mas precisa
-            // ocorrer uma correta verificação do tipo.
+            expressao.objeto,
             expressao.valor,
             expressao.indice
         );
@@ -298,7 +304,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     visitarDeclaracaoConst(declaracao: Const): Promise<any> {
         this.variaveis[declaracao.simbolo.lexema] = {
             imutavel: true,
-            tipo: declaracao.tipo,
+            tipo: declaracao.tipo as TipoDadosElementar,
             valor:
                 declaracao.inicializador !== null
                     ? declaracao.inicializador.valor !== undefined
@@ -325,7 +331,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         }
 
         for (const declaracao of declaracoes) {
-            if (declaracao instanceof FuncaoDeclaracao  || declaracao instanceof Var) {
+            if (declaracao instanceof FuncaoDeclaracao || declaracao instanceof Var) {
                 if (declaracao.simbolo.lexema !== 'inicio') {
                     declaracao.aceitar(this);
                 }

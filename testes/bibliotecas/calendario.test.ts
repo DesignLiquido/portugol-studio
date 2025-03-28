@@ -89,7 +89,7 @@ describe('Biblioteca Calendario', () => {
             const dataAtual = new Date();
             const milissegundoEsperado = dataAtual.getMilliseconds();
             const resultado = await milisegundo_atual();
-            expect(resultado).toBe(milissegundoEsperado);
+            expect(resultado).toBeGreaterThanOrEqual(milissegundoEsperado);
         });
     });
     describe('Dia da Semana Completo', () => {

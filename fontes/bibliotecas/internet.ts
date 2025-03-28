@@ -66,7 +66,7 @@ export async function baixar_imagem(
     try {
         await new Promise((resolve, reject) => {
             const stream = createWriteStream(arquivo);
-            stream.on('finish', resolve);
+            stream.on('finish', resolve as () => void);
             stream.on('error', reject);
             stream.write(imagemObtida);
             stream.end();
