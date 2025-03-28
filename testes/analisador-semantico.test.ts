@@ -15,18 +15,18 @@ describe('Analisador sêmantico', () => {
         });
 
         describe('Casos de Sucesso', () => {
-            it('Atribuição por indice', () => {
+            it('Atribuição por índice', () => {
                 const retornoLexador = lexador.mapear([
                     'programa {',
-                    'funcao inicio() {',
-                    'inteiro numeros[10]',
-                    'numeros[1] = "5"',
-                    '}',
+                    '    funcao inicio() {',
+                    '        inteiro numeros[10]',
+                    '        numeros[1] = "5"',
+                    '    }',
                     '}'
                 ], -1);
+
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
-
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
@@ -96,11 +96,12 @@ describe('Analisador sêmantico', () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
-                    'funcao inicio() {',
-                    'message = "olá mundo"',
-                    '}',
+                    '    funcao inicio() {',
+                    '        message = "olá mundo"',
+                    '    }',
                     '}'
                 ], -1);
+                
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
@@ -213,14 +214,15 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
             });
+
             it('Reatribuição de valores a uma constante', () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
-                    'funcao inicio() {',
-                    'const inteiro numero = 3',
-                    'numero = 4',
-                    '}',
+                    '    funcao inicio() {',
+                    '        const inteiro numero = 3',
+                    '        numero = 4',
+                    '    }',
                     '}'
                 ], -1);
                 const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
