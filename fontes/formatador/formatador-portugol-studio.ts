@@ -19,7 +19,6 @@ import {
     Importar,
     InicioAlgoritmo,
     Leia,
-    LeiaMultiplo,
     Para,
     ParaCada,
     Retorna,
@@ -533,10 +532,6 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         }
 
         this.codigoFormatado += `)${this.quebraLinha}`;
-    }
-
-    visitarExpressaoLeiaMultiplo(expressao: LeiaMultiplo): Promise<any> {
-        throw new Error('Método não implementado');
     }
 
     visitarExpressaoLiteral(expressao: Literal): any {
