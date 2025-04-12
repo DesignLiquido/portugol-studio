@@ -344,7 +344,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         return new Const(
             constanteBiblioteca,
-            new Importar(new Literal(this.hashArquivo, nomeBiblioteca.linha, nomeBiblioteca.lexema), null)
+            new Importar(new Literal(this.hashArquivo, nomeBiblioteca.linha, nomeBiblioteca.lexema))
         );
     }
 
