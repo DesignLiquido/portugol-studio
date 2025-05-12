@@ -1,6 +1,6 @@
-import { AcessoIndiceVariavel, Construto, Variavel } from '@designliquido/delegua/construtos';
-import { Declaracao, Expressao, Importar, Leia } from '@designliquido/delegua/declaracoes';
-import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/estruturas';
+import { AcessoIndiceVariavel, Construto, Leia } from '@designliquido/delegua/construtos';
+import { Declaracao, Expressao, Importar } from '@designliquido/delegua/declaracoes';
+import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/interpretador/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { VariavelInterface } from '@designliquido/delegua';
 

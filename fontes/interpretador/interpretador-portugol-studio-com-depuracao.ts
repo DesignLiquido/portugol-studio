@@ -1,6 +1,7 @@
-import { EscrevaMesmaLinha, Importar, Leia } from '@designliquido/delegua/declaracoes';
+import { EscrevaMesmaLinha, Importar } from '@designliquido/delegua/declaracoes';
 import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
-import { DeleguaModulo } from '@designliquido/delegua/estruturas';
+import { DeleguaModulo } from '@designliquido/delegua/interpretador/estruturas';
+import { Leia } from '@designliquido/delegua/construtos';
 
 import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
 import { Matriz } from '../construtos/matriz';

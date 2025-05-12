@@ -1,8 +1,9 @@
-import { EscrevaMesmaLinha, Importar, Leia } from '@designliquido/delegua/declaracoes';
+import { EscrevaMesmaLinha, Importar } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
 import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 import { EspacoVariaveis } from '@designliquido/delegua/espaco-variaveis';
-import { DeleguaModulo } from '@designliquido/delegua/estruturas';
+import { DeleguaModulo } from '@designliquido/delegua/interpretador/estruturas';
+import { Leia } from '@designliquido/delegua/construtos';
 
 import { Matriz } from '../construtos/matriz';
 import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';

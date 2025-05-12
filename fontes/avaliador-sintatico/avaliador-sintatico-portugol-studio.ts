@@ -6,9 +6,9 @@ import {
     Atribuir,
     Binario,
     Chamada,
-    Comentario,
     Construto,
     FuncaoConstruto,
+    Leia,
     Literal,
     Unario,
     Variavel,
@@ -23,20 +23,19 @@ import {
     Fazer,
     FuncaoDeclaracao,
     Expressao,
-    Leia,
     Var,
     Bloco,
     EscrevaMesmaLinha,
     Retorna,
     Const,
     Importar,
+    Comentario,
 } from '@designliquido/delegua/declaracoes';
 import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/interfaces/retornos';
 import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintatico/avaliador-sintatico-base';
 
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 
-import { RetornoDeclaracao } from '@designliquido/delegua/avaliador-sintatico/retornos';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
@@ -353,7 +352,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         this.blocos += 1;
         this.pilhaEscopos.empilhar(new InformacaoEscopo());
 
-        let declaracoes: Array<RetornoDeclaracao> = [];
+        let declaracoes: Array<Declaracao> = [];
 
         while (!this.verificarTipoSimboloAtual(tiposDeSimbolos.CHAVE_DIREITA) && !this.estaNoFinal()) {
             const declaracaoOuVetor: any = this.resolverDeclaracaoForaDeBloco();
@@ -851,7 +850,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
      * Análise de uma declaração `leia()`. No VisuAlg, `leia()` aceita 1..N argumentos.
      * @returns Uma declaração `Leia`.
      */
-    declaracaoLeia(): Leia {
+    expressaoLeia(): Leia {
         const simboloLeia = this.avancarEDevolverAnterior();
 
         this.consumir(tiposDeSimbolos.PARENTESE_ESQUERDO, "Esperado '(' antes do argumento em instrução `leia`.");
@@ -1081,7 +1080,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.INTEIRO:
                 return this.declaracaoInteiros();
             case tiposDeSimbolos.LEIA:
-                return this.declaracaoLeia();
+                return this.expressaoLeia();
             case tiposDeSimbolos.LIMPA:
                 return this.expressaoLimpa();
             case tiposDeSimbolos.LINHA_COMENTARIO:
