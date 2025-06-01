@@ -9,10 +9,16 @@ describe('Interpretador (Portugol Studio)', () => {
         let avaliadorSintatico: AvaliadorSintaticoPortugolStudio;
         let interpretador: InterpretadorPortugolStudio;
 
+        let _saidas: string[] = [];
+        const funcaoSaida = (texto: string) => {
+            _saidas.push(texto);
+        }
+
         beforeEach(() => {
+            _saidas = [];
             lexador = new LexadorPortugolStudio();
             avaliadorSintatico = new AvaliadorSintaticoPortugolStudio();
-            interpretador = new InterpretadorPortugolStudio(process.cwd());
+            interpretador = new InterpretadorPortugolStudio(process.cwd(), false, funcaoSaida, funcaoSaida);
         });
 
         describe('Cenários de sucesso', () => {
