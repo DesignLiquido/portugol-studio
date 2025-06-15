@@ -33,18 +33,20 @@ import {
 } from '@designliquido/delegua/declaracoes';
 import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/interfaces/retornos';
 import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintatico/avaliador-sintatico-base';
+import { PilhaEscopos } from '@designliquido/delegua/avaliador-sintatico';
+import { InformacaoEscopo } from '@designliquido/delegua/avaliador-sintatico/informacao-escopo';
+import { InformacaoVariavelOuConstante } from '@designliquido/delegua/informacao-variavel-ou-constante';
 
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 
+import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
 import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 import { Matriz, Limpa } from '../construtos';
+
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
-import { Simbolo } from '@designliquido/delegua/lexador';
 import tiposDeDados from '../tipos-de-dados';
-import { PilhaEscopos } from '@designliquido/delegua/avaliador-sintatico';
-import { InformacaoEscopo } from '@designliquido/delegua/avaliador-sintatico/informacao-escopo';
 
 /**
  * O avaliador sintático (_Parser_) é responsável por transformar os símbolos do Lexador em estruturas de alto nível.
@@ -784,7 +786,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         }
 
         const tipoDadosFinal = `${tipoDados}[]`;
-        this.pilhaEscopos.definirTipoVariavel(identificador.lexema, tipoDadosFinal);
+        this.pilhaEscopos.definirInformacoesVariavel(
+            identificador.lexema, 
+            new InformacaoVariavelOuConstante(identificador.lexema, tipoDadosFinal)
+        );
+
         return new Var(identificador, valorInicializacao, tipoDadosFinal);
     }
 
@@ -799,7 +805,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             valorInicializacao = this.expressao();
         }
 
-        this.pilhaEscopos.definirTipoVariavel(identificador.lexema, tipoDados);
+        this.pilhaEscopos.definirInformacoesVariavel(
+            identificador.lexema, 
+            new InformacaoVariavelOuConstante(identificador.lexema, tipoDados)
+        );
+
         return new Var(identificador, valorInicializacao, tipoDados as any);
     }
 
@@ -1046,7 +1056,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         const inicializador = this.expressao();
 
-        this.pilhaEscopos.definirTipoVariavel(identificador.lexema, tipo.lexema);
+        this.pilhaEscopos.definirInformacoesVariavel(
+            identificador.lexema, 
+            new InformacaoVariavelOuConstante(identificador.lexema, tipo.lexema)
+        );
+
         return new Const(identificador, inicializador, tipo.lexema as TipoDadosElementar);
     }
 
