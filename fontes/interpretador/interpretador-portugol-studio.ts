@@ -23,7 +23,7 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
         funcaoDeRetorno: Function = null,
         funcaoLimpa: Function = null
     ) {
-        super(diretorioBase, performance, funcaoDeRetorno);
+        super(diretorioBase, performance, funcaoDeRetorno, funcaoDeRetorno);
 
         if (funcaoLimpa !== null) {
             this.funcaoLimpa = funcaoLimpa;
