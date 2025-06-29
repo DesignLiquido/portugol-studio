@@ -1,6 +1,21 @@
 # portugol-studio
 
-Nossa implementação do dialeto Portugol Studio, usando TypeScript, baseado no núcleo de Delégua.
+Nossa implementação do dialeto Portugol Studio usando TypeScript, baseado no núcleo de Delégua.
+
+  <p align="center">
+    <img src="./recursos/imagens/badge-statements.svg" />
+    <img src="./recursos/imagens/badge-lines.svg" />
+    <img src="./recursos/imagens/badge-functions.svg" />
+    <img src="./recursos/imagens/badge-branches.svg" />
+    <a href="https://github.com/DesignLiquido/portugol-studio/issues" target="_blank">
+      <img src="https://img.shields.io/github/issues/Designliquido/portugol-studio" />
+    </a>
+    <a href="https://www.npmjs.com/package/@designliquido/portugol-studio" target="_blank">
+      <img src="https://img.shields.io/npm/v/@designliquido/portugol-studio" />
+    </a>
+    <img src="https://img.shields.io/npm/dw/@designliquido/portugol-studio" />
+    <img src="https://img.shields.io/github/license/Designliquido/portugol-studio" />
+  </p>
 
 ## Sobre este dialeto
 
