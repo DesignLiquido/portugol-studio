@@ -178,7 +178,10 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
     }
 
     visitarDeclaracaoDeExpressao(declaracao: Expressao) {
-        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}`;
+        if (this.deveIndentar) {
+            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}`;
+        }
+        
         this.formatarDeclaracaoOuConstruto(declaracao.expressao);
     }
 
@@ -328,7 +331,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
     visitarDeclaracaoSe(declaracao: Se) {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}se (`;
         this.formatarDeclaracaoOuConstruto(declaracao.condicao);
-        this.codigoFormatado += ` ) {${this.quebraLinha}`;
+        this.codigoFormatado += `) {${this.quebraLinha}`;
 
         this.indentacaoAtual += this.tamanhoIndentacao;
         for (let declaracaoBloco of (declaracao.caminhoEntao as Bloco).declaracoes) {
@@ -532,6 +535,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
 
     visitarExpressaoLeia(expressao: Leia): any {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}leia(`;
+        this.deveIndentar = false;
         for (let argumento of expressao.argumentos) {
             this.formatarDeclaracaoOuConstruto(argumento);
             this.codigoFormatado += `, `;
@@ -542,6 +546,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         }
 
         this.codigoFormatado += `)${this.quebraLinha}`;
+        this.deveIndentar = true;
     }
 
     visitarExpressaoLiteral(expressao: Literal): any {
@@ -788,7 +793,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
 
         // O avaliador sintático devolve uma última declaração `Expressao`
         // que é simplemente uma chamada à função `inicio()`, mas que é
-        // irrelevante aqui. Então simplesmente a descartamos.
+        // irrelevante aqui, então simplesmente a descartamos.
         declaracoes.pop();
 
         this.codigoFormatado += `programa ${this.quebraLinha}{${this.quebraLinha}`;

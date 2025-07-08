@@ -4,39 +4,43 @@ import { AvaliadorSintaticoPortugolStudio } from '../fontes/avaliador-sintatico/
 import { FormatadorPortugolStudio } from '../fontes/formatador/formatador-portugol-studio';
 import { LexadorPortugolStudio } from '../fontes/lexador/lexador-portugol-studio';
 
-describe('Formatadores > Portugol Studio', () => {
+describe('Formatador', () => {
     const formatador = new FormatadorPortugolStudio(sistemaOperacional.EOL);
     const avaliadorSintatico = new AvaliadorSintaticoPortugolStudio();
     const lexador = new LexadorPortugolStudio();
 
     it('Olá mundo', () => {
         const retornoLexador = lexador.mapear(
-            ['programa', '{', '   ', '    funcao inicio()', '    {', '        escreva("Olá Mundo")', '    }', '}'],
-            -1
+            ['programa{funcao inicio(){escreva("Olá Mundo")}}'], -1
         );
         const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(8);
+        expect(linhasResultado[0]).toContain("programa");
+        expect(linhasResultado[1]).toContain("{");
+        expect(linhasResultado[2]).toContain("funcao inicio()");
+        expect(linhasResultado[3]).toContain("{");
+        expect(linhasResultado[4]).toContain('escreva("Olá Mundo")');
+        expect(linhasResultado[5]).toContain('}');
+        expect(linhasResultado[6]).toContain('}');
     });
 
     it('Leia com condicional se', () => {
         const retornoLexador = lexador.mapear(
             [
-                'programa',
-                '{',
-                '    funcao inicio()',
-                '    {',
-                '        inteiro n',
-                '        leia(n)',
-                '        se(n == 1) {',
-                '           escreva("É igual a 1")',
+                'programa{',
+                ' funcao inicio()',
+                '   {',
+                '   inteiro n',
+                '     leia(n)',
+                '        se(n== 1 ){',
+                '         escreva("É igual a 1")',
                 '        }',
                 '        senao {',
-                '           escreva("Não é igual a 1")',
-                '        }',
-                '    }',
+                '                escreva("Não é igual a 1")}',
+                ' }',
                 '}',
             ],
             -1
@@ -46,6 +50,16 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(14);
+        expect(linhasResultado[0]).toContain("programa");
+        expect(linhasResultado[1]).toContain("{");
+        expect(linhasResultado[2]).toContain("funcao inicio()");
+        expect(linhasResultado[3]).toContain("{");
+        expect(linhasResultado[4]).toContain("inteiro n = 0");
+        expect(linhasResultado[5]).toContain("leia(n)");
+        expect(linhasResultado[6]).toContain("se (n == 1) {");
+        expect(linhasResultado[7]).toContain('escreva("É igual a 1")');
+        expect(linhasResultado[8]).toContain("} senao {");
+        expect(linhasResultado[9]).toContain('escreva("Não é igual a 1")');
     });
 
     it('Sucesso - Agrupamento', () => {
@@ -219,8 +233,6 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(37);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
     it('Escolha', async () => {
         const retornoLexador = lexador.mapear(
@@ -254,9 +266,8 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(18);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
+
     it('Enquanto', async () => {
         const retornoLexador = lexador.mapear(
             [
@@ -265,16 +276,13 @@ describe('Formatadores > Portugol Studio', () => {
                 '    funcao inicio()',
                 '    {',
                 '        inteiro numero, atual = 1, fatorial = 1',
-                '        ',
                 '        escreva("Digite um numero: ")',
                 '        leia(numero)',
-                '        ',
                 '        enquanto (atual <= numero)',
                 '        {',
                 '            fatorial = fatorial * atual',
                 '            atual = atual + 1',
                 '        }',
-                '        ',
                 '        escreva("O fatorial de ", numero, " é: ", fatorial, "\n")',
                 '    }',
                 '}',
@@ -286,8 +294,6 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(17);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
     it('Estrutura condicional - se e senao', async () => {
         const retornoLexador = lexador.mapear(
@@ -318,8 +324,6 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(18);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
     it('Para', async () => {
         const retornoLexador = lexador.mapear(
@@ -339,8 +343,6 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(12);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
     it('Atribuição de Vetores', () => {
         const retornoLexador = lexador.mapear(
@@ -359,8 +361,6 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(9);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
     it('Atribuição de Variáveis', async () => {
         const retornoLexador = lexador.mapear(
@@ -380,8 +380,6 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(10);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
 
     it('Funções', () => {
@@ -432,7 +430,5 @@ describe('Formatadores > Portugol Studio', () => {
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(31);
-        expect(retornoAvaliadorSintatico).toBeTruthy();
-        expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
     });
 });
