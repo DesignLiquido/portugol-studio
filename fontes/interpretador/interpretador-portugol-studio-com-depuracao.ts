@@ -1,5 +1,5 @@
 import { EscrevaMesmaLinha, Importar } from '@designliquido/delegua/declaracoes';
-import { InterpretadorComDepuracao } from '@designliquido/delegua/interpretador/interpretador-com-depuracao';
+import { InterpretadorBaseComDepuracao } from '@designliquido/delegua/interpretador/depuracao/interpretador-base-com-depuracao';
 import { DeleguaModulo } from '@designliquido/delegua/interpretador/estruturas';
 import { Leia } from '@designliquido/delegua/construtos';
 
@@ -11,7 +11,7 @@ import { Limpa } from '../construtos';
 import * as comum from './comum';
 
 export class InterpretadorPortugolStudioComDepuracao
-    extends InterpretadorComDepuracao
+    extends InterpretadorBaseComDepuracao
     implements VisitantePortugolStudioInterface
 {
     mensagemPrompt: string;
