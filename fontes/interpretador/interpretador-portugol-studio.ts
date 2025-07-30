@@ -1,7 +1,7 @@
 import { EscrevaMesmaLinha, Importar } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
 import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
-import { EspacoVariaveis } from '@designliquido/delegua/espaco-variaveis';
+import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memoria';
 import { DeleguaModulo } from '@designliquido/delegua/interpretador/estruturas';
 import { Leia } from '@designliquido/delegua/construtos';
 
@@ -33,7 +33,7 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
         const escopoExecucao: EscopoExecucao = {
             declaracoes: [],
             declaracaoAtual: 0,
-            ambiente: new EspacoVariaveis(),
+            espacoMemoria: new EspacoMemoria(),
             finalizado: false,
             tipo: 'outro',
             emLacoRepeticao: false,
