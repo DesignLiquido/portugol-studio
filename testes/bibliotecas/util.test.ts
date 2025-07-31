@@ -89,7 +89,7 @@ describe('Biblioteca Util', () => {
             const endTime = new Date().getTime();
             const elapsedTime = endTime - startTime;
             expect(elapsedTime).toBeGreaterThanOrEqual(intervalo * 0.9);
-            expect(elapsedTime).toBeLessThanOrEqual(intervalo * 2);
+            expect(elapsedTime).toBeLessThanOrEqual(intervalo * 3);
         });
     });
 

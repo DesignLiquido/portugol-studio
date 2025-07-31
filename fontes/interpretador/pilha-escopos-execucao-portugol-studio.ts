@@ -24,8 +24,12 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
         this.empilhar(escopoExecucao);
     }
 
+    migrarReferenciaMontaoParaEscopoDeVariavel(nomeVariavel: string, enderecoMontao: string): void {
+        throw new Error('Método não implementado.');
+    }
+
     registrarReferenciaMontao(endereco: string): void {
-        throw new Error('Method not implemented.');
+        throw new Error('Método não implementado.');
     }
 
     obterTodasDeclaracoesClasse() {
