@@ -10,8 +10,12 @@ export class Limpa implements Construto {
         this.hashArquivo = hashArquivo;
         this.linha = linha;
     }
-
+    
     async aceitar(visitante: VisitantePortugolStudioInterface): Promise<any> {
         return await visitante.visitarExpressaoLimpa(this);
+    }
+
+    paraTexto(): string {
+        return `<limpa />`;
     }
 }

@@ -19,4 +19,8 @@ export class Matriz implements Construto {
     async aceitar(visitante: VisitantePortugolStudioInterface): Promise<any> {
         return await visitante.visitarExpressaoMatriz(this);
     }
+
+    paraTexto(): string {
+        return `<matriz />`;
+    }
 }

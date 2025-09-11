@@ -198,7 +198,7 @@ export async function avaliarArgumentosEscreva(
 
     for (const argumento of argumentos) {
         const resultadoAvaliacao = await interpretador.avaliar(argumento);
-        let valor = resultadoAvaliacao?.hasOwnProperty('valor') ? resultadoAvaliacao.valor : resultadoAvaliacao;
+        let valor = interpretador.resolverValor(resultadoAvaliacao);
         formatoTexto += `${interpretador.paraTexto(valor)} `;
     }
 
@@ -300,7 +300,7 @@ async function inicializarDimensaoMatrizVazia(
     const copiaDimensoes = [...dimensoes];
     const dimensaoAtual = copiaDimensoes.shift();
     const tamanhoDimensao = await interpretador.avaliar(dimensaoAtual);
-    const valorTamanhoDimensao = tamanhoDimensao.hasOwnProperty('valor') ? tamanhoDimensao.valor : tamanhoDimensao;
+    const valorTamanhoDimensao = interpretador.resolverValor(tamanhoDimensao);
 
     for (let i = 0; i < valorTamanhoDimensao; i++) {
         if (copiaDimensoes.length > 0) {
