@@ -35,7 +35,7 @@ import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegu
 import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintatico/avaliador-sintatico-base';
 import { PilhaEscopos } from '@designliquido/delegua/avaliador-sintatico';
 import { InformacaoEscopo } from '@designliquido/delegua/avaliador-sintatico/informacao-escopo';
-import { InformacaoVariavelOuConstante } from '@designliquido/delegua/informacao-variavel-ou-constante';
+import { InformacaoElementoSintatico } from '@designliquido/delegua/informacao-elemento-sintatico';
 
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 
@@ -788,7 +788,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         const tipoDadosFinal = `${tipoDados}[]`;
         this.pilhaEscopos.definirInformacoesVariavel(
             identificador.lexema, 
-            new InformacaoVariavelOuConstante(identificador.lexema, tipoDadosFinal)
+            new InformacaoElementoSintatico(identificador.lexema, tipoDadosFinal)
         );
 
         return new Var(identificador, valorInicializacao, tipoDadosFinal);
@@ -807,7 +807,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         this.pilhaEscopos.definirInformacoesVariavel(
             identificador.lexema, 
-            new InformacaoVariavelOuConstante(identificador.lexema, tipoDados)
+            new InformacaoElementoSintatico(identificador.lexema, tipoDados)
         );
 
         return new Var(identificador, valorInicializacao, tipoDados as any);
@@ -1058,7 +1058,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         this.pilhaEscopos.definirInformacoesVariavel(
             identificador.lexema, 
-            new InformacaoVariavelOuConstante(identificador.lexema, tipo.lexema)
+            new InformacaoElementoSintatico(identificador.lexema, tipo.lexema)
         );
 
         return new Const(identificador, inicializador, tipo.lexema as TipoDadosElementar);
