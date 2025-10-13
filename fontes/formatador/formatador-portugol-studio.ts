@@ -1,6 +1,5 @@
 import { VisitanteComumInterface } from '@designliquido/delegua/interfaces';
 import {
-    Aleatorio,
     Bloco,
     CabecalhoPrograma,
     Classe,
@@ -193,10 +192,6 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         }
         
         this.formatarDeclaracaoOuConstruto(declaracao.expressao);
-    }
-
-    visitarDeclaracaoAleatorio(declaracao: Aleatorio): Promise<any> {
-        throw new Error('Método não implementado.');
     }
 
     visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao) {
