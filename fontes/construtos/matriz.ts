@@ -23,4 +23,8 @@ export class Matriz implements Construto {
     paraTexto(): string {
         return `<matriz />`;
     }
+
+    paraTextoSaida(): string {
+        throw new Error('Método não implementado.');
+    }
 }

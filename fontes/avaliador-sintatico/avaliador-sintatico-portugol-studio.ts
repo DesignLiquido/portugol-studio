@@ -8,6 +8,7 @@ import {
     Chamada,
     Construto,
     FuncaoConstruto,
+    ImportarComoConstruto,
     Leia,
     Literal,
     Unario,
@@ -28,7 +29,6 @@ import {
     EscrevaMesmaLinha,
     Retorna,
     Const,
-    Importar,
     Comentario,
 } from '@designliquido/delegua/declaracoes';
 import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/interfaces/retornos';
@@ -345,7 +345,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         return new Const(
             constanteBiblioteca,
-            new Importar(new Literal(this.hashArquivo, nomeBiblioteca.linha, nomeBiblioteca.lexema))
+            new ImportarComoConstruto(new Literal(this.hashArquivo, nomeBiblioteca.linha, nomeBiblioteca.lexema))
         );
     }
 

@@ -1,4 +1,4 @@
-import { AcessoIndiceVariavel, Construto, Leia } from '@designliquido/delegua/construtos';
+import { AcessoIndiceVariavel, Construto, ImportarComoConstruto, Leia } from '@designliquido/delegua/construtos';
 import { Declaracao, Expressao, Importar } from '@designliquido/delegua/declaracoes';
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/interpretador/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
@@ -205,8 +205,8 @@ export async function avaliarArgumentosEscreva(
     return formatoTexto;
 }
 
-export async function visitarExpressaoImportarComum(expressao: Importar): Promise<any> {
-    switch (expressao.caminho.valor) {
+function logicaComumImportacao(caminho: string): DeleguaModulo {
+    switch (caminho) {
         case 'Arquivos':
             return carregarBibliotecaArquivos();
         case 'Calendario':
@@ -224,8 +224,16 @@ export async function visitarExpressaoImportarComum(expressao: Importar): Promis
         case 'Util':
             return carregarBibliotecaUtil();
         default:
-            throw new ErroEmTempoDeExecucao(null, `Biblioteca não implementada: ${expressao.caminho}.`);
+            throw new ErroEmTempoDeExecucao(null, `Biblioteca não implementada: ${caminho}.`);
     }
+}
+
+export async function visitarDeclaracaoImportarComum(declaracao: Importar): Promise<DeleguaModulo> {
+    return Promise.resolve(logicaComumImportacao(declaracao.caminho.valor));
+}
+
+export async function visitarExpressaoImportarComum(expressao: ImportarComoConstruto): Promise<DeleguaModulo> {
+    return Promise.resolve(logicaComumImportacao(expressao.caminho.valor));
 }
 
 function desenveloparConstruto(expressao: Construto | Declaracao): Construto {
@@ -233,7 +241,8 @@ function desenveloparConstruto(expressao: Construto | Declaracao): Construto {
         return desenveloparConstruto((<Expressao>expressao).expressao);
     }
 
-    return expressao;
+    // TODO: Verificar sem tem mais algum caso de declaração não coberto aqui.
+    return expressao as Construto;
 }
 
 /**

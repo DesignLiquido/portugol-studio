@@ -3,7 +3,7 @@ import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpre
 import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
 import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memoria';
 import { DeleguaModulo } from '@designliquido/delegua/interpretador/estruturas';
-import { Leia } from '@designliquido/delegua/construtos';
+import { ImportarComoConstruto, Leia } from '@designliquido/delegua/construtos';
 
 import { Matriz } from '../construtos/matriz';
 import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
@@ -47,7 +47,11 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
     }
 
     async visitarDeclaracaoImportar(declaracao: Importar): Promise<DeleguaModulo> {
-        return comum.visitarExpressaoImportarComum(declaracao);
+        return comum.visitarDeclaracaoImportarComum(declaracao);
+    }
+
+    async visitarExpressaoImportar(expressao: ImportarComoConstruto): Promise<DeleguaModulo> {
+        return comum.visitarExpressaoImportarComum(expressao);
     }
 
     /**

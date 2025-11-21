@@ -18,4 +18,8 @@ export class Limpa implements Construto {
     paraTexto(): string {
         return `<limpa />`;
     }
+
+    paraTextoSaida(): string {
+        throw new Error('Método não implementado.');
+    }
 }

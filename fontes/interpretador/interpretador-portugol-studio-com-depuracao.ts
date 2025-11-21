@@ -1,7 +1,7 @@
 import { EscrevaMesmaLinha, Importar } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBaseComDepuracao } from '@designliquido/delegua/interpretador/depuracao/interpretador-base-com-depuracao';
 import { DeleguaModulo } from '@designliquido/delegua/interpretador/estruturas';
-import { Leia } from '@designliquido/delegua/construtos';
+import { ImportarComoConstruto, Leia } from '@designliquido/delegua/construtos';
 
 import { PilhaEscoposExecucaoPortugolStudio } from './pilha-escopos-execucao-portugol-studio';
 import { Matriz } from '../construtos/matriz';
@@ -60,7 +60,11 @@ export class InterpretadorPortugolStudioComDepuracao
     }
 
     async visitarDeclaracaoImportar(declaracao: Importar): Promise<DeleguaModulo> {
-        return comum.visitarExpressaoImportarComum(declaracao);
+        return comum.visitarDeclaracaoImportarComum(declaracao);
+    }
+
+    async visitarExpressaoImportar(expressao: ImportarComoConstruto): Promise<DeleguaModulo> {
+        return comum.visitarExpressaoImportarComum(expressao);
     }
 
     /**
