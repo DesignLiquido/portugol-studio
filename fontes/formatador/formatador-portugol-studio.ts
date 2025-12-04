@@ -25,6 +25,7 @@ import {
     Sustar,
     TendoComo,
     Tente,
+    TextoDocumentacao,
     Var,
     VarMultiplo,
 } from '@designliquido/delegua/declaracoes';
@@ -79,6 +80,10 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado = '';
         this.devePularLinha = true;
         this.deveIndentar = true;
+    }
+
+    visitarDeclaracaoTextoDocumentacao(declaracao: TextoDocumentacao): Promise<any> | void {
+        throw new Error('Método não implementado.');
     }
 
     visitarExpressaoComentario(expressao: ComentarioComoConstruto): Promise<any> | void {
