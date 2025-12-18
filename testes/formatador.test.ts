@@ -431,4 +431,257 @@ describe('Formatador', () => {
 
         expect(linhasResultado).toHaveLength(31);
     });
+
+    it('Comentários Multilinha', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                '/*',
+                'Este é um comentário',
+                'multilinha',
+                '*/',
+                'programa {',
+                '    funcao inicio() {',
+                '        escreva("Teste")',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
+
+        expect(resultado).toContain('Este é um comentário');
+        expect(resultado).toContain('multilinha');
+        expect(linhasResultado.length).toBeGreaterThan(8);
+    });
+
+    it('Operadores Binários - Módulo', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro resto',
+                '        resto = 10 % 3',
+                '        escreva(resto)',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('10 % 3');
+    });
+
+    it('Operadores Binários - Maior Igual e Menor Igual', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro a = 5',
+                '        inteiro b = 10',
+                '        se (a >= 5) {',
+                '            escreva("maior ou igual")',
+                '        }',
+                '        se (b <= 10) {',
+                '            escreva("menor ou igual")',
+                '        }',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('>=');
+        expect(resultado).toContain('<=');
+    });
+
+    it('Operadores Unários - Negação', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        logico ativo = falso',
+                '        se (nao ativo) {',
+                '            escreva("inativo")',
+                '        }',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('nao ');
+        expect(resultado).toContain('falso');
+    });
+
+    it('Literais Booleanos', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        logico verdade = verdadeiro',
+                '        logico mentira = falso',
+                '        escreva(verdade, mentira)',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('verdadeiro');
+        expect(resultado).toContain('falso');
+    });
+
+    it('Atribuição Por Índice', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro numeros[3]',
+                '        numeros[0] = 10',
+                '        numeros[1] = 20',
+                '        escreva(numeros[0])',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('numeros[0] = 10');
+        expect(resultado).toContain('numeros[1] = 20');
+    });
+
+    it('Declaração Var com tipo logico', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        logico ativo = verdadeiro',
+                '        escreva(ativo)',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('logico');
+        expect(resultado).toContain('verdadeiro');
+    });
+
+    it('Operador de Subtração', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro a = 10',
+                '        inteiro b = 5',
+                '        inteiro resultado = a - b',
+                '        escreva(resultado)',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain(' - ');
+    });
+
+    it('Vetor de Texto', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        cadeia nomes[2]',
+                '        nomes[0] = "Ana"',
+                '        escreva(nomes[0])',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('cadeia');
+        expect(resultado).toContain('"Ana"');
+        expect(resultado).toContain('nomes[0]');
+    });
+
+    it('Operador de Maior', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro x = 10',
+                '        se (x > 5) {',
+                '            escreva("maior")',
+                '        }',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain(' > ');
+    });
+
+    it('Retorno sem valor', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao vazia() {',
+                '        escreva("executando")',
+                '        retorne',
+                '    }',
+                '    funcao inicio() {',
+                '        vazia()',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('retorne');
+        expect(resultado).toContain('funcao vazia()');
+    });
+
+    it('Múltiplos comentários de linha única', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                '// Comentário 1',
+                '// Comentário 2',
+                'programa {',
+                '    funcao inicio() {',
+                '        // Comentário 3',
+                '        escreva("teste")',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('Comentário 1');
+        expect(resultado).toContain('Comentário 2');
+    });
 });

@@ -57,6 +57,7 @@ import {
     Super,
     TipoDe,
     Tupla,
+    TuplaN,
     Unario,
     Variavel,
     Vetor,
@@ -81,6 +82,11 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado = '';
         this.devePularLinha = true;
         this.deveIndentar = true;
+    }
+
+    /* istanbul ignore next */
+    visitarExpressaoTuplaN(expressao: TuplaN): Promise<any> | void {
+        throw new Error('Método não implementado.');
     }
 
     /* istanbul ignore next */
@@ -692,128 +698,128 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
     }
 
     formatarDeclaracaoOuConstruto(declaracaoOuConstruto: Declaracao | Construto): void {
-        switch (declaracaoOuConstruto.constructor.name) {
-            case 'AcessoIndiceVariavel':
+        switch (declaracaoOuConstruto.constructor) {
+            case AcessoIndiceVariavel:
                 this.visitarExpressaoAcessoIndiceVariavel(declaracaoOuConstruto as AcessoIndiceVariavel);
                 break;
-            case 'AcessoMetodoOuPropriedade':
+            case AcessoMetodoOuPropriedade:
                 this.visitarExpressaoAcessoMetodo(declaracaoOuConstruto as AcessoMetodoOuPropriedade);
                 break;
-            case 'Agrupamento':
+            case Agrupamento:
                 this.visitarExpressaoAgrupamento(declaracaoOuConstruto as Agrupamento);
                 break;
-            case 'AtribuicaoPorIndice':
+            case AtribuicaoPorIndice:
                 this.visitarExpressaoAtribuicaoPorIndice(declaracaoOuConstruto as AtribuicaoPorIndice);
                 break;
-            case 'Atribuir':
+            case Atribuir:
                 this.visitarExpressaoDeAtribuicao(declaracaoOuConstruto as Atribuir);
                 break;
-            case 'Binario':
+            case Binario:
                 this.visitarExpressaoBinaria(declaracaoOuConstruto as Binario);
                 break;
-            case 'Bloco':
+            case Bloco:
                 this.visitarExpressaoBloco(declaracaoOuConstruto as Bloco);
                 break;
-            case 'Chamada':
+            case Chamada:
                 this.visitarExpressaoDeChamada(declaracaoOuConstruto as Chamada);
                 break;
-            case 'Classe':
+            case Classe:
                 this.visitarDeclaracaoClasse(declaracaoOuConstruto as Classe);
                 break;
-            case 'Comentario':
+            case Comentario:
                 this.visitarDeclaracaoComentario(declaracaoOuConstruto as Comentario);
                 break;
-            case 'Continua':
+            case Continua:
                 this.visitarExpressaoContinua(declaracaoOuConstruto as Continua);
                 break;
-            case 'DefinirValor':
+            case DefinirValor:
                 this.visitarExpressaoDefinirValor(declaracaoOuConstruto as DefinirValor);
                 break;
-            case 'Dicionario':
+            case Dicionario:
                 this.visitarExpressaoDicionario(declaracaoOuConstruto as Dicionario);
                 break;
-            case 'Escolha':
+            case Escolha:
                 this.visitarDeclaracaoEscolha(declaracaoOuConstruto as Escolha);
                 break;
-            case 'Enquanto':
+            case Enquanto:
                 this.visitarDeclaracaoEnquanto(declaracaoOuConstruto as Enquanto);
                 break;
-            case 'Escreva':
+            case Escreva:
                 this.visitarDeclaracaoEscreva(declaracaoOuConstruto as Escreva);
                 break;
-            case 'EscrevaMesmaLinha':
+            case EscrevaMesmaLinha:
                 this.visitarDeclaracaoEscrevaMesmaLinha(declaracaoOuConstruto as Escreva);
                 break;
-            case 'Expressao':
+            case Expressao:
                 this.visitarDeclaracaoDeExpressao(declaracaoOuConstruto as Expressao);
                 break;
-            case 'ExpressaoRegular':
+            case ExpressaoRegular:
                 this.visitarExpressaoExpressaoRegular(declaracaoOuConstruto as ExpressaoRegular);
                 break;
-            case 'Falhar':
+            case Falhar:
                 this.visitarExpressaoFalhar(declaracaoOuConstruto as Falhar);
                 break;
-            case 'Fazer':
+            case Fazer:
                 this.visitarDeclaracaoFazer(declaracaoOuConstruto as Fazer);
                 break;
-            case 'FuncaoConstruto':
+            case FuncaoConstruto:
                 this.visitarExpressaoFuncaoConstruto(declaracaoOuConstruto as FuncaoConstruto);
                 break;
-            case 'FuncaoDeclaracao':
+            case FuncaoDeclaracao:
                 this.visitarDeclaracaoDefinicaoFuncao(declaracaoOuConstruto as FuncaoDeclaracao);
                 break;
-            case 'Importar':
+            case Importar:
                 this.visitarDeclaracaoImportar(declaracaoOuConstruto as Importar);
                 break;
-            case 'Isto':
+            case Isto:
                 this.visitarExpressaoIsto(declaracaoOuConstruto as Isto);
                 break;
-            case 'Leia':
+            case Leia:
                 this.visitarExpressaoLeia(declaracaoOuConstruto as Leia);
                 break;
-            case 'Literal':
+            case Literal:
                 this.visitarExpressaoLiteral(declaracaoOuConstruto as Literal);
                 break;
-            case 'Logico':
+            case Logico:
                 this.visitarExpressaoLogica(declaracaoOuConstruto as Logico);
                 break;
-            case 'Para':
+            case Para:
                 this.visitarDeclaracaoPara(declaracaoOuConstruto as Para);
                 break;
-            case 'ParaCada':
+            case ParaCada:
                 this.visitarDeclaracaoParaCada(declaracaoOuConstruto as ParaCada);
                 break;
-            case 'Retorna':
+            case Retorna:
                 this.visitarExpressaoRetornar(declaracaoOuConstruto as Retorna);
                 break;
-            case 'Se':
+            case Se:
                 this.visitarDeclaracaoSe(declaracaoOuConstruto as Se);
                 break;
-            case 'Super':
+            case Super:
                 this.visitarExpressaoSuper(declaracaoOuConstruto as Super);
                 break;
-            case 'Sustar':
+            case Sustar:
                 this.visitarExpressaoSustar(declaracaoOuConstruto as Sustar);
                 break;
-            case 'Tente':
+            case Tente:
                 this.visitarDeclaracaoTente(declaracaoOuConstruto as Tente);
                 break;
-            case 'TipoDe':
+            case TipoDe:
                 this.visitarExpressaoTipoDe(declaracaoOuConstruto as TipoDe);
                 break;
-            case 'Unario':
+            case Unario:
                 this.visitarExpressaoUnaria(declaracaoOuConstruto as Unario);
                 break;
-            case 'Const':
+            case Const:
                 this.visitarDeclaracaoConst(declaracaoOuConstruto as Const);
                 break;
-            case 'Var':
+            case Var:
                 this.visitarDeclaracaoVar(declaracaoOuConstruto as Var);
                 break;
-            case 'Variavel':
+            case Variavel:
                 this.visitarExpressaoDeVariavel(declaracaoOuConstruto as Variavel);
                 break;
-            case 'Vetor':
+            case Vetor:
                 this.visitarExpressaoVetor(declaracaoOuConstruto as Vetor);
                 break;
             default:
