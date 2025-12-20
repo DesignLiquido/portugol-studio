@@ -32,9 +32,10 @@ import {
     Vetor,
     Variavel
 } from '@designliquido/delegua/construtos';
+import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
+
 import { inferirTipoVariavel } from '../interpretador/inferenciador';
 import tiposDeDados from '../tipos-de-dados';
-import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
@@ -967,7 +968,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         return Promise.resolve(null);
     }
 
-    analisar(declaracoes: Declaracao[]): RetornoAnalisadorSemantico {
+    async analisar(declaracoes: Declaracao[]): Promise<RetornoAnalisadorSemantico> {
         // Inicializa o estado do analisador
         this.gerenciadorEscopos = new GerenciadorEscopos();
         this.variaveis = {};
@@ -995,7 +996,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
         // Processa o corpo do método principal
         while (this.atual < this.corpoMetodoPrincipal.length) {
-            this.corpoMetodoPrincipal[this.atual].aceitar(this);
+            await this.corpoMetodoPrincipal[this.atual].aceitar(this);
             this.atual++;
         }
 
