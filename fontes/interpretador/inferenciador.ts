@@ -1,4 +1,4 @@
-import { TipoNativoSimbolo } from "@designliquido/delegua/inferenciador";
+import { TipoNativoSimbolo } from '@designliquido/delegua/inferenciador';
 
 export type TipoInferencia = 'cadeia' | 'caracter' | 'inteiro' | 'lógico' | 'real' | 'vazio';
 

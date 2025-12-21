@@ -103,7 +103,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
     visitarExpressaoComentario(expressao: ComentarioComoConstruto): Promise<any> | void {
         throw new Error('Método não implementado.');
     }
-    
+
     /* istanbul ignore next */
     visitarExpressaoSeparador(expressao: Separador): Promise<any> | void {
         throw new Error('Método não implementado.');
@@ -220,7 +220,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         if (this.deveIndentar) {
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}`;
         }
-        
+
         this.formatarDeclaracaoOuConstruto(declaracao.expressao);
     }
 

@@ -70,8 +70,6 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
             });
-
-
         });
 
         describe('Casos de Falha', () => {

@@ -191,34 +191,24 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.REAL:
                 const simboloVariavel: SimboloInterface = this.avancarEDevolverAnterior();
                 const dicionarioTiposDelegua = {
-                    'CADEIA': 'texto',
-                    'CARACTER': 'texto',
-                    'INTEIRO': 'inteiro',
-                    'REAL': 'número'
-                }
+                    CADEIA: 'texto',
+                    CARACTER: 'texto',
+                    INTEIRO: 'inteiro',
+                    REAL: 'número',
+                };
 
                 return new Literal(
-                    this.hashArquivo, 
-                    Number(simboloVariavel.linha), 
-                    simboloVariavel.literal, 
+                    this.hashArquivo,
+                    Number(simboloVariavel.linha),
+                    simboloVariavel.literal,
                     dicionarioTiposDelegua[simboloAtual.tipo]
                 );
             case tiposDeSimbolos.FALSO:
                 this.avancarEDevolverAnterior();
-                return new Literal(
-                    this.hashArquivo, 
-                    Number(simboloAtual.linha), 
-                    false, 
-                    'lógico'
-                );
+                return new Literal(this.hashArquivo, Number(simboloAtual.linha), false, 'lógico');
             case tiposDeSimbolos.VERDADEIRO:
                 this.avancarEDevolverAnterior();
-                return new Literal(
-                    this.hashArquivo, 
-                    Number(simboloAtual.linha), 
-                    true,
-                    'lógico'
-                );
+                return new Literal(this.hashArquivo, Number(simboloAtual.linha), true, 'lógico');
             default:
                 throw this.erro(simboloAtual, 'Não deveria cair aqui.');
         }
@@ -286,8 +276,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
             if (expressao instanceof Variavel) {
                 return new Atribuir(this.hashArquivo, expressao, valor);
-            } 
-            
+            }
+
             if (expressao instanceof AcessoIndiceVariavel) {
                 return new AtribuicaoPorIndice(
                     this.hashArquivo,
@@ -624,7 +614,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                         inicializador = new Literal(
                             this.hashArquivo,
                             Number(literalInicializacao.linha),
-                            valorInicializacao, 
+                            valorInicializacao,
                             'inteiro'
                         );
                         break;
@@ -787,7 +777,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         const tipoDadosFinal = `${tipoDados}[]`;
         this.pilhaEscopos.definirInformacoesVariavel(
-            identificador.lexema, 
+            identificador.lexema,
             new InformacaoElementoSintatico(identificador.lexema, tipoDadosFinal)
         );
 
@@ -806,7 +796,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         }
 
         this.pilhaEscopos.definirInformacoesVariavel(
-            identificador.lexema, 
+            identificador.lexema,
             new InformacaoElementoSintatico(identificador.lexema, tipoDados)
         );
 
@@ -1057,7 +1047,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         const inicializador = this.expressao();
 
         this.pilhaEscopos.definirInformacoesVariavel(
-            identificador.lexema, 
+            identificador.lexema,
             new InformacaoElementoSintatico(identificador.lexema, tipo.lexema)
         );
 
