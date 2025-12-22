@@ -210,7 +210,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 this.avancarEDevolverAnterior();
                 return new Literal(this.hashArquivo, Number(simboloAtual.linha), true, 'lógico');
             default:
-                throw this.erro(simboloAtual, 'Não deveria cair aqui.');
+                throw this.erro(simboloAtual, `Não deveria cair aqui. Token inesperado: ${simboloAtual.tipo} ("${simboloAtual.lexema}") na linha ${simboloAtual.linha}`);
         }
     }
 
@@ -368,6 +368,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após condição do se.");
 
         const caminhoEntao = this.resolverDeclaracaoForaDeBloco();
+
+        while (this.verificarTipoSimboloAtual(tiposDeSimbolos.COMENTARIO) ||
+               this.verificarTipoSimboloAtual(tiposDeSimbolos.LINHA_COMENTARIO)) {
+            this.avancarEDevolverAnterior();
+        }
 
         let caminhoSenao = null;
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.SENAO)) {
