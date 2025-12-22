@@ -719,4 +719,78 @@ describe('Formatador', () => {
         expect(linhaLimpa).not.toEqual(linhaEscreva123);
         expect(linhaLimpa).not.toEqual(linhaEscreva456);
     });
+
+    it('Nested Para loops with matriz (no extra spaces in condition)', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa',
+                '{',
+                '    funcao inicio()',
+                '    {',
+                '        const inteiro TAMANHO = 5',
+                '        inteiro matriz[TAMANHO][TAMANHO]',
+                '        para (inteiro linha = 0; linha < TAMANHO; linha++)',
+                '        {',
+                '            para (inteiro coluna = 0; coluna < TAMANHO; coluna++)',
+                '            {',
+                '                matriz[linha][coluna] = linha + coluna',
+                '                escreva("[", matriz[linha][coluna], "]")',
+                '            }',
+                '            escreva ("\\n")',
+                '        }',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
+
+        // Find the lines with 'para' statements
+        const linhasComPara = linhasResultado.filter(linha => linha.includes('para ('));
+
+        // Check that there are no excessive spaces before the variable declaration in the para condition
+        // The correct format should be: "para (inteiro linha = 0; ..."
+        // NOT: "para (        inteiro linha = 0; ..."
+        for (const linha of linhasComPara) {
+            // Extract the part after "para ("
+            const match = linha.match(/para \((.+)/);
+            if (match) {
+                const condicao = match[1];
+                // Check that the condition doesn't start with excessive spaces
+                expect(condicao).not.toMatch(/^\s{4,}/);
+            }
+        }
+
+        // Verify the formatted code contains the expected structure
+        expect(resultado).toContain('para (inteiro linha = 0');
+        expect(resultado).toContain('para (inteiro coluna = 0');
+    });
+
+    it('Inline comments should stay on the same line as code', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa',
+                '{',
+                '    funcao inicio()',
+                '    {',
+                '        escreva("teste") // Este é um comentário inline',
+                '        inteiro x = 5',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
+
+        // Find the line with escreva
+        const linhaEscreva = linhasResultado.find(linha => linha.includes('escreva("teste")'));
+
+        // Verify that the inline comment is on the same line
+        expect(linhaEscreva).toBeDefined();
+        expect(linhaEscreva).toContain('// Este é um comentário inline');
+    });
 });

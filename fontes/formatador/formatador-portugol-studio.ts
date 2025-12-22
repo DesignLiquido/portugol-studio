@@ -76,6 +76,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
     codigoFormatado: string;
     devePularLinha: boolean;
     deveIndentar: boolean;
+    ultimaLinhaFormatada: number;
 
     constructor(quebraLinha: string, tamanhoIndentacao: number = 4) {
         this.quebraLinha = quebraLinha;
@@ -85,6 +86,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado = '';
         this.devePularLinha = true;
         this.deveIndentar = true;
+        this.ultimaLinhaFormatada = -1;
     }
 
     /* istanbul ignore next */
@@ -142,9 +144,24 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
 
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)} */${this.quebraLinha}`;
         } else {
-            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}// `;
-            this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, ' ');
-            this.codigoFormatado += `${this.quebraLinha}`;
+            const comentarioLinha = (declaracao as any).linha;
+            const eComentarioInline = comentarioLinha !== undefined &&
+                                       this.ultimaLinhaFormatada !== -1 &&
+                                       comentarioLinha === this.ultimaLinhaFormatada + 1;
+
+            if (eComentarioInline) {
+                if (this.codigoFormatado.endsWith(this.quebraLinha)) {
+                    this.codigoFormatado = this.codigoFormatado.slice(0, -this.quebraLinha.length);
+                }
+                
+                this.codigoFormatado += ` // `;
+                this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, ' ');
+                this.codigoFormatado += `${this.quebraLinha}`;
+            } else {
+                this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}// `;
+                this.codigoFormatado += (declaracao.conteudo as string).replace(/\s+/g, ' ');
+                this.codigoFormatado += `${this.quebraLinha}`;
+            }
         }
     }
 
@@ -180,7 +197,10 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             } else if (declaracao.inicializador instanceof ImportarComoConstruto) {
                 this.visitarExpressaoImportarComoConstruto(declaracao.inicializador, declaracao.simbolo.lexema);
             } else {
-                this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}const ${declaracao.tipo} ${
+                if (this.deveIndentar) {
+                    this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}`;
+                }
+                this.codigoFormatado += `const ${declaracao.tipo} ${
                     declaracao.simbolo.lexema
                 }`;
                 this.codigoFormatado += ` = `;
@@ -433,7 +453,10 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
                     break;
             }
 
-            this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}${tipoDado} ${declaracao.simbolo.lexema}`;
+            if (this.deveIndentar) {
+                this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}`;
+            }
+            this.codigoFormatado += `${tipoDado} ${declaracao.simbolo.lexema}`;
 
             if (declaracao.inicializador) {
                 // Se o inicializador é uma Matriz, não adicionamos ' = ', apenas formatamos as dimensões
@@ -618,6 +641,11 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
 
         for (let declaracaoCorpo of expressao.corpo) {
             this.formatarDeclaracaoOuConstruto(declaracaoCorpo);
+
+            // Track line number for inline comment detection
+            if ((declaracaoCorpo as any).linha !== undefined && !(declaracaoCorpo instanceof Comentario)) {
+                this.ultimaLinhaFormatada = (declaracaoCorpo as any).linha;
+            }
         }
 
         this.indentacaoAtual -= this.tamanhoIndentacao;
@@ -892,6 +920,11 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.indentacaoAtual += this.tamanhoIndentacao;
         for (let declaracaoBloco of declaracoes) {
             this.formatarDeclaracaoOuConstruto(declaracaoBloco);
+
+            // Track line number for inline comment detection
+            if ((declaracaoBloco as any).linha !== undefined && !(declaracaoBloco instanceof Comentario)) {
+                this.ultimaLinhaFormatada = (declaracaoBloco as any).linha;
+            }
         }
         this.indentacaoAtual -= this.tamanhoIndentacao;
     }
@@ -899,6 +932,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
     formatar(declaracoes: Declaracao[]): string {
         this.indentacaoAtual = 0;
         this.codigoFormatado = '';
+        this.ultimaLinhaFormatada = -1;
 
         // Comentários podem vir antes da declaração do programa.
         while (declaracoes[0] instanceof Comentario) {
@@ -918,6 +952,11 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
 
         for (let declaracao of declaracoes) {
             this.formatarDeclaracaoOuConstruto(declaracao);
+
+            // Track line number at the top-level declaration only
+            if ((declaracao as any).linha !== undefined && !(declaracao instanceof Comentario)) {
+                this.ultimaLinhaFormatada = (declaracao as any).linha;
+            }
         }
 
         this.indentacaoAtual -= this.tamanhoIndentacao;
