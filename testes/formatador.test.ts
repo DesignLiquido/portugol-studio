@@ -684,4 +684,39 @@ describe('Formatador', () => {
         expect(resultado).toContain('Comentário 1');
         expect(resultado).toContain('Comentário 2');
     });
+
+    it('Chamadas de função sem argumentos - limpa()', () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa',
+                '{',
+                '    funcao inicio()',
+                '    {',
+                "        escreva('123')",
+                '        limpa()',
+                "        escreva('456')",
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('limpa()');
+        expect(resultado).toContain('escreva("123")');
+        expect(resultado).toContain('escreva("456")');
+
+        // Verify that all three statements are on separate lines
+        const linhasResultado = resultado.split(sistemaOperacional.EOL);
+        const linhaLimpa = linhasResultado.findIndex(linha => linha.includes('limpa()'));
+        const linhaEscreva123 = linhasResultado.findIndex(linha => linha.includes('escreva("123")'));
+        const linhaEscreva456 = linhasResultado.findIndex(linha => linha.includes('escreva("456")'));
+
+        expect(linhaLimpa).toBeGreaterThan(-1);
+        expect(linhaEscreva123).toBeGreaterThan(-1);
+        expect(linhaEscreva456).toBeGreaterThan(-1);
+        expect(linhaLimpa).not.toEqual(linhaEscreva123);
+        expect(linhaLimpa).not.toEqual(linhaEscreva456);
+    });
 });

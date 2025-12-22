@@ -64,6 +64,7 @@ import {
     Vetor,
 } from '@designliquido/delegua/construtos';
 import { Matriz } from '../construtos/matriz';
+import { Limpa } from '../construtos/limpa';
 import { ContinuarQuebra, SustarQuebra } from '@designliquido/delegua/quebras';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
@@ -643,6 +644,13 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.deveIndentar = true;
     }
 
+    visitarExpressaoLimpa(expressao: Limpa): any {
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}limpa()`;
+        if (this.devePularLinha) {
+            this.codigoFormatado += this.quebraLinha;
+        }
+    }
+
     visitarExpressaoLiteral(expressao: Literal): any {
         if (typeof expressao.valor === 'string') {
             this.codigoFormatado += `"${expressao.valor}"`;
@@ -825,6 +833,9 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
                 break;
             case Leia:
                 this.visitarExpressaoLeia(declaracaoOuConstruto as Leia);
+                break;
+            case Limpa:
+                this.visitarExpressaoLimpa(declaracaoOuConstruto as Limpa);
                 break;
             case Literal:
                 this.visitarExpressaoLiteral(declaracaoOuConstruto as Literal);
