@@ -48,6 +48,7 @@ import {
     FimPara,
     FormatacaoEscrita,
     FuncaoConstruto,
+    ImportarComoConstruto,
     Isto,
     Leia,
     Literal,
@@ -62,6 +63,7 @@ import {
     Variavel,
     Vetor,
 } from '@designliquido/delegua/construtos';
+import { Matriz } from '../construtos/matriz';
 import { ContinuarQuebra, SustarQuebra } from '@designliquido/delegua/quebras';
 
 import tiposDeSimbolos from '../tipos-de-simbolos/lexico-regular';
@@ -174,6 +176,8 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         if (declaracao.inicializador) {
             if (declaracao.inicializador instanceof Importar) {
                 this.visitarDeclaracaoImportar(declaracao.inicializador, declaracao.simbolo.lexema);
+            } else if (declaracao.inicializador instanceof ImportarComoConstruto) {
+                this.visitarExpressaoImportarComoConstruto(declaracao.inicializador, declaracao.simbolo.lexema);
             } else {
                 this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}const ${declaracao.tipo} ${
                     declaracao.simbolo.lexema
@@ -206,8 +210,8 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         ) {
             this.visitarExpressaoBinaria(expressao.valor);
         } else {
-            const alvo = this.formatarDeclaracaoOuConstruto(expressao.alvo);
-            this.codigoFormatado += `${alvo} = `;
+            this.formatarDeclaracaoOuConstruto(expressao.alvo);
+            this.codigoFormatado += ` = `;
             this.formatarDeclaracaoOuConstruto(expressao.valor);
         }
 
@@ -323,6 +327,26 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         }
     }
 
+    visitarExpressaoImportarComoConstruto(expressao: ImportarComoConstruto, nomeConstante?: string) {
+        // ImportarComoConstruto contém um Literal com o nome da biblioteca
+        const nomeBiblioteca = (expressao as any).caminho?.valor || (expressao as any).valor;
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}inclua biblioteca ${nomeBiblioteca}`;
+
+        if (nomeConstante && nomeConstante.length > 0) {
+            this.codigoFormatado += ` --> ${nomeConstante}`;
+        }
+    }
+
+    visitarExpressaoMatriz(expressao: Matriz) {
+        // Para Matriz, precisamos formatar as dimensões
+        // Por exemplo, [500] para inteiro[500]
+        for (let dimensao of expressao.dimensoes) {
+            this.codigoFormatado += `[`;
+            this.formatarDeclaracaoOuConstruto(dimensao);
+            this.codigoFormatado += `]`;
+        }
+    }
+
     visitarDeclaracaoPara(declaracao: Para): any {
         this.codigoFormatado += `${this.quebraLinha}${' '.repeat(this.indentacaoAtual)}para (`;
         this.devePularLinha = false;
@@ -411,14 +435,25 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}${tipoDado} ${declaracao.simbolo.lexema}`;
 
             if (declaracao.inicializador) {
-                if (declaracao.inicializador instanceof Vetor) {
+                // Se o inicializador é uma Matriz, não adicionamos ' = ', apenas formatamos as dimensões
+                if (declaracao.inicializador instanceof Matriz) {
+                    this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
+                    if (this.devePularLinha) {
+                        this.codigoFormatado += this.quebraLinha;
+                    }
+                } else if (declaracao.inicializador instanceof Vetor) {
                     this.codigoFormatado += `[${declaracao.inicializador.valores.length}]`;
-                }
-
-                this.codigoFormatado += ` = `;
-                this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
-                if (this.devePularLinha) {
-                    this.codigoFormatado += this.quebraLinha;
+                    this.codigoFormatado += ` = `;
+                    this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
+                    if (this.devePularLinha) {
+                        this.codigoFormatado += this.quebraLinha;
+                    }
+                } else {
+                    this.codigoFormatado += ` = `;
+                    this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
+                    if (this.devePularLinha) {
+                        this.codigoFormatado += this.quebraLinha;
+                    }
                 }
             }
         } else {
@@ -444,9 +479,9 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         throw new Error('Método não implementado');
     }
 
-    /* istanbul ignore next */
     visitarExpressaoAcessoMetodo(expressao: any) {
-        throw new Error('Método não implementado');
+        this.formatarDeclaracaoOuConstruto(expressao.objeto);
+        this.codigoFormatado += `.${expressao.simbolo.lexema}`;
     }
 
     visitarExpressaoAgrupamento(expressao: Agrupamento): any {
@@ -524,10 +559,18 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         throw new Error('Método não implementado');
     }
 
-    /* istanbul ignore next */
-    visitarExpressaoDeChamada(expressao: any) {
-        /*         console.log(expressao);
-         */
+    visitarExpressaoDeChamada(expressao: Chamada) {
+        this.formatarDeclaracaoOuConstruto(expressao.entidadeChamada);
+        this.codigoFormatado += '(';
+
+        for (let i = 0; i < expressao.argumentos.length; i++) {
+            this.formatarDeclaracaoOuConstruto(expressao.argumentos[i]);
+            if (i < expressao.argumentos.length - 1) {
+                this.codigoFormatado += ', ';
+            }
+        }
+
+        this.codigoFormatado += ')';
     }
 
     /* istanbul ignore next */
@@ -771,8 +814,14 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Importar:
                 this.visitarDeclaracaoImportar(declaracaoOuConstruto as Importar);
                 break;
+            case ImportarComoConstruto:
+                this.visitarExpressaoImportarComoConstruto(declaracaoOuConstruto as ImportarComoConstruto);
+                break;
             case Isto:
                 this.visitarExpressaoIsto(declaracaoOuConstruto as Isto);
+                break;
+            case Matriz:
+                this.visitarExpressaoMatriz(declaracaoOuConstruto as Matriz);
                 break;
             case Leia:
                 this.visitarExpressaoLeia(declaracaoOuConstruto as Leia);
