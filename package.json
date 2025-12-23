@@ -33,6 +33,7 @@
         "@types/estree": "^1.0.7",
         "@types/jest": "^30.0.0",
         "@types/node": "^25.0.2",
+        "@types/node-fetch": "^2.6.13",
         "copyfiles": "^2.4.1",
         "jest": "^30.0.4",
         "jest-coverage-badges": "^1.1.2",

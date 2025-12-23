@@ -40,25 +40,42 @@ describe('Biblioteca Internet', () => {
         });
     });
     describe('Baixar Imagem', () => {
-        //Ajustar depois
-        it.skip('Trivial', async () => {
+        it('Trivial', async () => {
             const endereco = 'https://example.com/imagem.jpg';
             const caminho = './imagem';
             const tipoDaImagem = 'jpg';
-            const imagemObtida = Buffer.from('Imagem de exemplo');
+            const conteudoImagem = 'Imagem de exemplo';
+            const imagemObtida = Buffer.from(conteudoImagem);
+
+            // Cria um ArrayBuffer adequado para o mock
+            const encoder = new TextEncoder();
+            const arrayBuffer = encoder.encode(conteudoImagem).buffer;
+
+            // Mock para a requisição HEAD (primeira chamada)
             (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
                 headers: {
-                    head: jest.fn().mockReturnValueOnce(`image/${tipoDaImagem}`),
+                    get: jest.fn().mockReturnValueOnce(`image/${tipoDaImagem}`),
                 },
             } as unknown as Response);
+
+            // Mock para a requisição GET (segunda chamada)
             (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
-                buffer: jest.fn().mockResolvedValueOnce(imagemObtida),
+                arrayBuffer: jest.fn().mockResolvedValueOnce(arrayBuffer),
             } as unknown as Response);
+
             const mockStreamWrite = jest.fn();
             const mockStreamEnd = jest.fn();
+            const mockStreamOn = jest.fn((event: string, handler: () => void) => {
+                if (event === 'finish') {
+                    // Simula o evento 'finish' imediatamente
+                    setImmediate(handler);
+                }
+            });
+
             jest.spyOn(fs, 'createWriteStream').mockReturnValueOnce({
                 write: mockStreamWrite,
                 end: mockStreamEnd,
+                on: mockStreamOn,
             } as unknown as fs.WriteStream);
 
             await baixar_imagem({} as InterpretadorInterface, endereco, caminho);
@@ -76,18 +93,28 @@ describe('Biblioteca Internet', () => {
                 `Não foi possível obter o conteúdo de ${endereco}`
             );
         });
-        //Ajustar depois
-        it.skip('Falha - Incapaz de salvar a imagem', async () => {
+        it('Falha - Incapaz de salvar a imagem', async () => {
             const endereco = 'https://example.com/imagem.jpg';
             const caminho = './imagem';
             const tipoDaImagem = 'jpg';
-            const imagemObtida = Buffer.from('Imagem de exemplo');
+            const conteudoImagem = 'Imagem de exemplo';
+
+            // Cria um ArrayBuffer adequado para o mock
+            const encoder = new TextEncoder();
+            const arrayBuffer = encoder.encode(conteudoImagem).buffer;
+
+            // Mock para a requisição HEAD (primeira chamada)
             (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
                 headers: {
                     get: jest.fn().mockReturnValueOnce(`image/${tipoDaImagem}`),
                 },
-                buffer: jest.fn().mockResolvedValueOnce(imagemObtida),
             } as unknown as Response);
+
+            // Mock para a requisição GET (segunda chamada)
+            (fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+                arrayBuffer: jest.fn().mockResolvedValueOnce(arrayBuffer),
+            } as unknown as Response);
+
             jest.spyOn(fs, 'createWriteStream').mockImplementationOnce(() => {
                 throw new Error('Failed to create write stream');
             });
