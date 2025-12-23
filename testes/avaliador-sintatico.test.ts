@@ -324,9 +324,9 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                         '    }',
                         '  }'
                     ], -1);
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
-    
+
                     expect(retornoAvaliadorSintatico).toBeTruthy();
                     expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
                 });
@@ -346,9 +346,9 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                         '	}',
                         '}'
                         ], -1);
-    
+
                     const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
-    
+
                     expect(retornoAvaliadorSintatico).toBeTruthy();
                     expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
                 });
@@ -551,6 +551,156 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 }
 
                 expect(t).toThrow(ErroAvaliadorSintatico);
+            });
+            it('Falha - Atribuição a variável não declarada', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    funcao inicio()',
+                    '    {',
+                    '       a = b',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const t = () => {
+                    avaliadorSintatico.analisar(retornoLexador, -1);
+                }
+
+                expect(t).toThrow(Error);
+                expect(t).toThrow(
+                    expect.objectContaining({
+                        name: "Error",
+                        message: expect.stringContaining("Variável não definida: 'a'.")
+                    })
+                )
+            });
+
+            it('Falha - Inicialização com variável não declarada', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    funcao inicio()',
+                    '    {',
+                    '       cadeia a = b',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const t = () => {
+                    avaliadorSintatico.analisar(retornoLexador, -1);
+                }
+
+                expect(t).toThrow(Error);
+                expect(t).toThrow(
+                    expect.objectContaining({
+                        name: "Error",
+                        message: expect.stringContaining("Variável não definida: 'b'.")
+                    })
+                )
+            });
+
+            it('Falha - Inicialização com variável não declarada(inteiro)', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    funcao inicio()',
+                    '    {',
+                    '       a = 10',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const t = () => {
+                    avaliadorSintatico.analisar(retornoLexador, -1);
+                }
+
+                expect(t).toThrow(Error);
+                expect(t).toThrow(
+                    expect.objectContaining({
+                        name: "Error",
+                        message: expect.stringContaining("Variável não definida: 'a'.")
+                    })
+                )
+            });
+            it('Falha - Atribuição da variável de tipo incompatível (cadeia para inteiro)', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    cadeia a',
+                    '    inteiro b = 0',
+                    '    funcao inicio()',
+                    '    {',
+                    '       a = b',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const t = () => {
+                    avaliadorSintatico.analisar(retornoLexador, -1);
+                }
+
+                expect(t).toThrow(ErroAvaliadorSintatico);
+                expect(t).toThrow(
+                    expect.objectContaining({
+                        name: "Error",
+                        message: expect.stringContaining("Tipos incompatíveis! Não é possível atribuir uma expressão do tipo 'inteiro' à uma expressão do tipo 'cadeia'.")
+                    })
+                )
+
+            });
+
+            it('Falha - Atribuição da variável de tipo incompatível (inteiro para cadeia)', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    cadeia a',
+                    '    inteiro b = 0',
+                    '    funcao inicio()',
+                    '    {',
+                    '       b = a',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const t = () => {
+                    avaliadorSintatico.analisar(retornoLexador, -1);
+                }
+
+                expect(t).toThrow(ErroAvaliadorSintatico);
+                expect(t).toThrow(
+                    expect.objectContaining({
+                        name: "Error",
+                        message: expect.stringContaining("Tipos incompatíveis! Não é possível atribuir uma expressão do tipo 'cadeia' à uma expressão do tipo 'inteiro'.")
+                    })
+                )
+
+            });
+
+            it('Falha - Atribuição da variável de tipo incompatível (inteiro para cadeia)', () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    inteiro a',
+                    '    funcao inicio()',
+                    '    {',
+                    '       a = "texto"',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const t = () => {
+                    avaliadorSintatico.analisar(retornoLexador, -1);
+                }
+
+                expect(t).toThrow(ErroAvaliadorSintatico);
+                expect(t).toThrow(
+                    expect.objectContaining({
+                        name: "Error",
+                        message: expect.stringContaining("Tipos incompatíveis! Não é possível atribuir uma expressão do tipo 'texto' à uma expressão do tipo 'inteiro'.")
+                    })
+                )
+
             });
         });
     });

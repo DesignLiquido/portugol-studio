@@ -66,6 +66,35 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return this.simbolos[this.atual] && this.simbolos[this.atual].tipo === tipo;
     }
 
+    verificarCompatibilidadeTipos(construto: Construto, tipoEsperado: string): void {
+        if (construto instanceof Literal)
+        {
+            const tipoLiteral = (construto as any).tipo;
+            if(tipoLiteral && tipoLiteral !== tipoEsperado)
+            {
+                throw this.erro(
+                    this.simbolos[this.atual - 1],
+                    `Tipos incompatíveis! Não é possível atribuir uma expressão do tipo '${tipoLiteral}' à uma expressão do tipo '${tipoEsperado}'.`
+                )
+            }
+        } else if (construto instanceof Variavel) {
+            const simboloVariavel = (construto as any).simbolo;
+            const tipoVariavel = this.pilhaEscopos.obterTipoVariavelPorNome(simboloVariavel.lexema);
+            if (!tipoVariavel){
+                throw this.erro(
+                    simboloVariavel,
+                    `Variável não declarada: ${simboloVariavel.lexema}`
+                );
+            }
+            if (tipoVariavel !== tipoEsperado){
+                 throw this.erro(
+                    this.simbolos[this.atual - 1],
+                    `Tipos incompatíveis! Não é possível atribuir uma expressão do tipo '${tipoVariavel}' à uma expressão do tipo '${tipoEsperado}'.`
+                )
+            }
+        }
+    }
+
     avancarEDevolverAnterior() {
         this.atual += 1;
         return this.simbolos[this.atual - 1];
@@ -275,6 +304,19 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             const valor = this.atribuir();
 
             if (expressao instanceof Variavel) {
+                // Verificar se a variável está declara e compatibilidade de tipos.
+                const simboloVariavel = (expressao as any).simbolo;
+                const tipoVariavel = this.pilhaEscopos.obterTipoVariavelPorNome(simboloVariavel.lexema);
+                if (!tipoVariavel)
+                {
+                    throw this.erro(
+                        simboloVariavel,
+                        "Não é possível atribuir valor à uma variável não declarada"
+                    )
+                }
+
+                this.verificarCompatibilidadeTipos(valor, tipoVariavel);
+
                 return new Atribuir(this.hashArquivo, expressao, valor);
             }
 
@@ -626,6 +668,22 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                     case tiposDeSimbolos.IDENTIFICADOR:
                         // TODO: Montar escopo de variáveis conhecidas e verificar o tipo e existência até aqui.
                         const variavelInicializacao = this.avancarEDevolverAnterior();
+                        const tipoVariavel = this.pilhaEscopos.obterTipoVariavelPorNome(variavelInicializacao.lexema);
+
+                        if (!tipoVariavel){
+                            throw this.erro(
+                                variavelInicializacao,
+                                `Variável '${variavelInicializacao.lexema}' não declarada.`
+                            )
+                        }
+
+                        if (tipoVariavel !== 'inteiro') {
+                            throw this.erro(
+                                variavelInicializacao,
+                                `Tipos incompatíveis! Não é possível atribuir uma expressão do tipo '${tipoVariavel}' à uma expressão do tipo 'inteiro'.`
+                            );
+                        }
+
                         inicializador = new Variavel(this.hashArquivo, variavelInicializacao);
                         break;
                     default:
@@ -798,6 +856,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         let valorInicializacao: Construto = new Literal(this.hashArquivo, Number(simboloInteiro.linha), 0);
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.IGUAL)) {
             valorInicializacao = this.expressao();
+            this.verificarCompatibilidadeTipos(valorInicializacao, tipoDados)
         }
 
         this.pilhaEscopos.definirInformacoesVariavel(
