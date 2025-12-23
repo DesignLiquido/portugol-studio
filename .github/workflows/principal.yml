@@ -1,48 +1,36 @@
-name: Commit e PR - Principal
+name: Testes Unitários
 
 on:
-  pull_request_target:
-    types: [opened, synchronize, reopened]
+  pull_request:
     branches: [ principal ]
-    
+  push:
+    branches: [ principal ]
+
+# No permissions needed for running tests
 permissions:
-  checks: write
-  pull-requests: write
-  contents: write
+  contents: read
 
 jobs:
   testes-unitarios:
-    permissions:
-      checks: write
-      pull-requests: write
-      contents: write
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+
     - uses: actions/setup-node@v4
       with:
         node-version: '20'
-    # Alternativa mais simples de cobertura de código, quando o Jest Coverage 
-    # Report Action deixa de funcionar.
-    # - name: NPM - Dependências
-    #   run: |
-    #     sudo npm install
-    # - name: Testes unitários
-    #   run: |
-    #     sudo npm run testes-unitarios
-    # - name: Cobertura de Código
-    #   uses: MishaKav/jest-coverage-comment@main
-    # Os pacotes abaixo continuam dando o seguinte problema:
-    # https://github.com/ArtiomTr/jest-coverage-report-action/issues/233
-    # A solução dada pelo autor não resolve o problema.
-    - uses: ArtiomTr/jest-coverage-report-action@v2
-      id: coverage
+
+    - name: NPM - Dependências
+      run: npm install
+
+    - name: Testes unitários com cobertura
+      run: npm run testes-unitarios -- --coverage --coverageReporters=json-summary --coverageReporters=text
+
+    - name: Salvar resultados de cobertura
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v4
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        test-script: yarn testes-unitarios
-        package-manager: yarn
-        output: report-markdown
-    - uses: marocchino/sticky-pull-request-comment@v2
-      with:
-        message: ${{ steps.coverage.outputs.report }}
+        name: coverage-report
+        path: coverage/coverage-summary.json
+        retention-days: 1
