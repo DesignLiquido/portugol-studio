@@ -1,11 +1,13 @@
 {
+    // Use o IntelliSense para saber mais sobre os atributos possíveis.
+    // Focalizar para exibir as descrições dos atributos existentes.
+    // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
             "name": "Testes unitários",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "/home/archer/.nvm/versions/node/v22.21.0/bin/node",
             "runtimeArgs": [
                 "--inspect-brk",
                 "${workspaceRoot}/node_modules/jest/bin/jest.js",

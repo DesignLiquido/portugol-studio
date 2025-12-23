@@ -1,5 +1,0 @@
-{
-    "terminal.integrated.env.linux": {
-        "PATH": "/home/archer/.nvm/versions/node/v22.21.0/bin:${env:PATH}"
-    }
-}
