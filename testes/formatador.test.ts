@@ -9,11 +9,11 @@ describe('Formatador', () => {
     const avaliadorSintatico = new AvaliadorSintaticoPortugolStudio();
     const lexador = new LexadorPortugolStudio();
 
-    it('Olá mundo', () => {
+    it('Olá mundo', async () => {
         const retornoLexador = lexador.mapear(
             ['programa{funcao inicio(){escreva("Olá Mundo")}}'], -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -27,7 +27,7 @@ describe('Formatador', () => {
         expect(linhasResultado[6]).toContain('}');
     });
 
-    it('Leia com condicional se', () => {
+    it('Leia com condicional se', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa{',
@@ -45,7 +45,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -62,7 +62,7 @@ describe('Formatador', () => {
         expect(linhasResultado[9]).toContain('escreva("Não é igual a 1")');
     });
 
-    it('Sucesso - Agrupamento', () => {
+    it('Sucesso - Agrupamento', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa',
@@ -83,7 +83,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -91,7 +91,7 @@ describe('Formatador', () => {
         expect(retornoAvaliadorSintatico).toBeTruthy();
         expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThan(0);
     });
-    it('Sucesso - Leia', () => {
+    it('Sucesso - Leia', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa',
@@ -107,7 +107,7 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -139,7 +139,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -173,7 +173,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -228,7 +228,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -261,7 +261,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -289,7 +289,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -319,7 +319,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -338,13 +338,13 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(12);
     });
-    it('Atribuição de Vetores', () => {
+    it('Atribuição de Vetores', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -356,7 +356,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -375,14 +375,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(10);
     });
 
-    it('Funções', () => {
+    it('Funções', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa',
@@ -425,14 +425,14 @@ describe('Formatador', () => {
             -1
         );
 
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
         expect(linhasResultado).toHaveLength(31);
     });
 
-    it('Comentários Multilinha', () => {
+    it('Comentários Multilinha', async () => {
         const retornoLexador = lexador.mapear(
             [
                 '/*',
@@ -447,7 +447,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -456,7 +456,7 @@ describe('Formatador', () => {
         expect(linhasResultado.length).toBeGreaterThan(8);
     });
 
-    it('Operadores Binários - Módulo', () => {
+    it('Operadores Binários - Módulo', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -469,13 +469,13 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('10 % 3');
     });
 
-    it('Operadores Binários - Maior Igual e Menor Igual', () => {
+    it('Operadores Binários - Maior Igual e Menor Igual', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -493,14 +493,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('>=');
         expect(resultado).toContain('<=');
     });
 
-    it('Operadores Unários - Negação', () => {
+    it('Operadores Unários - Negação', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -514,14 +514,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('nao ');
         expect(resultado).toContain('falso');
     });
 
-    it('Literais Booleanos', () => {
+    it('Literais Booleanos', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -534,14 +534,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('verdadeiro');
         expect(resultado).toContain('falso');
     });
 
-    it('Atribuição Por Índice', () => {
+    it('Atribuição Por Índice', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -555,14 +555,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('numeros[0] = 10');
         expect(resultado).toContain('numeros[1] = 20');
     });
 
-    it('Declaração Var com tipo logico', () => {
+    it('Declaração Var com tipo logico', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -574,14 +574,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('logico');
         expect(resultado).toContain('verdadeiro');
     });
 
-    it('Operador de Subtração', () => {
+    it('Operador de Subtração', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -595,13 +595,13 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain(' - ');
     });
 
-    it('Vetor de Texto', () => {
+    it('Vetor de Texto', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -614,7 +614,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('cadeia');
@@ -622,7 +622,7 @@ describe('Formatador', () => {
         expect(resultado).toContain('nomes[0]');
     });
 
-    it('Operador de Maior', () => {
+    it('Operador de Maior', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -636,13 +636,13 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain(' > ');
     });
 
-    it('Retorno sem valor', () => {
+    it('Retorno sem valor', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa {',
@@ -657,14 +657,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('retorne');
         expect(resultado).toContain('funcao vazia()');
     });
 
-    it('Múltiplos comentários de linha única', () => {
+    it('Múltiplos comentários de linha única', async () => {
         const retornoLexador = lexador.mapear(
             [
                 '// Comentário 1',
@@ -678,14 +678,14 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('Comentário 1');
         expect(resultado).toContain('Comentário 2');
     });
 
-    it('Chamadas de função sem argumentos - limpa()', () => {
+    it('Chamadas de função sem argumentos - limpa()', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa',
@@ -700,7 +700,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
 
         expect(resultado).toContain('limpa()');
@@ -720,7 +720,7 @@ describe('Formatador', () => {
         expect(linhaLimpa).not.toEqual(linhaEscreva456);
     });
 
-    it('Nested Para loops with matriz (no extra spaces in condition)', () => {
+    it('Nested Para loops with matriz (no extra spaces in condition)', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa',
@@ -743,7 +743,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 
@@ -768,7 +768,7 @@ describe('Formatador', () => {
         expect(resultado).toContain('para (inteiro coluna = 0');
     });
 
-    it('Inline comments should stay on the same line as code', () => {
+    it('Inline comments should stay on the same line as code', async () => {
         const retornoLexador = lexador.mapear(
             [
                 'programa',
@@ -782,7 +782,7 @@ describe('Formatador', () => {
             ],
             -1
         );
-        const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
         const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
         const linhasResultado = resultado.split(sistemaOperacional.EOL);
 

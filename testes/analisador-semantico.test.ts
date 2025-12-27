@@ -25,7 +25,7 @@ describe('Analisador sêmantico', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
@@ -46,7 +46,7 @@ describe('Analisador sêmantico', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
@@ -64,7 +64,7 @@ describe('Analisador sêmantico', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
@@ -83,7 +83,7 @@ describe('Analisador sêmantico', () => {
                     '    }',
                     '}'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
 
@@ -100,7 +100,7 @@ describe('Analisador sêmantico', () => {
                     '}'
                 ], -1);
                 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
@@ -126,7 +126,7 @@ describe('Analisador sêmantico', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
@@ -149,7 +149,7 @@ describe('Analisador sêmantico', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
 
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
@@ -168,7 +168,7 @@ describe('Analisador sêmantico', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
@@ -188,7 +188,7 @@ describe('Analisador sêmantico', () => {
                     '}',
                     '}'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
@@ -206,7 +206,7 @@ describe('Analisador sêmantico', () => {
                     '}',
                     '}'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
@@ -223,7 +223,7 @@ describe('Analisador sêmantico', () => {
                     '    }',
                     '}'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();

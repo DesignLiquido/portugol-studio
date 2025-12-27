@@ -1,5 +1,5 @@
 import { ErroAvaliadorSintatico } from "@designliquido/delegua/avaliador-sintatico";
-import { FuncaoDeclaracao } from "@designliquido/delegua/declaracoes";
+import { Expressao, FuncaoDeclaracao } from "@designliquido/delegua/declaracoes";
 
 import { AvaliadorSintaticoPortugolStudio } from "../fontes";
 import { LexadorPortugolStudio } from "../fontes/lexador/lexador-portugol-studio";
@@ -17,7 +17,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
         });
 
         describe('Casos de Sucesso', () => {
-            it('Olá Mundo', () => {
+            it('Olá Mundo', async () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'programa',
@@ -30,13 +30,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     ],
                     -1
                 );
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(2);
             });
 
-            it('Comentários', () => {
+            it('Comentários', async () => {
                 const retornoLexador = lexador.mapear(
                     [
                         '/* Teste */',
@@ -51,13 +51,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     ],
                     -1
                 );
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes).toHaveLength(4);
             });
 
-            it('Estruturas de dados', () => {
+            it('Estruturas de dados', async () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'programa',
@@ -77,7 +77,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     ],
                     -1
                 );
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThanOrEqual(2);
@@ -102,13 +102,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('Escolha', () => {
+            it('Escolha', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa {',
                     '    funcao calculadora (){ ',
@@ -154,13 +154,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
             });
 
-            it('Funções', () => {
+            it('Funções', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
@@ -200,13 +200,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.erros).toHaveLength(0);
             });
 
-            it('Leia', () => {
+            it('Leia', async () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'programa',
@@ -222,13 +222,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     -1
                 );
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('Estrutura condicional - se e senao.', () => {
+            it('Estrutura condicional - se e senao.', async () => {
                 const resultado = lexador.mapear(
                     [
                         'programa',
@@ -253,13 +253,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     -1
                 );
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('Estruturas de repetição - Enquanto', () => {
+            it('Estruturas de repetição - Enquanto', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -281,13 +281,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('Estruturas de repetição - Faca ... Enquanto', () => {
+            it('Estruturas de repetição - Faca ... Enquanto', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -307,14 +307,14 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
             describe('Estruturas de repetição - Para', () => {
-                it('Trivial', () => {
+                it('Trivial', async () => {
                     const resultado = lexador.mapear([
                         'programa {',
                         '    funcao inicio() {',
@@ -325,13 +325,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                         '  }'
                     ], -1);
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
     
                     expect(retornoAvaliadorSintatico).toBeTruthy();
                     expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
                 });
 
-                it('Condição de parada como variável', () => {
+                it('Condição de parada como variável', async () => {
                     const resultado = lexador.mapear([
                         'programa',
                         '{',
@@ -347,14 +347,14 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                         '}'
                         ], -1);
     
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
     
                     expect(retornoAvaliadorSintatico).toBeTruthy();
                     expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
                 });
             });
 
-            it('Atribuição de Variáveis', () => {
+            it('Atribuição de Variáveis', async () => {
                 const resultado = lexador.mapear([
                     'programa {',
                     '    funcao inicio() {',
@@ -365,13 +365,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('Atribuição de Vetores', () => {
+            it('Atribuição de Vetores', async () => {
                 const resultado = lexador.mapear([
                     'programa {',
                     '    funcao inicio() {',
@@ -381,13 +381,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('Importação de bibliotecas', () => {
+            it('Importação de bibliotecas', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -399,13 +399,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThanOrEqual(2);
             });
 
-            it('Importação de bibliotecas, com nome de constante definido', () => {
+            it('Importação de bibliotecas, com nome de constante definido', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -417,13 +417,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(resultado, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBeGreaterThanOrEqual(2);
             });
 
-            it('Matrizes', () => {
+            it('Matrizes', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
@@ -436,13 +436,13 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
-            it('limpa()', () => {
+            it('limpa()', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
@@ -455,19 +455,21 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 expect(retornoAvaliadorSintatico).toBeTruthy();
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
                 const declaracaoFuncao = retornoAvaliadorSintatico.declaracoes[0];
                 expect(declaracaoFuncao).toBeInstanceOf(FuncaoDeclaracao);
                 expect((declaracaoFuncao as FuncaoDeclaracao).funcao.corpo.length).toBe(3);
-                expect((declaracaoFuncao as FuncaoDeclaracao).funcao.corpo[1]).toBeInstanceOf(Limpa);
+                const declaracaoLimpa = (declaracaoFuncao as FuncaoDeclaracao).funcao.corpo[1];
+                expect(declaracaoLimpa).toBeInstanceOf(Expressao);
+                expect(((declaracaoLimpa as any).expressao)).toBeInstanceOf(Limpa);
             });
         });
 
         describe('Casos de Falha', () => {
-            it('Falha - Função `inicio()` não definida', () => {
+            it('Falha - Função `inicio()` não definida', async () => {
                 const retornoLexador = lexador.mapear(
                     [
                         'programa',
@@ -481,12 +483,8 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     -1
                 );
 
-                const t = () => {
-                    avaliadorSintatico.analisar(retornoLexador, -1);
-                };
-
-                expect(t).toThrow(ErroAvaliadorSintatico);
-                expect(t).toThrow(
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
                     expect.objectContaining({
                         name: 'Error',
                         message: expect.stringContaining("Função 'inicio()' para iniciar o programa não foi definida.")
@@ -494,15 +492,11 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 )
             });
 
-            it('Falha - Programa vazio', () => {
+            it('Falha - Programa vazio', async () => {
                 const retornoLexador = lexador.mapear([''], -1);
 
-                const t = () => {
-                    avaliadorSintatico.analisar(retornoLexador, -1);
-                }
-
-                expect(t).toThrow(ErroAvaliadorSintatico);
-                expect(t).toThrow(
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
                     expect.objectContaining({
                         name: 'Error',
                         message: expect.stringContaining("Esperada expressão 'programa' para inicializar programa.")
@@ -510,7 +504,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 )
             })
 
-            it('Falha - Programa escreva com string não finalizada', () => {
+            it('Falha - Programa escreva com string não finalizada', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
@@ -521,13 +515,9 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1)
 
-                const t = () => {
-                    avaliadorSintatico.analisar(retornoLexador, -1);
-                }
-
-                expect(t).toThrow(ErroAvaliadorSintatico);
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
                 // @FixMe - Mensagem de erro não está sendo exibida corretamente.
-                expect(t).toThrow(
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
                     expect.objectContaining({
                         name: 'Error',
                         message: expect.stringContaining("Esperado ')' após os valores em escreva.")
@@ -535,7 +525,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 )
             })
 
-            it('Falha - Leia sem variável', () => {
+            it('Falha - Leia sem variável', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
                     '{',
@@ -546,11 +536,7 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const t = () => {
-                    avaliadorSintatico.analisar(retornoLexador, -1);
-                }
-
-                expect(t).toThrow(ErroAvaliadorSintatico);
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
             });
         });
     });

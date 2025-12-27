@@ -34,7 +34,7 @@ describe('Interpretador com Depuração (Portugol Studio)', () => {
                     "  }",
                     "}"
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 let execucaoFinalizada: boolean = false;
                 interpretador.finalizacaoDaExecucao = () => {

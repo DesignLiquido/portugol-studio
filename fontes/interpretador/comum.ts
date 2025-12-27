@@ -233,7 +233,8 @@ export async function visitarDeclaracaoImportarComum(declaracao: Importar): Prom
 }
 
 export async function visitarExpressaoImportarComum(expressao: ImportarComoConstruto): Promise<DeleguaModulo> {
-    return Promise.resolve(logicaComumImportacao(expressao.caminho.valor));
+    const caminho = typeof expressao.caminho.valor === 'string' ? expressao.caminho.valor : String(expressao.caminho.valor);
+    return Promise.resolve(logicaComumImportacao(caminho));
 }
 
 function desenveloparConstruto(expressao: Construto | Declaracao): Construto {

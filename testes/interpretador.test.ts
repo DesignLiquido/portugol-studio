@@ -33,7 +33,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     '    }',
                     '}'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetorno = (saida: string) => {
                     expect(saida).toEqual("Olá Mundo")
@@ -62,7 +62,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}'
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                     interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
                         _saidas.push(saida);
@@ -97,7 +97,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}'
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                     interpretador.funcaoDeRetorno = (saida: string) => {
                         expect(saida).toEqual("15")
@@ -133,7 +133,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}'
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                     interpretador.funcaoDeRetorno = (saida: any) => {
                         expect(saida).toEqual("É igual a 1")
@@ -159,7 +159,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     '    }',
                     '}'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 interpretador.funcaoDeRetorno = (saida: string) => {
                     expect(saida).toEqual("O resultado é:  5")
@@ -183,7 +183,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     '    }',
                     '}'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -209,7 +209,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     '    }',
                     '}'
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -232,7 +232,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     '    }',
                     '}',
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -256,7 +256,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}',
                     '}',
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -299,7 +299,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}',
                     '}',
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -356,7 +356,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}',
                     '}',
                 ], -1);
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -389,7 +389,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}',
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -454,7 +454,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         _saidas += saida;
                     }
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -487,7 +487,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     `    }`,
                     `}`], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
@@ -511,7 +511,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
@@ -535,7 +535,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoInterpretador.erros).toHaveLength(0);
@@ -559,7 +559,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         `}`
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -608,7 +608,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}'
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -640,7 +640,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}'
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -664,7 +664,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}'
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -691,7 +691,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}'
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -733,7 +733,7 @@ describe('Interpretador (Portugol Studio)', () => {
                         '}'
                     ], -1);
 
-                    const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
@@ -753,7 +753,7 @@ describe('Interpretador (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                const retornoAvaliadorSintatico = avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
 
                 let saida = "";
                 interpretador.funcaoDeRetornoMesmaLinha = (resultado: string) => {

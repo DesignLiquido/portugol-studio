@@ -10,14 +10,14 @@ describe('Lexador (Portugol Studio)', () => {
         });
 
         describe('Cenário de sucesso', () => {
-            it('Arquivo vazio.', () => {
+            it('Arquivo vazio.', async () => {
                 const resultado = lexador.mapear([''], -1);
 
                 expect(resultado).toBeTruthy();
                 expect(resultado.simbolos).toHaveLength(0);
             });
 
-            it('Programa vazio.', () => {
+            it('Programa vazio.', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -33,7 +33,7 @@ describe('Lexador (Portugol Studio)', () => {
                 expect(resultado.simbolos).toHaveLength(9);
             });
 
-            it('Operação matematica - adição', () => {
+            it('Operação matematica - adição', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -49,7 +49,7 @@ describe('Lexador (Portugol Studio)', () => {
                 expect(resultado.simbolos).toHaveLength(15);
             });
 
-            it('Operação matematica - subtração', () => {
+            it('Operação matematica - subtração', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -65,7 +65,7 @@ describe('Lexador (Portugol Studio)', () => {
                 expect(resultado.simbolos).toHaveLength(15);
             });
 
-            it('Operação matematica - multiplicação', () => {
+            it('Operação matematica - multiplicação', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -81,7 +81,7 @@ describe('Lexador (Portugol Studio)', () => {
                 expect(resultado.simbolos).toHaveLength(15);
             });
 
-            it('Operação matematica - divisão', () => {
+            it('Operação matematica - divisão', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -97,7 +97,7 @@ describe('Lexador (Portugol Studio)', () => {
                 expect(resultado.simbolos).toHaveLength(15);
             });
 
-            it('Estrutura condicional - se e senão', () => {
+            it('Estrutura condicional - se e senão', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -124,7 +124,7 @@ describe('Lexador (Portugol Studio)', () => {
                 expect(resultado.simbolos).toHaveLength(45);
             });
 
-            it('Enquanto', () => {
+            it('Enquanto', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',
@@ -150,7 +150,7 @@ describe('Lexador (Portugol Studio)', () => {
                 expect(resultado.simbolos).toHaveLength(57);
             });
 
-            it('Para', () => {
+            it('Para', async () => {
                 const resultado = lexador.mapear([
                     'programa {',
                     '    funcao inicio() {',
@@ -165,7 +165,7 @@ describe('Lexador (Portugol Studio)', () => {
                 expect(resultado.simbolos).toHaveLength(27);
             });
 
-            it('Importação de Biblioteca', () => {
+            it('Importação de Biblioteca', async () => {
                 const resultado = lexador.mapear([
                     'programa',
                     '{',

@@ -710,12 +710,18 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         // Verifica o tipo do valor sendo atribuído
         if (variavel.tipo) {
             if (valor instanceof Literal) {
-                const tipoInferido = inferirTipoVariavel(valor.valor);
-                if (tipoInferido !== variavel.tipo) {
-                    const erroTipo = this.validarCompatibilidadeTipos(tipoInferido, variavel.tipo);
-                    if (erroTipo) {
-                        this.erro(simboloAlvo, erroTipo);
-                        return Promise.resolve();
+                // ValorLiteral pode ser um Construto em Delégua 1, precisamos verificar se é um valor primitivo
+                const isPrimitivo = typeof valor.valor !== 'object' || valor.valor === null || !('linha' in valor.valor);
+
+                if (isPrimitivo) {
+                    const valorPrimitivo = valor.valor as string | number | boolean | any[];
+                    const tipoInferido = inferirTipoVariavel(valorPrimitivo);
+                    if (tipoInferido !== variavel.tipo) {
+                        const erroTipo = this.validarCompatibilidadeTipos(tipoInferido, variavel.tipo);
+                        if (erroTipo) {
+                            this.erro(simboloAlvo, erroTipo);
+                            return Promise.resolve();
+                        }
                     }
                 }
             }
@@ -918,7 +924,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             this.marcarVariaveisUsadasEmExpressao(argumento);
 
             // Verifica interpolação de texto
-            if (argumento instanceof Literal && argumento.tipo === 'texto') {
+            if (argumento instanceof Literal && argumento.tipo === 'texto' && typeof argumento.valor === 'string') {
                 this.verificarInterpolacaoTexto(argumento.valor, argumento);
             }
 
