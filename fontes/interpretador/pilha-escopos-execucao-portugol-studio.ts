@@ -36,14 +36,6 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
         throw new Error('Método não implementado.');
     }
 
-    obterReferenciaFuncao(idFuncao: string): DeleguaFuncao {
-        throw new Error('Método não implementado.');
-    }
-
-    registrarReferenciaFuncao(idFuncao: string, funcao: DeleguaFuncao): void {
-        throw new Error('Método não implementado.');
-    }
-
     empilhar(item: EscopoExecucao): void {
         this.pilha.push(item);
     }
@@ -260,5 +252,24 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
         }
 
         return retorno;
+    }
+
+    registrarReferenciaFuncao(idFuncao: string, funcao: DeleguaFuncao): void {
+        const espacoMemoriaAtual = this.pilha[this.pilha.length - 1].espacoMemoria;
+        espacoMemoriaAtual.referenciasFuncoes[idFuncao] = funcao;
+    }
+
+    obterReferenciaFuncao(idFuncao: string): DeleguaFuncao {
+        for (let i = 1; i <= this.pilha.length; i++) {
+            const espacoMemoria = this.pilha[this.pilha.length - i].espacoMemoria;
+            if (espacoMemoria.referenciasFuncoes[idFuncao] !== undefined) {
+                return espacoMemoria.referenciasFuncoes[idFuncao];
+            }
+        }
+
+        throw new ErroEmTempoDeExecucao(
+            new Simbolo('especial', idFuncao, idFuncao, -1, -1),
+            "Referência para função não encontrada: '" + idFuncao + "'."
+        );
     }
 }
