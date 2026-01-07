@@ -72,10 +72,10 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     }
 
     estaNoFinal(): boolean {
-        return (
-            (this.blocos === 1 && this.simbolos[this.atual].tipo === tiposDeSimbolos.CHAVE_DIREITA) ||
-            this.atual === this.simbolos.length
-        );
+        if (this.atual >= this.simbolos.length) {
+            return true;
+        }
+        return this.blocos === 1 && this.simbolos[this.atual].tipo === tiposDeSimbolos.CHAVE_DIREITA;
     }
 
     async declaracaoEscreva(): Promise<Escreva> {

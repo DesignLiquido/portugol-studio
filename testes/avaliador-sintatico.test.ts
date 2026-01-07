@@ -538,6 +538,20 @@ describe('Avaliador sintático (Portugol Studio)', () => {
 
                 await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
             });
+
+            it('Falha - Bloco de programa não finalizado (chave direita ausente)', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa{  funcao inicio () {        escreva("Olá Mundo!")} '
+                ], -1);
+
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
+                    expect.objectContaining({
+                        name: 'Error',
+                        message: expect.stringContaining('Esperado chave direita final para término do programa.')
+                    })
+                );
+            });
         });
     });
 });
