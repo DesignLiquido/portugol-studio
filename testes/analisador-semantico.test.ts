@@ -53,6 +53,26 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
             });
 
+            it('Atribuição válida entre variáveis do mesmo tipo', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    inteiro a = 5',
+                    '    inteiro b = 0',
+                    '    funcao inicio()',
+                    '    {',
+                    '        b = a',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
+
             it('Reconhece e utiliza variável global corretamente', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',
@@ -211,6 +231,29 @@ describe('Analisador sêmantico', () => {
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+            });
+
+            it('Atribuição de variável inteira a variável cadeia (tipos incompatíveis)', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    cadeia a',
+                    '    inteiro b = 0',
+                    '    funcao inicio()',
+                    '    {',
+                    '        a = b',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+                expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toBe(
+                    "Não é possível atribuir um valor do tipo 'inteiro' a uma variável do tipo 'cadeia'."
+                );
             });
 
             it('Reatribuição de valores a uma constante', async () => {

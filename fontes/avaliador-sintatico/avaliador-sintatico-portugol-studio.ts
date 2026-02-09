@@ -636,8 +636,24 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                         );
                         break;
                     case tiposDeSimbolos.IDENTIFICADOR:
-                        // TODO: Montar escopo de variáveis conhecidas e verificar o tipo e existência até aqui.
                         const variavelInicializacao = this.avancarEDevolverAnterior();
+                        const nomeVariavel = variavelInicializacao.lexema;
+
+                        if (!this.pilhaEscopos.variavelJaDefinida(nomeVariavel)) {
+                            throw this.erro(
+                                variavelInicializacao,
+                                `Variável '${nomeVariavel}' não declarada até este ponto.`
+                            );
+                        }
+
+                        const tipoVariavel = this.pilhaEscopos.obterTipoVariavelPorNome(nomeVariavel);
+                        if (tipoVariavel && tipoVariavel !== 'inteiro') {
+                            throw this.erro(
+                                variavelInicializacao,
+                                `Esperado variável do tipo 'inteiro', mas '${nomeVariavel}' é do tipo '${tipoVariavel}'.`
+                            );
+                        }
+
                         inicializador = new Variavel(this.hashArquivo, variavelInicializacao);
                         break;
                     default:

@@ -600,7 +600,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                     return Promise.resolve();
                 }
 
-                const tipoInferido = inferirTipoVariavel(variavelExistente.valor);
+                const tipoInferido = variavelExistente.tipo || inferirTipoVariavel(variavelExistente.valor);
                 if (tipoInferido !== declaracao.tipo) {
                     const erroTipo = this.validarCompatibilidadeTipos(tipoInferido, declaracao.tipo);
                     if (erroTipo) {
@@ -734,7 +734,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                     return Promise.resolve();
                 }
 
-                const tipoInferido = inferirTipoVariavel(variavelValor.valor);
+                const tipoInferido = variavelValor.tipo || inferirTipoVariavel(variavelValor.valor);
                 if (tipoInferido !== variavel.tipo) {
                     const erroTipo = this.validarCompatibilidadeTipos(tipoInferido, variavel.tipo);
                     if (erroTipo) {
