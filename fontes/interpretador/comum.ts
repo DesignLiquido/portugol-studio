@@ -205,7 +205,7 @@ export async function avaliarArgumentosEscreva(
     return formatoTexto;
 }
 
-function logicaComumImportacao(caminho: string): DeleguaModulo {
+export function logicaComumImportacao(caminho: string): DeleguaModulo {
     switch (caminho) {
         case 'Arquivos':
             return carregarBibliotecaArquivos();
