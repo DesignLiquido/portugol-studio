@@ -295,7 +295,7 @@ describe('Biblioteca de Objetos', () => {
     });
 
     describe('Obter propriedade do tipo caracter em vetor', () => {
-        let endereco;
+        let endereco: number;
 
         beforeEach(async () => {
             endereco = await criar_objeto();
@@ -352,7 +352,7 @@ describe('Biblioteca de Objetos', () => {
     });
 
     describe('Obter propriedade do tipo logico em vetor', () => {
-        let endereco;
+        let endereco: number;
 
         beforeEach(async () => {
             endereco = await criar_objeto();
@@ -401,7 +401,7 @@ describe('Biblioteca de Objetos', () => {
     });
 
     describe('Obter propriedade do tipo real em vetor', () => {
-        let endereco;
+        let endereco: number;
 
         beforeEach(async () => {
             endereco = await criar_objeto();
@@ -458,7 +458,7 @@ describe('Biblioteca de Objetos', () => {
     });
 
     describe('Obter propriedade do tipo inteiro em vetor', () => {
-        let endereco;
+        let endereco: number;
 
         beforeEach(async () => {
             endereco = await criar_objeto();
@@ -515,7 +515,7 @@ describe('Biblioteca de Objetos', () => {
     });
 
     describe('Obter propriedade do tipo cadeia em vetor', () => {
-        let endereco;
+        let endereco: number;
 
         beforeEach(async () => {
             endereco = await criar_objeto();

@@ -8,35 +8,11 @@ import { VisitantePortugolStudioInterface } from '../interfaces';
 import { Matriz } from '../construtos/matriz';
 import { converterValor } from './inferenciador';
 
-import * as arquivos from '../bibliotecas/arquivos';
 import * as calendario from '../bibliotecas/calendario';
-import * as internet from '../bibliotecas/internet';
 import * as matematica from '../bibliotecas/matematica';
 import * as objetos from '../bibliotecas/objetos';
 import * as texto from '../bibliotecas/texto';
 import * as tipos from '../bibliotecas/tipos';
-import * as util from '../bibliotecas/util';
-
-function carregarBibliotecaArquivos(): DeleguaModulo {
-    const metodos: { [nome: string]: FuncaoPadrao } = {
-        abrir_arquivo: new FuncaoPadrao(2, arquivos.abrir_arquivo),
-        fechar_arquivo: new FuncaoPadrao(1, arquivos.fechar_arquivo),
-        fim_arquivo: new FuncaoPadrao(1, arquivos.fim_arquivo),
-        ler_linha: new FuncaoPadrao(1, arquivos.ler_linha),
-        escrever_linha: new FuncaoPadrao(2, arquivos.escrever_linha),
-        substituir_texto: new FuncaoPadrao(4, arquivos.substituir_texto),
-        arquivo_existe: new FuncaoPadrao(1, arquivos.arquivo_existe),
-        apagar_arquivo: new FuncaoPadrao(1, arquivos.apagar_arquivo),
-        criar_pasta: new FuncaoPadrao(1, arquivos.criar_pasta),
-        listar_pastas: new FuncaoPadrao(2, arquivos.listar_pastas),
-        listar_arquivos: new FuncaoPadrao(2, arquivos.listar_arquivos),
-        listar_arquivos_por_tipo: new FuncaoPadrao(3, arquivos.listar_arquivos_por_tipo),
-    };
-
-    const objetoArquivos = new DeleguaModulo('Arquivos');
-    objetoArquivos.componentes = metodos;
-    return objetoArquivos;
-}
 
 function carregarBibliotecaCalendario(): DeleguaModulo {
     const metodos: { [nome: string]: FuncaoPadrao } = {
@@ -55,19 +31,6 @@ function carregarBibliotecaCalendario(): DeleguaModulo {
     const objetoCalendario = new DeleguaModulo('Calendario');
     objetoCalendario.componentes = metodos;
     return objetoCalendario;
-}
-
-function carregarBibliotecaInternet(): DeleguaModulo {
-    const metodos: { [nome: string]: FuncaoPadrao } = {
-        definir_tempo_limite: new FuncaoPadrao(1, internet.definir_tempo_limite),
-        obter_texto: new FuncaoPadrao(1, internet.obter_texto),
-        baixar_imagem: new FuncaoPadrao(2, internet.baixar_imagem),
-        endereco_disponivel: new FuncaoPadrao(1, internet.endereco_disponivel),
-    };
-
-    const objetoInternet = new DeleguaModulo('Internet');
-    objetoInternet.componentes = metodos;
-    return objetoInternet;
 }
 
 function carregarBibliotecaMatematica(): DeleguaModulo {
@@ -167,22 +130,6 @@ function carregarBibliotecaTipos(): DeleguaModulo {
     return objetoTipos;
 }
 
-function carregarBibliotecaUtil(): DeleguaModulo {
-    const metodos: { [nome: string]: FuncaoPadrao } = {
-        obter_diretorio_usuario: new FuncaoPadrao(0, util.obter_diretorio_usuario),
-        numero_elementos: new FuncaoPadrao(1, util.numero_elementos),
-        numero_linhas: new FuncaoPadrao(1, util.numero_linhas),
-        numero_colunas: new FuncaoPadrao(1, util.numero_colunas),
-        sorteia: new FuncaoPadrao(2, util.sorteia),
-        aguarde: new FuncaoPadrao(1, util.aguarde),
-        tempo_decorrido: new FuncaoPadrao(0, util.tempo_decorrido),
-    };
-
-    const objetoUtil = new DeleguaModulo('Util');
-    objetoUtil.componentes = metodos;
-    return objetoUtil;
-}
-
 /**
  * Avaliação de argumentos para `escreva`. Diferentemente de outros dialetos, aqui não ocorre `trimEnd`, já que `\n`
  * É significativo para Portugol Studio.
@@ -207,12 +154,8 @@ export async function avaliarArgumentosEscreva(
 
 export function logicaComumImportacao(caminho: string): DeleguaModulo {
     switch (caminho) {
-        case 'Arquivos':
-            return carregarBibliotecaArquivos();
         case 'Calendario':
             return carregarBibliotecaCalendario();
-        case 'Internet':
-            return carregarBibliotecaInternet();
         case 'Matematica':
             return carregarBibliotecaMatematica();
         case 'Objetos':
@@ -221,8 +164,6 @@ export function logicaComumImportacao(caminho: string): DeleguaModulo {
             return carregarBibliotecaTexto();
         case 'Tipos':
             return carregarBibliotecaTipos();
-        case 'Util':
-            return carregarBibliotecaUtil();
         default:
             throw new ErroEmTempoDeExecucao(null, `Biblioteca não implementada: ${caminho}.`);
     }
