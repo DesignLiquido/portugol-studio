@@ -36,12 +36,12 @@ import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintati
 import { PilhaEscopos } from '@designliquido/delegua/avaliador-sintatico';
 import { InformacaoEscopo } from '@designliquido/delegua/avaliador-sintatico/informacao-escopo';
 import { InformacaoElementoSintatico } from '@designliquido/delegua/informacao-elemento-sintatico';
+import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 
 import { Simbolo } from '@designliquido/delegua/lexador';
 import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
-import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 import { Matriz, Limpa } from '../construtos';
 
@@ -515,7 +515,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return this.simbolos[this.atual];
     }
 
-    verificarDefinicaoTipo(lexema: string): TipoDadosElementar {
+    verificarDefinicaoTipo(lexema: string): TipoInferencia {
         const tipos = [...Object.values(tiposDeDados)];
         const contemTipo = tipos.find((tipo) => tipo === lexema);
         if (contemTipo && this.verificarTipoProximoSimbolo(tiposDeSimbolos.COLCHETE_ESQUERDO)) {
@@ -530,10 +530,10 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
             this.avancarEDevolverAnterior();
 
-            return contemTipoVetor as TipoDadosElementar;
+            return contemTipoVetor as TipoInferencia;
         }
 
-        return contemTipo as TipoDadosElementar;
+        return contemTipo as TipoInferencia;
     }
 
     protected async logicaComumParametros(): Promise<ParametroInterface[]> {
@@ -1084,7 +1084,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             new InformacaoElementoSintatico(identificador.lexema, tipo.lexema)
         );
 
-        return new Const(identificador, inicializador, tipo.lexema as TipoDadosElementar);
+        return new Const(identificador, inicializador, tipo.lexema as TipoInferencia);
     }
 
     async resolverDeclaracaoForaDeBloco(): Promise<Declaracao | Declaracao[]> {

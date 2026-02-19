@@ -32,10 +32,10 @@ import {
     Vetor,
     Variavel,
 } from '@designliquido/delegua/construtos';
-import { TipoDadosElementar } from '@designliquido/delegua/tipo-dados-elementar';
 
 import { inferirTipoVariavel } from '../interpretador/inferenciador';
 import tiposDeDados from '../tipos-de-dados';
+import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
 export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
@@ -400,67 +400,6 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     }
 
     /**
-     * Obtém o tipo de uma expressão
-     */
-    private obterTipoExpressao(expressao: any): string | null {
-        if (expressao instanceof Literal) {
-            return expressao.tipo;
-        }
-
-        if (expressao instanceof Variavel) {
-            const variavel = this.gerenciadorEscopos.buscar(expressao.simbolo.lexema);
-            return variavel?.tipo || null;
-        }
-
-        if (expressao instanceof Binario) {
-            return this.inferirTipoBinario(expressao);
-        }
-
-        if (expressao instanceof Agrupamento) {
-            return this.obterTipoExpressao(expressao.expressao);
-        }
-
-        return null;
-    }
-
-    /**
-     * Infere o tipo de resultado de uma operação binária
-     */
-    private inferirTipoBinario(binario: Binario): string | null {
-        const tipoEsquerda = this.obterTipoExpressao(binario.esquerda);
-        const tipoDireita = this.obterTipoExpressao(binario.direita);
-
-        if (!tipoEsquerda || !tipoDireita) {
-            return null;
-        }
-
-        const operadoresMatematicos = ['ADICAO', 'SUBTRACAO', 'MULTIPLICACAO', 'DIVISAO', 'MODULO'];
-        const operadoresComparacao = ['MAIOR', 'MAIOR_IGUAL', 'MENOR', 'MENOR_IGUAL', 'IGUAL', 'DIFERENTE'];
-
-        if (operadoresComparacao.includes(binario.operador.tipo)) {
-            return 'lógico';
-        }
-
-        if (operadoresMatematicos.includes(binario.operador.tipo)) {
-            const tiposNumericos = ['inteiro', 'número', 'real'];
-            if (tiposNumericos.includes(tipoEsquerda) && tiposNumericos.includes(tipoDireita)) {
-                // Se um dos lados é 'real', o resultado é 'real'
-                if (tipoEsquerda === 'real' || tipoDireita === 'real') {
-                    return 'real';
-                }
-                return 'número';
-            }
-
-            // Concatenação de textos
-            if (tipoEsquerda === 'texto' || tipoDireita === 'texto') {
-                return 'texto';
-            }
-        }
-
-        return 'qualquer';
-    }
-
-    /**
      * Verifica a existência de um construto
      */
     private verificarExistenciaConstruto(construto: any): void {
@@ -624,7 +563,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         // Declara a variável usando GerenciadorEscopos
         const variavel = {
             nome: simbolo.lexema,
-            tipo: (declaracao.tipo as TipoDadosElementar) || 'qualquer',
+            tipo: (declaracao.tipo as TipoInferencia) || 'qualquer',
             imutavel: false,
             valor: valorInicializador,
             inicializada: inicializador !== null && inicializador !== undefined,
@@ -643,7 +582,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         // Mantém compatibilidade com o dicionário antigo
         this.variaveis[simbolo.lexema] = {
             imutavel: false,
-            tipo: declaracao.tipo as TipoDadosElementar,
+            tipo: declaracao.tipo as TipoInferencia,
             valor: valorInicializador,
             valorDefinido: true,
         };
@@ -883,7 +822,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         // Declara a constante usando GerenciadorEscopos
         this.gerenciadorEscopos.declarar(declaracao.simbolo.lexema, {
             nome: declaracao.simbolo.lexema,
-            tipo: (declaracao.tipo as TipoDadosElementar) || 'qualquer',
+            tipo: (declaracao.tipo as TipoInferencia) || 'qualquer',
             imutavel: true,
             valor: valorInicializador,
             inicializada: true,
@@ -895,7 +834,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         // Mantém compatibilidade com o dicionário antigo
         this.variaveis[declaracao.simbolo.lexema] = {
             imutavel: true,
-            tipo: declaracao.tipo as TipoDadosElementar,
+            tipo: declaracao.tipo as TipoInferencia,
             valor: valorInicializador,
             valorDefinido: true,
         };

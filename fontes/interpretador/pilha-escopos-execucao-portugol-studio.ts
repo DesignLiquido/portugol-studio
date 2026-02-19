@@ -6,7 +6,8 @@ import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
 import { DescritorTipoClasse, DeleguaFuncao } from '@designliquido/delegua/interpretador/estruturas';
 import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memoria';
 
-import { TipoInferencia, inferirTipoVariavel, converterValor } from './inferenciador';
+import { inferirTipoVariavel, converterValor } from './inferenciador';
+import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
 export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoInterface {
     pilha: EscopoExecucao[];

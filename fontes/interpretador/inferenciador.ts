@@ -1,6 +1,4 @@
-import { TipoNativoSimbolo } from '@designliquido/delegua/inferenciador';
-
-export type TipoInferencia = 'cadeia' | 'caracter' | 'inteiro' | 'lógico' | 'real' | 'vazio';
+import { TipoInferencia, TipoNativoSimbolo } from '@designliquido/delegua/inferenciador';
 
 export function inferirTipoVariavel(
     variavel: string | number | Array<any> | boolean | null | undefined
