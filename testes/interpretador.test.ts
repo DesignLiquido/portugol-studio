@@ -108,6 +108,37 @@ describe('Interpretador (Portugol Studio)', () => {
                     expect(retornoInterpretador.erros).toHaveLength(0);
                 });
 
+                it('Leia em posição de vetor', async () => {
+                    const respostas = [42];
+                    interpretador.interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.pop());
+                        }
+                    };
+
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        '        inteiro numeros[2]',
+                        '        leia(numeros[0])',
+                        '        escreva(numeros[0])',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+
+                    interpretador.funcaoDeRetorno = (saida: any) => {
+                        expect(saida).toEqual('42')
+                    }
+
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                });
+
                 it('Leia com condicional se', async () => {
                     const respostas = [1];
                     interpretador.interfaceEntradaSaida = {
@@ -142,6 +173,34 @@ describe('Interpretador (Portugol Studio)', () => {
                     const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
 
                     expect(retornoInterpretador.erros).toHaveLength(0);
+                });
+
+                it('Falha - Argumento inválido', async () => {
+                    const respostas = [1];
+                    interpretador.interfaceEntradaSaida = {
+                        question: (mensagem: string, callback: Function) => {
+                            callback(respostas.pop());
+                        }
+                    };
+
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    funcao inicio()',
+                        '    {',
+                        '        inteiro n = 0',
+                        '        leia(n + 1)',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros).toHaveLength(1);
+                    expect(retornoInterpretador.erros[0].erroInterno.message).toContain(
+                        'Argumento inválido em leia(). Esperado variável ou posição indexada de vetor/matriz.'
+                    );
                 });
             });
 

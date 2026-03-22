@@ -90,6 +90,25 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
             });
+
+            it('Leia com variável e índice de vetor válidos', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inicio() {',
+                    'inteiro n = 0',
+                    'inteiro numeros[2]',
+                    'leia(n, numeros[0])',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
         });
 
         describe('Casos de Falha', () => {
@@ -271,6 +290,27 @@ describe('Analisador sêmantico', () => {
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+            });
+
+            it('Leia com argumento inválido', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    funcao inicio() {',
+                    '        inteiro n = 0',
+                    '        leia(n + 1)',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+                expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toBe(
+                    'Argumento inválido em leia(). Esperado variável ou posição indexada de vetor/matriz.'
+                );
             });
         });
     })

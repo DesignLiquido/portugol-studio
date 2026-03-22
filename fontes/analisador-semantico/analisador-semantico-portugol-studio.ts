@@ -21,12 +21,14 @@ import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/v
 
 import { PilhaVariaveis } from './pilha-variaveis';
 import {
+    AcessoIndiceVariavel,
     Agrupamento,
     AtribuicaoPorIndice,
     Atribuir,
     Binario,
     Chamada,
     FuncaoConstruto,
+    Leia,
     Literal,
     Logico,
     Vetor,
@@ -773,6 +775,49 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         return Promise.resolve();
     }
 
+    private desenveloparExpressaoLeia(argumento: any): any {
+        if (argumento instanceof Expressao) {
+            return this.desenveloparExpressaoLeia(argumento.expressao);
+        }
+
+        return argumento;
+    }
+
+    visitarExpressaoLeia(expressao: Leia): Promise<any> {
+        for (const argumento of expressao.argumentos) {
+            const construto = this.desenveloparExpressaoLeia(argumento);
+
+            if (construto instanceof Variavel) {
+                this.verificarVariavel(construto);
+                continue;
+            }
+
+            if (construto instanceof AcessoIndiceVariavel) {
+                if (construto.entidadeChamada instanceof Variavel) {
+                    this.verificarVariavel(construto.entidadeChamada);
+                }
+
+                if (construto.indice instanceof Variavel) {
+                    this.verificarVariavel(construto.indice);
+                }
+
+                continue;
+            }
+
+            const simbolo = (construto as any)?.simbolo || {
+                lexema: 'leia',
+                tipo: 'LEIA',
+                linha: expressao.simbolo.linha,
+                hashArquivo: expressao.simbolo.hashArquivo,
+                literal: null,
+            };
+
+            this.erro(simbolo, 'Argumento inválido em leia(). Esperado variável ou posição indexada de vetor/matriz.');
+        }
+
+        return Promise.resolve();
+    }
+
     visitarDeclaracaoDeExpressao(declaracao: Expressao) {
         switch (declaracao.expressao.constructor) {
             case Atribuir:
@@ -786,6 +831,9 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                 break;
             case AtribuicaoPorIndice:
                 this.visitarExpressaoAtribuicaoPorIndice(declaracao.expressao as AtribuicaoPorIndice);
+                break;
+            case Leia:
+                this.visitarExpressaoLeia(declaracao.expressao as Leia);
                 break;
             default:
                 console.log(declaracao.expressao);

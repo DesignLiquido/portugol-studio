@@ -1,4 +1,4 @@
-import { AcessoIndiceVariavel, Construto, ImportarComoConstruto, Leia } from '@designliquido/delegua/construtos';
+import { AcessoIndiceVariavel, Construto, ImportarComoConstruto, Leia, Variavel } from '@designliquido/delegua/construtos';
 import { Declaracao, Expressao, Importar } from '@designliquido/delegua/declaracoes';
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/interpretador/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
@@ -258,12 +258,21 @@ export async function visitarExpressaoLeiaComum(
             ]);
 
             const variavel: VariavelInterface = promises[0];
-            const indice: VariavelInterface = promises[1];
+            const indice = interpretador.resolverValor(promises[1]);
 
-            variavel.valor[indice.valor] = converterValor(variavel.subtipo, valorLido);
-        } else {
-            interpretador.pilhaEscoposExecucao.definirVariavel((construtoVariavel as any).simbolo.lexema, valorLido);
+            variavel.valor[indice] = converterValor(variavel.subtipo, valorLido);
+            continue;
         }
+
+        if (construtoVariavel instanceof Variavel) {
+            interpretador.pilhaEscoposExecucao.definirVariavel(construtoVariavel.simbolo.lexema, valorLido);
+            continue;
+        }
+
+        throw new ErroEmTempoDeExecucao(
+            null,
+            'Argumento inválido em leia(). Esperado variável ou posição indexada de vetor/matriz.'
+        );
     }
 }
 
