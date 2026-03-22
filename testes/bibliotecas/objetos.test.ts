@@ -20,7 +20,9 @@ import {
     obter_json,
     contem_propriedade,
     tipo_propriedade,
-    TIPO_INTEIRO
+    TIPO_INTEIRO,
+    TIPO_REAL,
+    liberar,
 } from './../../fontes/bibliotecas/objetos';
 import { InterpretadorInterface } from '@designliquido/delegua/interfaces';
 describe('Biblioteca de Objetos', () => {
@@ -637,6 +639,23 @@ describe('Biblioteca de Objetos', () => {
             await atribuir_propriedade({} as InterpretadorInterface, endereco, 'idade', 25);
             const tipo = await tipo_propriedade({} as InterpretadorInterface, endereco, 'idade');
             expect(tipo).toBe(TIPO_INTEIRO);
+        });
+
+        it('Deve classificar numero fracionario como real', async () => {
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'altura', 1.75);
+            const tipo = await tipo_propriedade({} as InterpretadorInterface, endereco, 'altura');
+            expect(tipo).toBe(TIPO_REAL);
+        });
+    });
+
+    describe('Liberar todos os objetos', () => {
+        it('Trivial', async () => {
+            const endereco = await criar_objeto();
+            await atribuir_propriedade({} as InterpretadorInterface, endereco, 'nome', 'Charlotte');
+
+            await liberar();
+
+            await expect(obter_json({} as InterpretadorInterface, endereco)).rejects.toThrow();
         });
     });
 });

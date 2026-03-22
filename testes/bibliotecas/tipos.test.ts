@@ -11,6 +11,7 @@ import {
     logico_para_cadeia,
     logico_para_caracter,
     logico_para_inteiro,
+    real_para_cadeia,
     caracter_e_inteiro,
     caracter_e_logico,
     caracter_para_cadeia,
@@ -72,6 +73,11 @@ describe('Tipos', () => {
 
         it('Valor Não Lógico', async () => {
             const cad = 'Valor negado';
+            expect(cadeia_e_logico({} as InterpretadorInterface, cad)).toBe(false);
+        });
+
+        it('Nao deve aceitar trecho parcial', async () => {
+            const cad = 'verdadeiroABC';
             expect(cadeia_e_logico({} as InterpretadorInterface, cad)).toBe(false);
         });
     });
@@ -360,6 +366,20 @@ describe('Tipos', () => {
             const valor = 123.45;
             const resultado = real_para_inteiro({} as InterpretadorInterface, valor);
             expect(resultado).toBe(123);
+        });
+
+        it('Deve truncar numero negativo', async () => {
+            const valor = -123.45;
+            const resultado = real_para_inteiro({} as InterpretadorInterface, valor);
+            expect(resultado).toBe(-123);
+        });
+    });
+
+    describe('Conversão de Real para Cadeia', () => {
+        it('Trivial', async () => {
+            const valor = 12.5;
+            const resultado = real_para_cadeia({} as InterpretadorInterface, valor);
+            expect(resultado).toBe('12.5');
         });
     });
 });

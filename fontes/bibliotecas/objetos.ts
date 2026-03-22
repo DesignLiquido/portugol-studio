@@ -235,6 +235,10 @@ export async function liberar_objeto(interpretador: InterpretadorInterface, ende
     delete cacheObjetos[endereco];
 }
 
+export async function liberar(): Promise<void> {
+    cacheObjetos = [];
+}
+
 export async function obter_json(interpretador: InterpretadorInterface, endereco: number): Promise<string> {
     const objeto = cacheObjetos[endereco];
     if (!objeto) {
@@ -261,7 +265,7 @@ export async function tipo_propriedade(
         return valor.length === 1 ? TIPO_CARACTER : TIPO_CADEIA;
     }
     if (typeof valor === 'number') {
-        return TIPO_INTEIRO;
+        return Number.isInteger(valor) ? TIPO_INTEIRO : TIPO_REAL;
     }
     if (typeof valor === 'boolean') {
         return TIPO_LOGICO;

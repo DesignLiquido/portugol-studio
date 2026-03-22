@@ -25,11 +25,34 @@ function carregarBibliotecaCalendario(): DeleguaModulo {
         segundo_atual: new FuncaoPadrao(0, calendario.segundo_atual),
         milisegundo_atual: new FuncaoPadrao(0, calendario.milisegundo_atual),
         dia_semana_completo: new FuncaoPadrao(0, calendario.dia_semana_completo),
-        dia_semana_curto: new FuncaoPadrao(0, calendario.dia_semana_completo),
+        dia_semana_curto: new FuncaoPadrao(0, calendario.dia_semana_curto),
+        dia_semana_abreviado: new FuncaoPadrao(0, calendario.dia_semana_abreviado),
     };
 
     const objetoCalendario = new DeleguaModulo('Calendario');
-    objetoCalendario.componentes = metodos;
+    objetoCalendario.componentes = { ...metodos };
+
+    const componentesCalendario = objetoCalendario.componentes as Record<string, any>;
+    componentesCalendario.DIA_DOMINGO = calendario.DIA_DOMINGO;
+    componentesCalendario.DIA_SEGUNDA_FEIRA = calendario.DIA_SEGUNDA_FEIRA;
+    componentesCalendario.DIA_TERCA_FEIRA = calendario.DIA_TERCA_FEIRA;
+    componentesCalendario.DIA_QUARTA_FEIRA = calendario.DIA_QUARTA_FEIRA;
+    componentesCalendario.DIA_QUINTA_FEIRA = calendario.DIA_QUINTA_FEIRA;
+    componentesCalendario.DIA_SEXTA_FEIRA = calendario.DIA_SEXTA_FEIRA;
+    componentesCalendario.DIA_SABADO = calendario.DIA_SABADO;
+    componentesCalendario.MES_JANEIRO = calendario.MES_JANEIRO;
+    componentesCalendario.MES_FEVEREIRO = calendario.MES_FEVEREIRO;
+    componentesCalendario.MES_MARCO = calendario.MES_MARCO;
+    componentesCalendario.MES_ABRIL = calendario.MES_ABRIL;
+    componentesCalendario.MES_MAIO = calendario.MES_MAIO;
+    componentesCalendario.MES_JUNHO = calendario.MES_JUNHO;
+    componentesCalendario.MES_JULHO = calendario.MES_JULHO;
+    componentesCalendario.MES_AGOSTO = calendario.MES_AGOSTO;
+    componentesCalendario.MES_SETEMBRO = calendario.MES_SETEMBRO;
+    componentesCalendario.MES_OUTUBRO = calendario.MES_OUTUBRO;
+    componentesCalendario.MES_NOVEMBRO = calendario.MES_NOVEMBRO;
+    componentesCalendario.MES_DEZEMBRO = calendario.MES_DEZEMBRO;
+
     return objetoCalendario;
 }
 
@@ -59,6 +82,7 @@ function carregarBibliotecaObjetos(): DeleguaModulo {
         criar_objeto: new FuncaoPadrao(0, objetos.criar_objeto),
         criar_objeto_via_json: new FuncaoPadrao(1, objetos.criar_objeto_via_json),
         criar_objeto_via_xml: new FuncaoPadrao(1, objetos.criar_objeto_via_xml),
+        liberar: new FuncaoPadrao(0, objetos.liberar),
         liberar_objeto: new FuncaoPadrao(1, objetos.liberar_objeto),
         obter_json: new FuncaoPadrao(1, objetos.obter_json),
         obter_propriedade_tipo_cadeia: new FuncaoPadrao(2, objetos.obter_propriedade_tipo_cadeia),
@@ -122,6 +146,7 @@ function carregarBibliotecaTipos(): DeleguaModulo {
         logico_para_cadeia: new FuncaoPadrao(1, tipos.logico_para_cadeia),
         logico_para_inteiro: new FuncaoPadrao(1, tipos.logico_para_inteiro),
         logico_para_caracter: new FuncaoPadrao(1, tipos.logico_para_caracter),
+        real_para_cadeia: new FuncaoPadrao(1, tipos.real_para_cadeia),
         real_para_inteiro: new FuncaoPadrao(1, tipos.real_para_inteiro),
     };
 

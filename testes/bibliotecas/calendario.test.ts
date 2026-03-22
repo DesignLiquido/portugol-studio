@@ -24,8 +24,7 @@ describe('Biblioteca Calendario', () => {
     describe('Dia da Semana Atual', () => {
         it('Trivial', async () => {
             const dataAtual = new Date();
-            let diaEsperado = dataAtual.getDay() + 1;
-            if (diaEsperado === 7) diaEsperado = 0;
+            const diaEsperado = dataAtual.getDay() + 1;
             const resultado = await dia_semana_atual();
             expect(resultado).toBe(diaEsperado);
         });

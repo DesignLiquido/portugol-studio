@@ -4,7 +4,7 @@ const PADRAO_INTEIRO_NOTACAO_HEXADECIMAL: RegExp = /^(0x|0X)?([0-9]|[a-f]|[A-F])
 const PADRAO_INTEIRO_NOTACAO_BINARIA: RegExp = /^(0b|0B)?[0-1]+$/;
 const PADRAO_INTEIRO_NOTACAO_DECIMAL: RegExp = /^-?\d+$/;
 const PADRAO_REAL: RegExp = /^-?\d+\.\d+$/;
-const PADRAO_LOGICO: RegExp = /^verdadeiro|falso$/;
+const PADRAO_LOGICO: RegExp = /^(verdadeiro|falso)$/;
 
 export function cadeia_e_inteiro(interpretador: InterpretadorInterface, cad: string, base: number): boolean {
     switch (base) {
@@ -155,8 +155,12 @@ export function logico_para_caracter(interpretador: InterpretadorInterface, valo
     return valor ? 'S' : 'N';
 }
 
+export function real_para_cadeia(interpretador: InterpretadorInterface, valor: number): string {
+    return String(valor);
+}
+
 export function real_para_inteiro(interpretador: InterpretadorInterface, valor: number): number {
-    return Math.floor(valor);
+    return Math.trunc(valor);
 }
 
 function lpad(quantidade: number, cadeia: string): string {

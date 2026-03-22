@@ -542,6 +542,55 @@ describe('Interpretador (Portugol Studio)', () => {
                 expect(_saidas).toContain('9');
             });
 
+            it('Biblioteca Calendario usa dia_semana_curto corretamente', async () => {
+                let _saidas = "";
+                interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                    _saidas += saida;
+                }
+
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    inclua biblioteca Calendario',
+                    '    funcao inicio()',
+                    '    {',
+                    '        escreva(Calendario.dia_semana_curto(2, falso, falso))',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+                expect(_saidas).toContain('Segunda');
+                expect(_saidas).not.toContain('Segunda-Feira');
+            });
+
+            it('Biblioteca Calendario expõe constantes de dia e mês', async () => {
+                let _saidas = "";
+                interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                    _saidas += saida;
+                }
+
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    inclua biblioteca Calendario',
+                    '    funcao inicio()',
+                    '    {',
+                    '        escreva(Calendario.DIA_DOMINGO, Calendario.MES_JANEIRO)',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoInterpretador.erros).toHaveLength(0);
+                expect(_saidas).toContain('1 1');
+            });
+
             describe('Bibliotecas delegadas ao delegua-node', () => {
                 it('Arquivos retorna erro orientativo', async () => {
                     const retornoLexador = lexador.mapear([
