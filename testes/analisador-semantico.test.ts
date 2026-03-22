@@ -458,6 +458,79 @@ describe('Analisador sêmantico', () => {
                 expect(mensagens.some(m => m.includes('naoDeclarada'))).toBe(true);
             });
 
+            it('Declaracao com tipo incompativel gera diagnostico (inteiro recebe texto)', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa {',
+                    '    funcao inicio() {',
+                    '        inteiro x = "texto"',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico.diagnosticos.length).toBeGreaterThan(0);
+            });
+
+            it('Divisao por zero em expressao gera diagnostico', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa {',
+                    '    funcao inicio() {',
+                    '        inteiro x = 10',
+                    '        se (x / 0 == 0) {',
+                    '            escreva("zero")',
+                    '        }',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                const temDivisaoPorZero = retornoAnalisadorSemantico.diagnosticos.some(
+                    d => d.mensagem.includes('Divisão por zero')
+                );
+                expect(temDivisaoPorZero).toBe(true);
+            });
+
+            it('Operador logico e em condicional valida', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa {',
+                    '    funcao inicio() {',
+                    '        logico a = verdadeiro',
+                    '        logico b = falso',
+                    '        se (a e b) {',
+                    '            escreva("ambos")',
+                    '        }',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
+
+            it('Variavel declarada mas nao usada nao gera erro (aviso desativado)', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa {',
+                    '    funcao inicio() {',
+                    '        inteiro x = 5',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                const temErro = retornoAnalisadorSemantico.diagnosticos.some(
+                    d => d.mensagem.includes('x')
+                );
+                expect(temErro).toBe(false);
+            });
+
             it('Funcao com parametros valida - retorne usa parametro', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa',

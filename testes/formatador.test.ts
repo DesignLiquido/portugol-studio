@@ -979,6 +979,63 @@ describe('Formatador', () => {
         expect(resultado).not.toContain('caso contrario:');
     });
 
+    it('Operador logico e (and)', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        logico a = verdadeiro',
+                '        logico b = falso',
+                '        se (a e b) {',
+                '            escreva("ambos verdadeiro")',
+                '        }',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+        expect(resultado).toContain(' e ');
+    });
+
+    it('Array de caracter', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        caracter letras[3]',
+                '        escreva(letras[0])',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+        expect(resultado).toContain('caracter letras');
+    });
+
+    it('Divisao e modulo (operadores aritmeticos)', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro x = 7',
+                '        inteiro y = x / 2',
+                '        inteiro z = x % 2',
+                '        escreva(y)',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+        expect(resultado).toContain(' / ');
+        expect(resultado).toContain(' % ');
+    });
+
     it('Inline comments should stay on the same line as code', async () => {
         const retornoLexador = lexador.mapear(
             [

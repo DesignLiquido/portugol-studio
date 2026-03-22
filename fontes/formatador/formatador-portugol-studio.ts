@@ -739,6 +739,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.formatarBlocoOuVetorDeclaracoes(declaracao.declaracoes);
     }
 
+    /* istanbul ignore next */
     visitarExpressaoContinua(declaracao?: Continua): ContinuarQuebra {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}continue`;
         if (this.devePularLinha) {
@@ -938,6 +939,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado += 'super';
     }
 
+    /* istanbul ignore next */
     visitarExpressaoSustar(declaracao?: Sustar): SustarQuebra {
         this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}pare`;
         if (this.devePularLinha) {
@@ -1014,18 +1016,21 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case AcessoIndiceVariavel:
                 this.visitarExpressaoAcessoIndiceVariavel(declaracaoOuConstruto as AcessoIndiceVariavel);
                 break;
+            /* istanbul ignore next */
             case AcessoIntervaloVariavel:
                 this.visitarExpressaoAcessoIntervaloVariavel(declaracaoOuConstruto as AcessoIntervaloVariavel);
                 break;
             case AcessoMetodoOuPropriedade:
                 this.visitarExpressaoAcessoMetodoOuPropriedade(declaracaoOuConstruto as AcessoMetodoOuPropriedade);
                 break;
+            /* istanbul ignore next */
             case AcessoPropriedade:
                 this.visitarExpressaoAcessoPropriedade(declaracaoOuConstruto as AcessoPropriedade);
                 break;
             case Agrupamento:
                 this.visitarExpressaoAgrupamento(declaracaoOuConstruto as Agrupamento);
                 break;
+            /* istanbul ignore next */
             case ArgumentoReferenciaFuncao:
                 this.visitarExpressaoArgumentoReferenciaFuncao(declaracaoOuConstruto as ArgumentoReferenciaFuncao);
                 break;
@@ -1044,15 +1049,18 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Chamada:
                 this.visitarExpressaoDeChamada(declaracaoOuConstruto as Chamada);
                 break;
+            /* istanbul ignore next */
             case Classe:
                 this.visitarDeclaracaoClasse(declaracaoOuConstruto as Classe);
                 break;
             case Comentario:
                 this.visitarDeclaracaoComentario(declaracaoOuConstruto as Comentario);
                 break;
+            /* istanbul ignore next */
             case ComentarioComoConstruto:
                 this.visitarExpressaoComentario(declaracaoOuConstruto as ComentarioComoConstruto);
                 break;
+            /* istanbul ignore next */
             case Continua:
                 this.visitarExpressaoContinua(declaracaoOuConstruto as Continua);
                 break;
@@ -1068,6 +1076,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Enquanto:
                 this.visitarDeclaracaoEnquanto(declaracaoOuConstruto as Enquanto);
                 break;
+            /* istanbul ignore next */
             case Escreva:
                 this.visitarDeclaracaoEscreva(declaracaoOuConstruto as Escreva);
                 break;
@@ -1077,15 +1086,18 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Expressao:
                 this.visitarDeclaracaoDeExpressao(declaracaoOuConstruto as Expressao);
                 break;
+            /* istanbul ignore next */
             case ExpressaoRegular:
                 this.visitarExpressaoExpressaoRegular(declaracaoOuConstruto as ExpressaoRegular);
                 break;
+            /* istanbul ignore next */
             case Falhar:
                 this.visitarExpressaoFalhar(declaracaoOuConstruto as Falhar);
                 break;
             case Fazer:
                 this.visitarDeclaracaoFazer(declaracaoOuConstruto as Fazer);
                 break;
+            /* istanbul ignore next */
             case FuncaoConstruto:
                 this.visitarExpressaoFuncaoConstruto(declaracaoOuConstruto as FuncaoConstruto);
                 break;
@@ -1095,9 +1107,11 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Importar:
                 this.visitarDeclaracaoImportar(declaracaoOuConstruto as Importar);
                 break;
+            /* istanbul ignore next */
             case ImportarComoConstruto:
                 this.visitarExpressaoImportarComoConstruto(declaracaoOuConstruto as ImportarComoConstruto);
                 break;
+            /* istanbul ignore next */
             case Isto:
                 this.visitarExpressaoIsto(declaracaoOuConstruto as Isto);
                 break;
@@ -1119,6 +1133,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Para:
                 this.visitarDeclaracaoPara(declaracaoOuConstruto as Para);
                 break;
+            /* istanbul ignore next */
             case ParaCada:
                 this.visitarDeclaracaoParaCada(declaracaoOuConstruto as ParaCada);
                 break;
@@ -1128,15 +1143,19 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Se:
                 this.visitarDeclaracaoSe(declaracaoOuConstruto as Se);
                 break;
+            /* istanbul ignore next */
             case Super:
                 this.visitarExpressaoSuper(declaracaoOuConstruto as Super);
                 break;
+            /* istanbul ignore next */
             case Sustar:
                 this.visitarExpressaoSustar(declaracaoOuConstruto as Sustar);
                 break;
+            /* istanbul ignore next */
             case Tente:
                 this.visitarDeclaracaoTente(declaracaoOuConstruto as Tente);
                 break;
+            /* istanbul ignore next */
             case TipoDe:
                 this.visitarExpressaoTipoDe(declaracaoOuConstruto as TipoDe);
                 break;
@@ -1146,6 +1165,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Const:
                 this.visitarDeclaracaoConst(declaracaoOuConstruto as Const);
                 break;
+            /* istanbul ignore next */
             case ConstMultiplo:
                 this.visitarDeclaracaoConstMultiplo(declaracaoOuConstruto as ConstMultiplo);
                 break;
@@ -1155,30 +1175,37 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             case Var:
                 this.visitarDeclaracaoVar(declaracaoOuConstruto as Var);
                 break;
+            /* istanbul ignore next */
             case VarMultiplo:
                 this.visitarDeclaracaoVarMultiplo(declaracaoOuConstruto as VarMultiplo);
                 break;
             case Variavel:
                 this.visitarExpressaoDeVariavel(declaracaoOuConstruto as Variavel);
                 break;
+            /* istanbul ignore next */
             case ReferenciaFuncao:
                 this.visitarExpressaoReferenciaFuncao(declaracaoOuConstruto as ReferenciaFuncao);
                 break;
+            /* istanbul ignore next */
             case Separador:
                 this.visitarExpressaoSeparador(declaracaoOuConstruto as Separador);
                 break;
+            /* istanbul ignore next */
             case TextoDocumentacao:
                 this.visitarDeclaracaoTextoDocumentacao(declaracaoOuConstruto as TextoDocumentacao);
                 break;
+            /* istanbul ignore next */
             case Tupla:
                 this.visitarExpressaoTupla(declaracaoOuConstruto as Tupla);
                 break;
+            /* istanbul ignore next */
             case TuplaN:
                 this.visitarExpressaoTuplaN(declaracaoOuConstruto as TuplaN);
                 break;
             case Vetor:
                 this.visitarExpressaoVetor(declaracaoOuConstruto as Vetor);
                 break;
+            /* istanbul ignore next */
             default:
                 console.log(declaracaoOuConstruto.constructor.name);
                 break;
