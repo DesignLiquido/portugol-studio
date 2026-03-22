@@ -222,13 +222,13 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     /**
      * Verifica condições em estruturas de controle
      */
-    private verificarCondicao(condicao: any): Promise<any> {
+    private verificarCondicao(condicao: any, contexto: 'fluxo-controle' | 'enquanto' | 'faca-enquanto' | 'se' = 'fluxo-controle'): Promise<any> {
         if (condicao instanceof Agrupamento) {
-            return this.verificarCondicao(condicao.expressao);
+            return this.verificarCondicao(condicao.expressao, contexto);
         }
 
         if (condicao instanceof Variavel) {
-            return this.verificarVariavelBinaria(condicao);
+            return this.verificarVariavelBinaria(condicao, contexto);
         }
 
         if (condicao instanceof Binario) {
@@ -249,7 +249,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     /**
      * Verifica variável em contexto binário/condicional
      */
-    private verificarVariavelBinaria(variavel: Variavel): Promise<any> {
+    private verificarVariavelBinaria(variavel: Variavel, contexto: 'fluxo-controle' | 'enquanto' | 'faca-enquanto' | 'se' = 'fluxo-controle'): Promise<any> {
         this.verificarVariavel(variavel);
         const variavelHipotetica = this.gerenciadorEscopos.buscar(variavel.simbolo.lexema);
 
@@ -258,7 +258,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             !(variavelHipotetica.valor instanceof Binario) &&
             typeof variavelHipotetica.valor !== 'boolean'
         ) {
-            this.erro(variavel.simbolo, `Esperado tipo 'lógico' na condição do 'enquanto'.`);
+            this.erro(variavel.simbolo, `Esperado tipo 'lógico' na condição do '${contexto}'.`);
         }
 
         return Promise.resolve();
@@ -941,7 +941,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
      * Visita declaração de enquanto com validação de condição
      */
     async visitarDeclaracaoEnquanto(declaracao: Enquanto): Promise<void> {
-        await this.verificarCondicao(declaracao.condicao);
+        await this.verificarCondicao(declaracao.condicao, 'enquanto');
         await this.visitarCorpoCondicionalOuLoop(declaracao.corpo);
     }
 
@@ -962,14 +962,14 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     }
 
     async visitarDeclaracaoSe(declaracao: Se): Promise<void> {
-        await this.verificarCondicao(declaracao.condicao);
+        await this.verificarCondicao(declaracao.condicao, 'se');
         await this.visitarCorpoCondicionalOuLoop(declaracao.caminhoEntao as any);
         await this.visitarCorpoCondicionalOuLoop(declaracao.caminhoSenao as any);
     }
 
     async visitarDeclaracaoFazer(declaracao: Fazer): Promise<void> {
         await this.visitarCorpoCondicionalOuLoop(declaracao.caminhoFazer as any);
-        await this.verificarCondicao(declaracao.condicaoEnquanto);
+        await this.verificarCondicao(declaracao.condicaoEnquanto, 'faca-enquanto');
     }
 
     /**

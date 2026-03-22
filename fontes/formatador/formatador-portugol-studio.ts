@@ -613,9 +613,27 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado += ')';
     }
 
-    /* istanbul ignore next */
     visitarExpressaoDefinirValor(expressao: any) {
-        throw new Error('Método não implementado');
+        const objeto = expressao?.objeto ?? expressao?.entidadeChamada;
+        const nomePropriedade = expressao?.nome ?? expressao?.simbolo ?? expressao?.propriedade;
+        const valor = expressao?.valor;
+
+        if (objeto) {
+            this.formatarDeclaracaoOuConstruto(objeto);
+        }
+
+        if (nomePropriedade?.lexema) {
+            this.codigoFormatado += `.${nomePropriedade.lexema}`;
+        } else if (typeof nomePropriedade === 'string') {
+            this.codigoFormatado += `.${nomePropriedade}`;
+        }
+
+        this.codigoFormatado += ' = ';
+        this.formatarDeclaracaoOuConstruto(valor);
+
+        if (this.devePularLinha) {
+            this.codigoFormatado += this.quebraLinha;
+        }
     }
 
     /* istanbul ignore next */
@@ -627,9 +645,21 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado += `${expressao.simbolo.lexema}`;
     }
 
-    /* istanbul ignore next */
     visitarExpressaoDicionario(expressao: any) {
-        throw new Error('Método não implementado');
+        const chaves = expressao?.chaves ?? [];
+        const valores = expressao?.valores ?? [];
+
+        this.codigoFormatado += '{';
+        for (let i = 0; i < chaves.length; i++) {
+            this.formatarDeclaracaoOuConstruto(chaves[i]);
+            this.codigoFormatado += ': ';
+            this.formatarDeclaracaoOuConstruto(valores[i]);
+
+            if (i < chaves.length - 1) {
+                this.codigoFormatado += ', ';
+            }
+        }
+        this.codigoFormatado += '}';
     }
 
     /* istanbul ignore next */

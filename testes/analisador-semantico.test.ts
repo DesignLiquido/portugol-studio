@@ -351,7 +351,7 @@ describe('Analisador sêmantico', () => {
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
-                expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toContain("Esperado tipo 'lógico'");
+                expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toContain("condição do 'se'");
             });
 
             it('Enquanto analisa corpo interno', async () => {

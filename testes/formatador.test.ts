@@ -35,6 +35,27 @@ describe('Formatador', () => {
         expect(() => formatadorDireto.visitarExpressaoFormatacaoEscrita(formatacao)).not.toThrow();
     });
 
+    it('Definir valor não lança exceção', () => {
+        const formatadorDireto = new FormatadorPortugolStudio(sistemaOperacional.EOL);
+        const expressao = {
+            objeto: new Literal(-1, 1, 'obj', 'texto'),
+            nome: { lexema: 'propriedade' },
+            valor: new Literal(-1, 1, 10, 'inteiro'),
+        } as any;
+
+        expect(() => formatadorDireto.visitarExpressaoDefinirValor(expressao)).not.toThrow();
+    });
+
+    it('Dicionario não lança exceção', () => {
+        const formatadorDireto = new FormatadorPortugolStudio(sistemaOperacional.EOL);
+        const dicionario = {
+            chaves: [new Literal(-1, 1, 'chave', 'texto')],
+            valores: [new Literal(-1, 1, 'valor', 'texto')],
+        } as any;
+
+        expect(() => formatadorDireto.visitarExpressaoDicionario(dicionario)).not.toThrow();
+    });
+
     it('Leia com condicional se', async () => {
         const retornoLexador = lexador.mapear(
             [
