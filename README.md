@@ -54,6 +54,7 @@ Adotamos a estratégia de integração conhecida no projeto como **Opção B** p
 - Este pacote mantém os contratos de dialeto e a compatibilidade de importação das bibliotecas.
 - Bibliotecas com dependência de ambiente/SO (como `Arquivos`, `Internet` e `Util`) têm implementação real fornecida pelo [delegua-node](https://github.com/DesignLiquido/delegua-node).
 - Quando essa integração não está disponível no runtime atual, o importador retorna erro orientativo explícito apontando para o `delegua-node`.
+- Não há carregamento automático dessas bibliotecas neste pacote: ao importá-las aqui, a orientação é executar o código em um ambiente apropriado (ex.: `delegua-node`).
 
 Bibliotecas compartilhadas suportadas diretamente neste pacote:
 

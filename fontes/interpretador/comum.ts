@@ -182,7 +182,7 @@ const bibliotecasDelegadasAoDeleguaNode = ['Arquivos', 'Internet', 'Util'];
 function erroBibliotecaDelegada(caminho: string): never {
     throw new ErroEmTempoDeExecucao(
         null,
-        `Biblioteca '${caminho}' depende de recursos específicos de ambiente e deve ser fornecida pelo projeto delegua-node.`
+        `Biblioteca '${caminho}' depende de recursos específicos de ambiente e deve ser executada em um runtime que ofereça essa biblioteca, como o projeto delegua-node.`
     );
 }
 

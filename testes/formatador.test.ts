@@ -294,6 +294,28 @@ describe('Formatador', () => {
         expect(resultado).toContain('idade = idade + 1');
     });
 
+    it('Acesso a propriedade de biblioteca', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa',
+                '{',
+                '    inclua biblioteca Calendario',
+                '    funcao inicio()',
+                '    {',
+                '        escreva(Calendario.DIA_DOMINGO)',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('inclua biblioteca Calendario');
+        expect(resultado).toContain('escreva(Calendario.DIA_DOMINGO)');
+    });
+
     it('Enquanto', async () => {
         const retornoLexador = lexador.mapear(
             [

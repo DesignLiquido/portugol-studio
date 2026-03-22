@@ -124,14 +124,26 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         throw new Error('Método não implementado.');
     }
 
-    /* istanbul ignore next */
     visitarExpressaoAcessoMetodoOuPropriedade(expressao: AcessoMetodoOuPropriedade): Promise<any> | void {
-        throw new Error('Método não implementado.');
+        this.visitarExpressaoAcessoMetodo(expressao);
     }
 
-    /* istanbul ignore next */
     visitarExpressaoAcessoPropriedade(expressao: AcessoPropriedade): Promise<any> | void {
-        throw new Error('Método não implementado.');
+        const objeto = (expressao as any).objeto || (expressao as any).entidadeChamada;
+        const simbolo = (expressao as any).simbolo || (expressao as any).nome;
+
+        if (objeto) {
+            this.formatarDeclaracaoOuConstruto(objeto);
+        }
+
+        if (simbolo?.lexema) {
+            this.codigoFormatado += `.${simbolo.lexema}`;
+            return;
+        }
+
+        if (typeof simbolo === 'string') {
+            this.codigoFormatado += `.${simbolo}`;
+        }
     }
 
     visitarDeclaracaoComentario(declaracao: Comentario): void | Promise<any> {
@@ -803,7 +815,10 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
                 this.visitarExpressaoAcessoIndiceVariavel(declaracaoOuConstruto as AcessoIndiceVariavel);
                 break;
             case AcessoMetodoOuPropriedade:
-                this.visitarExpressaoAcessoMetodo(declaracaoOuConstruto as AcessoMetodoOuPropriedade);
+                this.visitarExpressaoAcessoMetodoOuPropriedade(declaracaoOuConstruto as AcessoMetodoOuPropriedade);
+                break;
+            case AcessoPropriedade:
+                this.visitarExpressaoAcessoPropriedade(declaracaoOuConstruto as AcessoPropriedade);
                 break;
             case Agrupamento:
                 this.visitarExpressaoAgrupamento(declaracaoOuConstruto as Agrupamento);
