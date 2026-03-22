@@ -1,4 +1,5 @@
 import {
+    Bloco,
     Const,
     Declaracao,
     Enquanto,
@@ -6,7 +7,9 @@ import {
     Escreva,
     EscrevaMesmaLinha,
     Expressao,
+    Fazer,
     FuncaoDeclaracao,
+    Se,
     Retorna,
     Var,
 } from '@designliquido/delegua/declaracoes';
@@ -937,8 +940,36 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     /**
      * Visita declaração de enquanto com validação de condição
      */
-    visitarDeclaracaoEnquanto(declaracao: Enquanto): Promise<void> {
-        return this.verificarCondicao(declaracao.condicao);
+    async visitarDeclaracaoEnquanto(declaracao: Enquanto): Promise<void> {
+        await this.verificarCondicao(declaracao.condicao);
+        await this.visitarCorpoCondicionalOuLoop(declaracao.corpo);
+    }
+
+    private async visitarCorpoCondicionalOuLoop(corpo: Declaracao | Bloco | null | undefined): Promise<void> {
+        if (!corpo) {
+            return;
+        }
+
+        if (corpo instanceof Bloco) {
+            for (const declaracao of corpo.declaracoes) {
+                await declaracao.aceitar(this);
+            }
+
+            return;
+        }
+
+        await corpo.aceitar(this);
+    }
+
+    async visitarDeclaracaoSe(declaracao: Se): Promise<void> {
+        await this.verificarCondicao(declaracao.condicao);
+        await this.visitarCorpoCondicionalOuLoop(declaracao.caminhoEntao as any);
+        await this.visitarCorpoCondicionalOuLoop(declaracao.caminhoSenao as any);
+    }
+
+    async visitarDeclaracaoFazer(declaracao: Fazer): Promise<void> {
+        await this.visitarCorpoCondicionalOuLoop(declaracao.caminhoFazer as any);
+        await this.verificarCondicao(declaracao.condicaoEnquanto);
     }
 
     /**

@@ -109,6 +109,26 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
             });
+
+            it('Condicional se com expressão lógica válida', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inicio() {',
+                    'logico condicao = verdadeiro',
+                    'se (condicao) {',
+                    'escreva("ok")',
+                    '}',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
         });
 
         describe('Casos de Falha', () => {
@@ -311,6 +331,48 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toBe(
                     'Argumento inválido em leia(). Esperado variável ou posição indexada de vetor/matriz.'
                 );
+            });
+
+            it('Condicional se com variável não lógica', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inicio() {',
+                    'inteiro valor = 1',
+                    'se (valor) {',
+                    'escreva("x")',
+                    '}',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+                expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toContain("Esperado tipo 'lógico'");
+            });
+
+            it('Enquanto analisa corpo interno', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inicio() {',
+                    'logico condicao = verdadeiro',
+                    'enquanto (condicao) {',
+                    'naoDeclarada = 10',
+                    '}',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
+                expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toContain('ainda não foi declarada');
             });
         });
     })

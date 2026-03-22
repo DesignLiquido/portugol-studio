@@ -647,9 +647,17 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         throw new Error('Método não implementado');
     }
 
-    /* istanbul ignore next */
     visitarExpressaoFormatacaoEscrita(declaracao: FormatacaoEscrita) {
-        throw new Error('Método não implementado');
+        const expressao = (declaracao as any).expressao ?? (declaracao as any).valor ?? declaracao;
+
+        if (expressao && expressao !== declaracao) {
+            this.formatarDeclaracaoOuConstruto(expressao as any);
+            return;
+        }
+
+        if ((declaracao as any).hasOwnProperty('casasDecimais')) {
+            this.codigoFormatado += `${(declaracao as any).casasDecimais}`;
+        }
     }
 
     visitarExpressaoFuncaoConstruto(expressao: FuncaoConstruto) {

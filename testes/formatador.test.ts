@@ -3,6 +3,7 @@ import * as sistemaOperacional from 'os';
 import { AvaliadorSintaticoPortugolStudio } from '../fontes/avaliador-sintatico/avaliador-sintatico-portugol-studio';
 import { FormatadorPortugolStudio } from '../fontes/formatador/formatador-portugol-studio';
 import { LexadorPortugolStudio } from '../fontes/lexador/lexador-portugol-studio';
+import { Literal } from '@designliquido/delegua/construtos';
 
 describe('Formatador', () => {
     const formatador = new FormatadorPortugolStudio(sistemaOperacional.EOL);
@@ -25,6 +26,13 @@ describe('Formatador', () => {
         expect(linhasResultado[4]).toContain('escreva("Olá Mundo")');
         expect(linhasResultado[5]).toContain('}');
         expect(linhasResultado[6]).toContain('}');
+    });
+    
+    it('Formatação de escrita não lança exceção', () => {
+        const formatadorDireto = new FormatadorPortugolStudio(sistemaOperacional.EOL);
+        const formatacao = { expressao: new Literal(-1, 1, 'teste', 'texto') } as any;
+
+        expect(() => formatadorDireto.visitarExpressaoFormatacaoEscrita(formatacao)).not.toThrow();
     });
 
     it('Leia com condicional se', async () => {
