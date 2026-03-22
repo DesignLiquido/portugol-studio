@@ -752,13 +752,30 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return new Expressao(expressao);
     }
 
+    private obterTamanhoEsperadoDimensao(construtoDimensao: Construto): number | null {
+        if (!(construtoDimensao instanceof Literal)) {
+            return null;
+        }
+
+        if (typeof construtoDimensao.valor !== 'number') {
+            return null;
+        }
+
+        // -1 representa dimensão não especificada no Portugol Studio.
+        if (construtoDimensao.valor < 0) {
+            return null;
+        }
+
+        return Math.trunc(construtoDimensao.valor);
+    }
+
     /**
      * Método recursivo que lê os valores de inicialização de uma matriz de N dimensões.
      * @param {Construto[]} dimensoes O número de dimensões faltantes.
      * Cada passo recursivo usa o primeiro valor e chama a função passando esse vetor, mas sem
      * o primeiro valor.
      */
-    protected async lerValoresAtribuicaoMatriz(dimensoes: Construto[]): Promise<any[]> {
+    protected async lerValoresAtribuicaoMatriz(dimensoes: Construto[], indiceDimensaoAtual: number = 1): Promise<any[]> {
         this.consumir(
             tiposDeSimbolos.CHAVE_ESQUERDA,
             'Esperado chave esquerda após sinal de igual em lado direito da atribuição de vetor.'
@@ -770,23 +787,26 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             if (dimensoes.length === 1) {
                 valores.push(await this.primario());
             } else {
-                const valoresProximaDimensao = await this.lerValoresAtribuicaoMatriz(dimensoes.slice(1));
+                const valoresProximaDimensao = await this.lerValoresAtribuicaoMatriz(
+                    dimensoes.slice(1),
+                    indiceDimensaoAtual + 1
+                );
                 valores.push(valoresProximaDimensao);
             }
         } while (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VIRGULA));
 
-        this.consumir(
+        const simboloFechamento = this.consumir(
             tiposDeSimbolos.CHAVE_DIREITA,
             'Esperado chave direita após valores de vetor em lado direito da atribuição de vetor.'
         );
 
-        // TODO: Recolocar.
-        /* if (dimensoes !== valores.length) {
+        const tamanhoEsperado = this.obterTamanhoEsperadoDimensao(dimensoes[0]);
+        if (tamanhoEsperado !== null && tamanhoEsperado !== valores.length) {
             throw this.erro(
-                simboloInteiro,
-                `Esperado ${dimensoes} números, mas foram fornecidos ${valores.length} valores do lado direito da atribuição.`
+                simboloFechamento,
+                `Esperado ${tamanhoEsperado} valores na dimensão ${indiceDimensaoAtual}, mas foram fornecidos ${valores.length}.`
             );
-        } */
+        }
 
         return valores;
     }

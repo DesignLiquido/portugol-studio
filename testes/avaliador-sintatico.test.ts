@@ -552,6 +552,46 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     })
                 );
             });
+
+            it('Falha - Vetor com quantidade de valores menor que a dimensão declarada', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    funcao inicio()',
+                    '    {',
+                    '        inteiro numeros[3] = {1, 2}',
+                    '    }',
+                    '}'
+                ], -1);
+
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
+                    expect.objectContaining({
+                        name: 'Error',
+                        message: expect.stringContaining('Esperado 3 valores na dimensão 1, mas foram fornecidos 2.')
+                    })
+                );
+            });
+
+            it('Falha - Matriz com quantidade de colunas menor que a dimensão declarada', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    '    funcao inicio()',
+                    '    {',
+                    '        inteiro matriz[2][2] = {{1, 2}, {3}}',
+                    '    }',
+                    '}'
+                ], -1);
+
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
+                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
+                    expect.objectContaining({
+                        name: 'Error',
+                        message: expect.stringContaining('Esperado 2 valores na dimensão 2, mas foram fornecidos 1.')
+                    })
+                );
+            });
         });
     });
 });
