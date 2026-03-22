@@ -542,6 +542,83 @@ describe('Interpretador (Portugol Studio)', () => {
                 expect(_saidas).toContain('9');
             });
 
+            describe('Bibliotecas delegadas ao delegua-node', () => {
+                it('Arquivos retorna erro orientativo', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    inclua biblioteca Arquivos',
+                        '    funcao inicio()',
+                        '    {',
+                        '        escreva("teste")',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros.length).toBeGreaterThan(0);
+                    const mensagem = String(
+                        (retornoInterpretador.erros[0] as any)?.erroInterno?.mensagem ??
+                            (retornoInterpretador.erros[0] as any)?.erroInterno?.message ??
+                            ''
+                    );
+                    expect(mensagem).toContain("Biblioteca 'Arquivos'");
+                    expect(mensagem).toContain('delegua-node');
+                });
+
+                it('Internet retorna erro orientativo', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    inclua biblioteca Internet',
+                        '    funcao inicio()',
+                        '    {',
+                        '        escreva("teste")',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros.length).toBeGreaterThan(0);
+                    const mensagem = String(
+                        (retornoInterpretador.erros[0] as any)?.erroInterno?.mensagem ??
+                            (retornoInterpretador.erros[0] as any)?.erroInterno?.message ??
+                            ''
+                    );
+                    expect(mensagem).toContain("Biblioteca 'Internet'");
+                    expect(mensagem).toContain('delegua-node');
+                });
+
+                it('Util retorna erro orientativo', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'programa',
+                        '{',
+                        '    inclua biblioteca Util',
+                        '    funcao inicio()',
+                        '    {',
+                        '        escreva("teste")',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros.length).toBeGreaterThan(0);
+                    const mensagem = String(
+                        (retornoInterpretador.erros[0] as any)?.erroInterno?.mensagem ??
+                            (retornoInterpretador.erros[0] as any)?.erroInterno?.message ??
+                            ''
+                    );
+                    expect(mensagem).toContain("Biblioteca 'Util'");
+                    expect(mensagem).toContain('delegua-node');
+                });
+            });
+
             describe('Matrizes', () => {
                 it('Declaração com índice variável', async () => {
                     let _saidas = "";

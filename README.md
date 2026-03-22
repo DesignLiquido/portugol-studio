@@ -46,3 +46,19 @@ A finalidade educacional deste dialeto serve a dois grandes propósitos:
 Este dialeto é distribuído como um pacote do [NPM](https://npmjs.com), e é compatível com qualquer versão de JavaScript e Node.js. O código é escrito em TypeScript, mas transpilado para JavaScript ES5, virtualmente compatível com 100% dos navegadores de internet disponíveis atualmente.
 
 Este dialeto pode ser utilizado como base para construir outras aplicações, como _sites_ de internet, aplicativos para dispositivos móveis e até mesmo scripts executados por linha de comando. É também agregado ao [pacote de Delégua para Node.js](https://github.com/DesignLiquido/delegua-node), o que permite a execução de fontes por linha de comando.
+
+## Bibliotecas e integração com delegua-node
+
+Adotamos a estratégia de integração conhecida no projeto como **Opção B** para bibliotecas dependentes de ambiente:
+
+- Este pacote mantém os contratos de dialeto e a compatibilidade de importação das bibliotecas.
+- Bibliotecas com dependência de ambiente/SO (como `Arquivos`, `Internet` e `Util`) têm implementação real fornecida pelo [delegua-node](https://github.com/DesignLiquido/delegua-node).
+- Quando essa integração não está disponível no runtime atual, o importador retorna erro orientativo explícito apontando para o `delegua-node`.
+
+Bibliotecas compartilhadas suportadas diretamente neste pacote:
+
+- `Calendario`
+- `Matematica`
+- `Objetos`
+- `Texto`
+- `Tipos`

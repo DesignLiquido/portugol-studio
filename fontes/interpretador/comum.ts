@@ -152,6 +152,15 @@ export async function avaliarArgumentosEscreva(
     return formatoTexto;
 }
 
+const bibliotecasDelegadasAoDeleguaNode = ['Arquivos', 'Internet', 'Util'];
+
+function erroBibliotecaDelegada(caminho: string): never {
+    throw new ErroEmTempoDeExecucao(
+        null,
+        `Biblioteca '${caminho}' depende de recursos específicos de ambiente e deve ser fornecida pelo projeto delegua-node.`
+    );
+}
+
 export function logicaComumImportacao(caminho: string): DeleguaModulo {
     switch (caminho) {
         case 'Calendario':
@@ -165,6 +174,10 @@ export function logicaComumImportacao(caminho: string): DeleguaModulo {
         case 'Tipos':
             return carregarBibliotecaTipos();
         default:
+            if (bibliotecasDelegadasAoDeleguaNode.includes(caminho)) {
+                erroBibliotecaDelegada(caminho);
+            }
+
             throw new ErroEmTempoDeExecucao(null, `Biblioteca não implementada: ${caminho}.`);
     }
 }

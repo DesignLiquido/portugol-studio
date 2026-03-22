@@ -28,6 +28,14 @@ Para os fontes, usamos [TypeScript](https://www.typescriptlang.org/) (versão ma
 
 Nós usamos testes unitários para testar todos os componentes de Delégua. Nossa biblioteca de testes é a Jest: https://jestjs.io/. Não é preciso escrever testes unitários para contribuir com a linguagem.
 
+### Fronteira deste pacote e delegua-node
+
+Este repositório adota a seguinte estratégia para bibliotecas dependentes de ambiente:
+
+- Bibliotecas compartilhadas de linguagem continuam implementadas aqui.
+- Bibliotecas com dependência de ambiente/SO (por exemplo `Arquivos`, `Internet` e `Util`) são resolvidas pelo projeto `delegua-node`.
+- Ao contribuir, mantenha essa separação: contratos e integração aqui, implementação dependente de ambiente no `delegua-node`.
+
 ### Trabalhando na sua modificação
 
 Recomendamos fazer um _fork_ do projeto (ou seja, uma cópia em separado), modificar essa cópia e abrir uma _Pull Request_ da sua cópia para o repositório oficial. [Este vídeo pode ajudar](https://www.youtube.com/watch?v=l1rwvDvD1og). 
