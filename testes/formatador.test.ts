@@ -268,6 +268,32 @@ describe('Formatador', () => {
         expect(linhasResultado.length).toBeGreaterThanOrEqual(18);
     });
 
+    it('Expressão lógica com operador ou', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa',
+                '{',
+                '    funcao inicio()',
+                '    {',
+                '        inteiro idade = 10',
+                '        enquanto (idade < 5 ou idade > 120)',
+                '        {',
+                '            escreva("Idade inválida")',
+                '            idade = idade + 1',
+                '        }',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('idade < 5 ou idade > 120');
+        expect(resultado).toContain('idade = idade + 1');
+    });
+
     it('Enquanto', async () => {
         const retornoLexador = lexador.mapear(
             [

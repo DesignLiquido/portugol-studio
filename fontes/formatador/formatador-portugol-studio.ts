@@ -578,9 +578,13 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.formatarBlocoOuVetorDeclaracoes(declaracao.declaracoes);
     }
 
-    /* istanbul ignore next */
     visitarExpressaoContinua(declaracao?: Continua): ContinuarQuebra {
-        throw new Error('Método não implementado');
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}continue`;
+        if (this.devePularLinha) {
+            this.codigoFormatado += this.quebraLinha;
+        }
+
+        return new ContinuarQuebra();
     }
 
     visitarExpressaoDeChamada(expressao: Chamada) {
@@ -699,9 +703,22 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado += `${expressao.valor}`;
     }
 
-    /* istanbul ignore next */
     visitarExpressaoLogica(expressao: any) {
-        throw new Error('Método não implementado');
+        this.formatarDeclaracaoOuConstruto(expressao.esquerda);
+
+        switch (expressao.operador.tipo) {
+            case tiposDeSimbolos.E:
+                this.codigoFormatado += ' e ';
+                break;
+            case tiposDeSimbolos.OU:
+                this.codigoFormatado += ' ou ';
+                break;
+            default:
+                this.codigoFormatado += ` ${expressao.operador.lexema ?? ''} `;
+                break;
+        }
+
+        this.formatarDeclaracaoOuConstruto(expressao.direita);
     }
 
     visitarExpressaoRetornar(declaracao: Retorna): any {
@@ -719,9 +736,13 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         throw new Error('Método não implementado');
     }
 
-    /* istanbul ignore next */
     visitarExpressaoSustar(declaracao?: Sustar): SustarQuebra {
-        throw new Error('Método não implementado');
+        this.codigoFormatado += `${' '.repeat(this.indentacaoAtual)}pare`;
+        if (this.devePularLinha) {
+            this.codigoFormatado += this.quebraLinha;
+        }
+
+        return new SustarQuebra();
     }
 
     /* istanbul ignore next */
