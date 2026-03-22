@@ -63,3 +63,7 @@ Bibliotecas compartilhadas suportadas diretamente neste pacote:
 - `Objetos`
 - `Texto`
 - `Tipos`
+
+Contrato de fronteira para bibliotecas delegadas:
+
+- `fontes/bibliotecas/CONTRATO-DELEGUA-NODE.md`

@@ -374,6 +374,109 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
                 expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toContain('ainda não foi declarada');
             });
+
+            it('Para analisa corpo interno - variavel nao declarada', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inicio() {',
+                    'para (inteiro i = 0; i < 10; i++) {',
+                    'naoDeclarada = i',
+                    '}',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                const mensagens = retornoAnalisadorSemantico.diagnosticos.map(d => d.mensagem);
+                expect(mensagens.some(m => m.includes('naoDeclarada') && m.includes('declarada'))).toBe(true);
+            });
+
+            it('Para valido nao gera diagnostico', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inicio() {',
+                    'para (inteiro i = 0; i < 10; i++) {',
+                    'escreva(i)',
+                    '}',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
+
+            it('Escolha analisa corpo dos casos', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inicio() {',
+                    'inteiro x = 1',
+                    'escolha (x) {',
+                    'caso 1:',
+                    'naoDeclarada = 5',
+                    'pare',
+                    '}',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                const mensagens = retornoAnalisadorSemantico.diagnosticos.map(d => d.mensagem);
+                expect(mensagens.some(m => m.includes('naoDeclarada') && m.includes('declarada'))).toBe(true);
+            });
+
+            it('Funcao com parametros analisa corpo', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inteiro dobrar(inteiro n) {',
+                    'retorne naoDeclarada',
+                    '}',
+                    'funcao inicio() {',
+                    'escreva(dobrar(5))',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                const mensagens = retornoAnalisadorSemantico.diagnosticos.map(d => d.mensagem);
+                expect(mensagens.some(m => m.includes('naoDeclarada'))).toBe(true);
+            });
+
+            it('Funcao com parametros valida - retorne usa parametro', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inteiro dobrar(inteiro n) {',
+                    'retorne n',
+                    '}',
+                    'funcao inicio() {',
+                    'escreva(dobrar(5))',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
         });
     })
 })

@@ -56,6 +56,30 @@ describe('Formatador', () => {
         expect(() => formatadorDireto.visitarExpressaoDicionario(dicionario)).not.toThrow();
     });
 
+    it('Acesso de intervalo não lança exceção', () => {
+        const formatadorDireto = new FormatadorPortugolStudio(sistemaOperacional.EOL);
+        const acessoIntervalo = {
+            entidadeChamada: { simbolo: { lexema: 'vetor' } },
+            indiceInicial: new Literal(-1, 1, 1, 'inteiro'),
+            indiceFinal: new Literal(-1, 1, 3, 'inteiro'),
+        } as any;
+
+        expect(() => formatadorDireto.visitarExpressaoAcessoIntervaloVariavel(acessoIntervalo)).not.toThrow();
+        expect(formatadorDireto.codigoFormatado).toContain('vetor[1..3]');
+    });
+
+    it('Atribuição por índices de matriz não lança exceção', async () => {
+        const formatadorDireto = new FormatadorPortugolStudio(sistemaOperacional.EOL);
+        const atribuicao = {
+            entidadeChamada: { simbolo: { lexema: 'matriz' } },
+            indices: [new Literal(-1, 1, 0, 'inteiro'), new Literal(-1, 1, 1, 'inteiro')],
+            valor: new Literal(-1, 1, 42, 'inteiro'),
+        } as any;
+
+        await expect(formatadorDireto.visitarExpressaoAtribuicaoPorIndicesMatriz(atribuicao)).resolves.toBeUndefined();
+        expect(formatadorDireto.codigoFormatado).toContain('matriz[0][1] = 42');
+    });
+
     it('Leia com condicional se', async () => {
         const retornoLexador = lexador.mapear(
             [
@@ -843,6 +867,116 @@ describe('Formatador', () => {
         // Verify the formatted code contains the expected structure
         expect(resultado).toContain('para (inteiro linha = 0');
         expect(resultado).toContain('para (inteiro coluna = 0');
+    });
+
+    it('Funcao com parametros tipados e tipo de retorno', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao real soma(real a, real b) {',
+                '        real resultado',
+                '        resultado = a + b',
+                '        retorne resultado',
+                '    }',
+                '    funcao inicio() {',
+                '        escreva(soma(1.0, 2.0))',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('funcao real soma(real a, real b)');
+        expect(resultado).toContain('funcao inicio()');
+        expect(resultado).toContain('retorne resultado');
+    });
+
+    it('Funcao com um parametro sem tipo de retorno', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao saudar(cadeia nome) {',
+                '        escreva("Ola, ", nome)',
+                '    }',
+                '    funcao inicio() {',
+                '        saudar("mundo")',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('funcao saudar(cadeia nome)');
+    });
+
+    it('Operador diferente (!=)', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro x = 5',
+                '        se (x != 3) {',
+                '            escreva("diferente")',
+                '        }',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain(' != ');
+    });
+
+    it('Negacao unaria (menos)', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro x = 5',
+                '        inteiro y = -x',
+                '        escreva(y)',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+
+        expect(resultado).toContain('-x');
+    });
+
+    it('Escolha sem caso contrario nao lanca excecao', async () => {
+        const retornoLexador = lexador.mapear(
+            [
+                'programa {',
+                '    funcao inicio() {',
+                '        inteiro x = 2',
+                '        escolha (x) {',
+                '            caso 1:',
+                '            escreva("um")',
+                '            pare',
+                '            caso 2:',
+                '            escreva("dois")',
+                '            pare',
+                '        }',
+                '    }',
+                '}',
+            ],
+            -1
+        );
+        const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+        expect(() => formatador.formatar(retornoAvaliadorSintatico.declaracoes)).not.toThrow();
+        const resultado = formatador.formatar(retornoAvaliadorSintatico.declaracoes);
+        expect(resultado).toContain('caso 1:');
+        expect(resultado).toContain('caso 2:');
+        expect(resultado).not.toContain('caso contrario:');
     });
 
     it('Inline comments should stay on the same line as code', async () => {

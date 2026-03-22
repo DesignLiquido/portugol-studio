@@ -239,6 +239,10 @@ export async function liberar(): Promise<void> {
     cacheObjetos = [];
 }
 
+export async function finalizar(): Promise<void> {
+    cacheObjetos = [];
+}
+
 export async function obter_json(interpretador: InterpretadorInterface, endereco: number): Promise<string> {
     const objeto = cacheObjetos[endereco];
     if (!objeto) {

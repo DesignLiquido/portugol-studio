@@ -9,6 +9,7 @@ import {
     Expressao,
     Fazer,
     FuncaoDeclaracao,
+    Para,
     Se,
     Retorna,
     Var,
@@ -505,7 +506,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         return Promise.resolve();
     }
 
-    visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<any> {
+    async visitarDeclaracaoDefinicaoFuncao(declaracao: FuncaoDeclaracao): Promise<any> {
         for (let parametro of declaracao.funcao.parametros) {
             if (parametro.hasOwnProperty('tipoDado') && !parametro.tipoDado) {
                 this.adicionarDiagnostico(declaracao.simbolo, `O tipo '${parametro.tipoDado}' não é valido`);
@@ -519,6 +520,31 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         this.funcoes[declaracao.simbolo.lexema] = {
             valor: declaracao.funcao,
         };
+
+        // Analisa o corpo de funções definidas pelo usuário (exceto 'inicio', tratado em analisar())
+        if (declaracao.simbolo.lexema !== 'inicio') {
+            this.gerenciadorEscopos.empilharEscopo();
+
+            for (const parametro of declaracao.funcao.parametros) {
+                this.gerenciadorEscopos.declarar(parametro.nome.lexema, {
+                    nome: parametro.nome.lexema,
+                    tipo: (parametro.tipoDado as TipoInferencia) || 'qualquer',
+                    imutavel: false,
+                    valor: undefined,
+                    inicializada: true,
+                    usada: false,
+                    hashArquivo: parametro.nome.hashArquivo,
+                    linha: parametro.nome.linha,
+                });
+            }
+
+            for (const declaracaoCorpo of declaracao.funcao.corpo) {
+                await declaracaoCorpo.aceitar(this);
+            }
+
+            this.gerenciadorEscopos.desempilharEscopo();
+        }
+
         return Promise.resolve();
     }
 
@@ -972,10 +998,32 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         await this.verificarCondicao(declaracao.condicaoEnquanto, 'faca-enquanto');
     }
 
+    async visitarDeclaracaoPara(declaracao: Para): Promise<void> {
+        if (declaracao.inicializador) {
+            if (Array.isArray(declaracao.inicializador)) {
+                for (const init of declaracao.inicializador) {
+                    await init.aceitar(this);
+                }
+            } else {
+                await declaracao.inicializador.aceitar(this);
+            }
+        }
+
+        if (declaracao.condicao) {
+            await this.verificarCondicao(declaracao.condicao, 'fluxo-controle');
+        }
+
+        if (declaracao.incrementar) {
+            this.marcarVariaveisUsadasEmExpressao(declaracao.incrementar);
+        }
+
+        await this.visitarCorpoCondicionalOuLoop(declaracao.corpo);
+    }
+
     /**
-     * Visita declaração de escolha com validação de tipos
+     * Visita declaração de escolha com validação de tipos e recursão nos corpos dos casos
      */
-    visitarDeclaracaoEscolha(declaracao: Escolha): Promise<void> {
+    async visitarDeclaracaoEscolha(declaracao: Escolha): Promise<void> {
         const identificadorOuLiteral = declaracao.identificadorOuLiteral;
         const tipo = identificadorOuLiteral.tipo;
 
@@ -1011,15 +1059,31 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                         break;
                 }
             }
+
+            for (const declaracaoCorpo of caminho.declaracoes) {
+                await declaracaoCorpo.aceitar(this);
+            }
         }
 
-        return Promise.resolve();
+        if (declaracao.caminhoPadrao?.declaracoes) {
+            for (const declaracaoCorpo of declaracao.caminhoPadrao.declaracoes) {
+                await declaracaoCorpo.aceitar(this);
+            }
+        }
     }
 
     /**
-     * Visita declaração de retorna
+     * Visita declaração de retorna com validação básica do valor retornado
      */
     visitarExpressaoRetornar(declaracao: Retorna): Promise<any> {
+        if (declaracao.valor) {
+            this.marcarVariaveisUsadasEmExpressao(declaracao.valor);
+
+            if (declaracao.valor instanceof Variavel) {
+                this.verificarVariavel(declaracao.valor);
+            }
+        }
+
         return Promise.resolve(null);
     }
 

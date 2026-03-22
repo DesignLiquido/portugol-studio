@@ -72,6 +72,8 @@ function carregarBibliotecaMatematica(): DeleguaModulo {
 
     const objetoMatematica = new DeleguaModulo('Matematica');
     objetoMatematica.componentes = metodos;
+    const componentesMatematica = objetoMatematica.componentes as Record<string, any>;
+    componentesMatematica.PI = matematica.PI;
     return objetoMatematica;
 }
 
@@ -82,6 +84,7 @@ function carregarBibliotecaObjetos(): DeleguaModulo {
         criar_objeto: new FuncaoPadrao(0, objetos.criar_objeto),
         criar_objeto_via_json: new FuncaoPadrao(1, objetos.criar_objeto_via_json),
         criar_objeto_via_xml: new FuncaoPadrao(1, objetos.criar_objeto_via_xml),
+        finalizar: new FuncaoPadrao(0, objetos.finalizar),
         liberar: new FuncaoPadrao(0, objetos.liberar),
         liberar_objeto: new FuncaoPadrao(1, objetos.liberar_objeto),
         obter_json: new FuncaoPadrao(1, objetos.obter_json),
@@ -111,11 +114,11 @@ function carregarBibliotecaTexto(): DeleguaModulo {
         numero_caracteres: new FuncaoPadrao(1, texto.numero_caracteres),
         caixa_alta: new FuncaoPadrao(1, texto.caixa_alta),
         caixa_baixa: new FuncaoPadrao(1, texto.caixa_baixa),
-        substituir: new FuncaoPadrao(1, texto.substituir),
-        preencher_a_esquerda: new FuncaoPadrao(1, texto.preencher_a_esquerda),
-        obter_caracter: new FuncaoPadrao(1, texto.obter_caracter),
-        posicao_texto: new FuncaoPadrao(1, texto.posicao_texto),
-        extrair_subtexto: new FuncaoPadrao(1, texto.extrair_subtexto),
+        substituir: new FuncaoPadrao(3, texto.substituir),
+        preencher_a_esquerda: new FuncaoPadrao(3, texto.preencher_a_esquerda),
+        obter_caracter: new FuncaoPadrao(2, texto.obter_caracter),
+        posicao_texto: new FuncaoPadrao(3, texto.posicao_texto),
+        extrair_subtexto: new FuncaoPadrao(3, texto.extrair_subtexto),
     };
 
     const objetoTexto = new DeleguaModulo('Texto');

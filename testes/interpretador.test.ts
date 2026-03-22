@@ -673,6 +673,8 @@ describe('Interpretador (Portugol Studio)', () => {
                             ''
                     );
                     expect(mensagem).toContain("Biblioteca 'Arquivos'");
+                    expect(mensagem).toContain('depende de recursos específicos de ambiente');
+                    expect(mensagem).toContain('runtime que ofereça essa biblioteca');
                     expect(mensagem).toContain('delegua-node');
                 });
 
@@ -698,6 +700,8 @@ describe('Interpretador (Portugol Studio)', () => {
                             ''
                     );
                     expect(mensagem).toContain("Biblioteca 'Internet'");
+                    expect(mensagem).toContain('depende de recursos específicos de ambiente');
+                    expect(mensagem).toContain('runtime que ofereça essa biblioteca');
                     expect(mensagem).toContain('delegua-node');
                 });
 
@@ -723,6 +727,8 @@ describe('Interpretador (Portugol Studio)', () => {
                             ''
                     );
                     expect(mensagem).toContain("Biblioteca 'Util'");
+                    expect(mensagem).toContain('depende de recursos específicos de ambiente');
+                    expect(mensagem).toContain('runtime que ofereça essa biblioteca');
                     expect(mensagem).toContain('delegua-node');
                 });
             });

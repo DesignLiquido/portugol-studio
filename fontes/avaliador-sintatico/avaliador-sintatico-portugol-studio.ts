@@ -1059,6 +1059,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         // No Portugol Studio, se temos um símbolo de tipo após `função`,
         // teremos um retorno no corpo da função.
+        let tipoRetorno: string | undefined;
         if (
             [
                 tiposDeSimbolos.REAL,
@@ -1068,14 +1069,13 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 tiposDeSimbolos.LOGICO,
             ].includes(this.simbolos[this.atual].tipo)
         ) {
-            // Por enquanto apenas consumimos o símbolo sem ações adicionais.
-            this.avancarEDevolverAnterior();
+            tipoRetorno = this.avancarEDevolverAnterior().lexema;
         }
 
         this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.VAZIO);
 
         const nomeFuncao: SimboloInterface = this.consumir(tiposDeSimbolos.IDENTIFICADOR, `Esperado nome ${tipo}.`);
-        return new FuncaoDeclaracao(nomeFuncao, await this.corpoDaFuncao(tipo));
+        return new FuncaoDeclaracao(nomeFuncao, await this.corpoDaFuncao(tipo), tipoRetorno);
     }
 
     async declaracaoDeConstantes(): Promise<Const> {
