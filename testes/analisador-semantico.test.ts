@@ -550,6 +550,49 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
             });
+
+            it('Retorne com tipo incompativel (cadeia em funcao inteiro) gera diagnostico', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inteiro obterValor() {',
+                    'retorne "texto"',
+                    '}',
+                    'funcao inicio() {',
+                    'escreva(obterValor())',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                const temErroRetorno = retornoAnalisadorSemantico.diagnosticos.some(
+                    d => d.mensagem.toLowerCase().includes('retorno') || d.mensagem.toLowerCase().includes('incompatível')
+                );
+                expect(temErroRetorno).toBe(true);
+            });
+
+            it('Retorne com literal inteiro em funcao inteiro nao gera diagnostico', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa',
+                    '{',
+                    'funcao inteiro obterCinco() {',
+                    'retorne 5',
+                    '}',
+                    'funcao inicio() {',
+                    'escreva(obterCinco())',
+                    '}',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                expect(retornoAnalisadorSemantico).toBeTruthy();
+                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+            });
         });
     })
 })

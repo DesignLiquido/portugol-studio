@@ -50,6 +50,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     atual: number;
     diagnosticos: DiagnosticoAnalisadorSemantico[];
     corpoMetodoPrincipal = [];
+    /** Tipo de retorno declarado da função sendo analisada no momento. Nulo fora de funções. */
+    tipoRetornoFuncaoAtual: string | null = null;
 
     constructor() {
         super();
@@ -523,6 +525,9 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
         // Analisa o corpo de funções definidas pelo usuário (exceto 'inicio', tratado em analisar())
         if (declaracao.simbolo.lexema !== 'inicio') {
+            const tipoRetornoAnterior = this.tipoRetornoFuncaoAtual;
+            this.tipoRetornoFuncaoAtual = declaracao.tipo || null;
+
             this.gerenciadorEscopos.empilharEscopo();
 
             for (const parametro of declaracao.funcao.parametros) {
@@ -543,6 +548,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             }
 
             this.gerenciadorEscopos.desempilharEscopo();
+            this.tipoRetornoFuncaoAtual = tipoRetornoAnterior;
         }
 
         return Promise.resolve();
@@ -1081,6 +1087,30 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
             if (declaracao.valor instanceof Variavel) {
                 this.verificarVariavel(declaracao.valor);
+            }
+
+            // Validação básica de compatibilidade de tipo com o tipo de retorno declarado da função
+            if (this.tipoRetornoFuncaoAtual && this.tipoRetornoFuncaoAtual !== 'qualquer' && this.tipoRetornoFuncaoAtual !== 'vazio') {
+                let tipoRetornado: string | null = null;
+
+                if (declaracao.valor instanceof Literal) {
+                    tipoRetornado = inferirTipoVariavel((declaracao.valor as any).valor) as string;
+                } else if (declaracao.valor instanceof Variavel) {
+                    const variavelEncontrada = this.gerenciadorEscopos.buscar(declaracao.valor.simbolo.lexema);
+                    if (variavelEncontrada) {
+                        tipoRetornado = variavelEncontrada.tipo || inferirTipoVariavel(variavelEncontrada.valor) as string;
+                    }
+                }
+
+                if (tipoRetornado && tipoRetornado !== this.tipoRetornoFuncaoAtual) {
+                    const erroTipo = this.validarCompatibilidadeTipos(tipoRetornado, this.tipoRetornoFuncaoAtual);
+                    if (erroTipo) {
+                        this.adicionarDiagnostico(
+                            declaracao.simboloChave,
+                            `Tipo de retorno incompatível: função declarada como '${this.tipoRetornoFuncaoAtual}' mas retorna '${tipoRetornado}'.`
+                        );
+                    }
+                }
             }
         }
 
