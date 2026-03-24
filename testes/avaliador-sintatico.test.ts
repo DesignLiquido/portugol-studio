@@ -313,6 +313,50 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                 expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
             });
 
+            it('Estruturas de repetição - Enquanto com pare', async () => {
+                const resultado = lexador.mapear([
+                    'programa {',
+                    '    funcao inicio() {',
+                    '        inteiro i = 1',
+                    '        enquanto (i <= 10) {',
+                    '            se (i == 5) {',
+                    '                pare',
+                    '            }',
+                    '            escreva(i)',
+                    '            i++',
+                    '        }',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
+
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
+            });
+
+            it('Estruturas de repetição - Faca...Enquanto com pare', async () => {
+                const resultado = lexador.mapear([
+                    'programa {',
+                    '    funcao inicio() {',
+                    '        inteiro i = 1',
+                    '        faca {',
+                    '            se (i == 5) {',
+                    '                pare',
+                    '            }',
+                    '            escreva(i)',
+                    '            i++',
+                    '        } enquanto (i <= 10)',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
+
+                expect(retornoAvaliadorSintatico).toBeTruthy();
+                expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
+            });
+
             describe('Estruturas de repetição - Para', () => {
                 it('Trivial', async () => {
                     const resultado = lexador.mapear([
@@ -324,9 +368,9 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                         '    }',
                         '  }'
                     ], -1);
-    
+
                     const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
-    
+
                     expect(retornoAvaliadorSintatico).toBeTruthy();
                     expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
                 });
@@ -346,9 +390,29 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                         '	}',
                         '}'
                         ], -1);
-    
+
                     const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
-    
+
+                    expect(retornoAvaliadorSintatico).toBeTruthy();
+                    expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
+                });
+
+                it('Com pare para sair do loop', async () => {
+                    const resultado = lexador.mapear([
+                        'programa {',
+                        '    funcao inicio() {',
+                        '        para (inteiro i = 1; i <= 10; i++) {',
+                        '            se (i == 5) {',
+                        '                pare',
+                        '            }',
+                        '            escreva(i)',
+                        '        }',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(resultado, -1);
+
                     expect(retornoAvaliadorSintatico).toBeTruthy();
                     expect(retornoAvaliadorSintatico.declaracoes.length).toBe(2);
                 });
