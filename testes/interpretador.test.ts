@@ -73,6 +73,64 @@ describe('Interpretador (Portugol Studio)', () => {
                     expect(retornoInterpretador.erros).toHaveLength(0);
                     expect(_saidas).toHaveLength(10);
                 });
+
+                it('Com pare: deve parar antes de chegar ao fim', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'programa {',
+                        '    funcao inicio() {',
+                        '        para (inteiro i = 1; i <= 10; i++) {',
+                        '            se (i == 5) {',
+                        '                pare',
+                        '            }',
+                        '            escreva(i)',
+                        '        }',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        _saidas.push(saida);
+                    }
+
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toHaveLength(4);
+                    expect(_saidas).toEqual(['1 ', '2 ', '3 ', '4 ']);
+                });
+            })
+
+            describe('Enquanto', () => {
+                it('Com pare: deve parar antes de chegar ao fim', async () => {
+                    const retornoLexador = lexador.mapear([
+                        'programa {',
+                        '    funcao inicio() {',
+                        '        inteiro i = 1',
+                        '        enquanto (i <= 10) {',
+                        '            se (i == 5) {',
+                        '                pare',
+                        '            }',
+                        '            escreva(i)',
+                        '            i++',
+                        '        }',
+                        '    }',
+                        '}'
+                    ], -1);
+
+                    const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+
+                    interpretador.funcaoDeRetornoMesmaLinha = (saida: string) => {
+                        _saidas.push(saida);
+                    }
+
+                    const retornoInterpretador = await interpretador.interpretar(retornoAvaliadorSintatico.declaracoes);
+
+                    expect(retornoInterpretador.erros).toHaveLength(0);
+                    expect(_saidas).toHaveLength(4);
+                    expect(_saidas).toEqual(['1 ', '2 ', '3 ', '4 ']);
+                });
             })
 
             describe('Leia', () => {

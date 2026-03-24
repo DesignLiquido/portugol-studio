@@ -30,6 +30,7 @@ import {
     Retorna,
     Const,
     Comentario,
+    Sustar,
 } from '@designliquido/delegua/declaracoes';
 import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/interfaces/retornos';
 import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintatico/avaliador-sintatico-base';
@@ -976,6 +977,11 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return new Retorna(simboloChave, valor);
     }
 
+    declaracaoPare(): Sustar {
+        const simbolo = this.avancarEDevolverAnterior();
+        return new Sustar(simbolo);
+    }
+
     async declaracaoPara(): Promise<Para> {
         try {
             const simboloPara: SimboloInterface = this.avancarEDevolverAnterior();
@@ -1146,6 +1152,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 return this.declaracaoLogicos();
             case tiposDeSimbolos.PARA:
                 return await this.declaracaoPara();
+            case tiposDeSimbolos.PARE:
+                return this.declaracaoPare();
             case tiposDeSimbolos.PROGRAMA:
             case tiposDeSimbolos.CHAVE_DIREITA:
                 this.avancarEDevolverAnterior();
