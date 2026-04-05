@@ -49,7 +49,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     funcoes: { [nomeFuncao: string]: FuncaoHipoteticaInterface };
     atual: number;
     diagnosticos: DiagnosticoAnalisadorSemantico[];
-    corpoMetodoPrincipal = [];
+    corpoMetodoPrincipal: Declaracao[] = [];
     /** Tipo de retorno declarado da função sendo analisada no momento. Nulo fora de funções. */
     tipoRetornoFuncaoAtual: string | null = null;
 
@@ -150,7 +150,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     /**
      * Verifica interpolações de texto e marca variáveis como usadas
      */
-    private verificarInterpolacaoTexto(texto: string, literal: Literal): void {
+    protected verificarInterpolacaoTexto(texto: string, literal: Literal): void {
         // Regex para encontrar ${identificador}
         const regexInterpolacao = /\$\{([a-zA-Z_][a-zA-Z0-9_]*)\}/g;
         let match;
@@ -471,7 +471,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         for (let variavel of naoUsadas) {
             // Verifica se já existe um erro associado à variável
             const temErro = this.diagnosticos.some(
-                (d) => d.severidade === DiagnosticoSeveridade.ERRO && d.simbolo.lexema === variavel.nome
+                (d) => d.severidade === DiagnosticoSeveridade.ERRO && d.simbolo?.lexema === variavel.nome
             );
 
             // Se a variável já tem um erro associado, não emitir aviso de não usada
@@ -783,7 +783,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
                     }
 
                     if (argumento instanceof Literal) {
-                        switch (argumento.valor.constructor.name) {
+                        switch (argumento.valor?.constructor.name) {
                             case 'Number':
                                 if (!['inteiro', 'real'].includes(tipoDadoParametro)) {
                                     this.erro(
@@ -1131,7 +1131,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         );
 
         if (declaracaoMetodoPrincipal) {
-            this.corpoMetodoPrincipal = (declaracaoMetodoPrincipal as FuncaoDeclaracao).funcao.corpo;
+            const declaracaoMetodoPrincipalResolvida = declaracaoMetodoPrincipal as FuncaoDeclaracao;
+            this.corpoMetodoPrincipal = declaracaoMetodoPrincipalResolvida.funcao.corpo as Declaracao[];
         }
 
         // Processa declarações globais (exceto o método principal)
