@@ -1,6 +1,7 @@
 import { AnalisadorSemanticoPortugolStudio } from '../fontes/analisador-semantico';
 import { AvaliadorSintaticoPortugolStudio } from "../fontes/avaliador-sintatico";
 import { LexadorPortugolStudio } from "../fontes/lexador";
+import { DiagnosticoSeveridade } from '@designliquido/delegua/interfaces/erros';
 
 describe('Analisador sêmantico', () => {
     describe('analisar()', () => {
@@ -70,7 +71,10 @@ describe('Analisador sêmantico', () => {
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
-                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
+                const erros = retornoAnalisadorSemantico.diagnosticos.filter(
+                    d => d.severidade === DiagnosticoSeveridade.ERRO
+                );
+                expect(erros).toHaveLength(0);
             });
 
             it('Reconhece e utiliza variável global corretamente', async () => {
@@ -189,14 +193,17 @@ describe('Analisador sêmantico', () => {
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
-                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(5);
+                const erros = retornoAnalisadorSemantico.diagnosticos.filter(
+                    d => d.severidade === DiagnosticoSeveridade.ERRO
+                );
+                expect(erros).toHaveLength(5);
 
 
-                expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toEqual("Não é possível atribuir um valor do tipo 'cadeia' a uma variável do tipo 'real'.");
-                expect(retornoAnalisadorSemantico.diagnosticos[1].mensagem).toEqual("Não é possível atribuir um valor do tipo 'cadeia' a uma variável do tipo 'inteiro'.");
-                expect(retornoAnalisadorSemantico.diagnosticos[2].mensagem).toEqual("Não é possível atribuir um valor do tipo 'inteiro' a uma variável do tipo 'lógico'.");
-                expect(retornoAnalisadorSemantico.diagnosticos[3].mensagem).toEqual("Não é possível atribuir um valor do tipo 'inteiro' a uma variável do tipo 'cadeia'.");
-                expect(retornoAnalisadorSemantico.diagnosticos[4].mensagem).toEqual("Não é possível atribuir um valor do tipo 'real' a uma variável do tipo 'inteiro'.");
+                expect(erros[0].mensagem).toEqual("Não é possível atribuir um valor do tipo 'cadeia' a uma variável do tipo 'real'.");
+                expect(erros[1].mensagem).toEqual("Não é possível atribuir um valor do tipo 'cadeia' a uma variável do tipo 'inteiro'.");
+                expect(erros[2].mensagem).toEqual("Não é possível atribuir um valor do tipo 'inteiro' a uma variável do tipo 'lógico'.");
+                expect(erros[3].mensagem).toEqual("Não é possível atribuir um valor do tipo 'inteiro' a uma variável do tipo 'cadeia'.");
+                expect(erros[4].mensagem).toEqual("Não é possível atribuir um valor do tipo 'real' a uma variável do tipo 'inteiro'.");
             });
 
             it('Erro ao atribuir uma variável não declarada', async () => {
@@ -235,8 +242,6 @@ describe('Analisador sêmantico', () => {
                     "Não é possível atribuir um valor do tipo 'inteiro' a uma variável do tipo 'cadeia'."
                 );
             });
-
-
 
             it('Chamada de função inexistente', async () => {
                 const retornoLexador = lexador.mapear([
@@ -327,8 +332,11 @@ describe('Analisador sêmantico', () => {
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
-                expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(1);
-                expect(retornoAnalisadorSemantico.diagnosticos[0].mensagem).toBe(
+                const erros = retornoAnalisadorSemantico.diagnosticos.filter(
+                    d => d.severidade === DiagnosticoSeveridade.ERRO
+                );
+                expect(erros).toHaveLength(1);
+                expect(erros[0].mensagem).toBe(
                     'Argumento inválido em leia(). Esperado variável ou posição indexada de vetor/matriz.'
                 );
             });
@@ -392,7 +400,7 @@ describe('Analisador sêmantico', () => {
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 const mensagens = retornoAnalisadorSemantico.diagnosticos.map(d => d.mensagem);
-                expect(mensagens.some(m => m.includes('naoDeclarada') && m.includes('declarada'))).toBe(true);
+                expect(mensagens.some(m => m?.includes('naoDeclarada') && m?.includes('declarada'))).toBe(true);
             });
 
             it('Para valido nao gera diagnostico', async () => {
@@ -434,7 +442,7 @@ describe('Analisador sêmantico', () => {
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 const mensagens = retornoAnalisadorSemantico.diagnosticos.map(d => d.mensagem);
-                expect(mensagens.some(m => m.includes('naoDeclarada') && m.includes('declarada'))).toBe(true);
+                expect(mensagens.some(m => m?.includes('naoDeclarada') && m?.includes('declarada'))).toBe(true);
             });
 
             it('Funcao com parametros analisa corpo', async () => {
@@ -455,7 +463,7 @@ describe('Analisador sêmantico', () => {
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 const mensagens = retornoAnalisadorSemantico.diagnosticos.map(d => d.mensagem);
-                expect(mensagens.some(m => m.includes('naoDeclarada'))).toBe(true);
+                expect(mensagens.some(m => m?.includes('naoDeclarada'))).toBe(true);
             });
 
             it('Declaracao com tipo incompativel gera diagnostico (inteiro recebe texto)', async () => {
@@ -489,7 +497,7 @@ describe('Analisador sêmantico', () => {
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
                 const temDivisaoPorZero = retornoAnalisadorSemantico.diagnosticos.some(
-                    d => d.mensagem.includes('Divisão por zero')
+                    d => d.mensagem?.includes('Divisão por zero')
                 );
                 expect(temDivisaoPorZero).toBe(true);
             });
@@ -513,7 +521,7 @@ describe('Analisador sêmantico', () => {
                 expect(retornoAnalisadorSemantico.diagnosticos).toHaveLength(0);
             });
 
-            it('Variavel declarada mas nao usada nao gera erro (aviso desativado)', async () => {
+            it('Variavel declarada mas nao usada gera sugestao pedagogica', async () => {
                 const retornoLexador = lexador.mapear([
                     'programa {',
                     '    funcao inicio() {',
@@ -525,10 +533,63 @@ describe('Analisador sêmantico', () => {
                 const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
                 const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
 
-                const temErro = retornoAnalisadorSemantico.diagnosticos.some(
-                    d => d.mensagem.includes('x')
+                const sugestaoVariavelNaoUsada = retornoAnalisadorSemantico.diagnosticos.find(
+                    d => d.severidade === DiagnosticoSeveridade.SUGESTAO && d.mensagem?.includes("nunca usada")
                 );
-                expect(temErro).toBe(false);
+
+                expect(sugestaoVariavelNaoUsada).toBeTruthy();
+                expect(sugestaoVariavelNaoUsada?.mensagem).toContain("Variável 'x'");
+            });
+
+            it('Troca sem variavel auxiliar gera sugestoes pedagogicas', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa {',
+                    '    funcao inicio() {',
+                    '        inteiro a, b',
+                    '        leia(a, b)',
+                    '        a = b',
+                    '        b = a',
+                    '        escreva(a, b)',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                const sugestoes = retornoAnalisadorSemantico.diagnosticos.filter(
+                    d => d.severidade === DiagnosticoSeveridade.SUGESTAO
+                );
+
+                expect(sugestoes.length).toBeGreaterThanOrEqual(2);
+                expect(sugestoes.some(s => s.mensagem?.includes('ordem de escrita'))).toBe(true);
+                expect(sugestoes.some(s => s.mensagem?.includes('variável auxiliar'))).toBe(true);
+            });
+
+            it('Troca com variavel auxiliar nao gera sugestoes de troca insegura', async () => {
+                const retornoLexador = lexador.mapear([
+                    'programa {',
+                    '    funcao inicio() {',
+                    '        inteiro a, b, aux',
+                    '        leia(a, b)',
+                    '        aux = a',
+                    '        a = b',
+                    '        b = aux',
+                    '        escreva(a, b)',
+                    '    }',
+                    '}'
+                ], -1);
+
+                const retornoAvaliadorSintatico = await avaliadorSintatico.analisar(retornoLexador, -1);
+                const retornoAnalisadorSemantico = await analisadorSemantico.analisar(retornoAvaliadorSintatico.declaracoes);
+
+                const sugestoesTroca = retornoAnalisadorSemantico.diagnosticos.filter(
+                    d =>
+                        d.severidade === DiagnosticoSeveridade.SUGESTAO &&
+                        (d.mensagem?.includes('ordem de escrita') || d.mensagem?.includes('variável auxiliar'))
+                );
+
+                expect(sugestoesTroca).toHaveLength(0);
             });
 
             it('Funcao com parametros valida - retorne usa parametro', async () => {
@@ -569,7 +630,7 @@ describe('Analisador sêmantico', () => {
 
                 expect(retornoAnalisadorSemantico).toBeTruthy();
                 const temErroRetorno = retornoAnalisadorSemantico.diagnosticos.some(
-                    d => d.mensagem.toLowerCase().includes('retorno') || d.mensagem.toLowerCase().includes('incompatível')
+                    d => d.mensagem?.toLowerCase().includes('retorno') || d.mensagem?.toLowerCase().includes('incompatível')
                 );
                 expect(temErroRetorno).toBe(true);
             });

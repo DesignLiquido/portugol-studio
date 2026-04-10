@@ -22,8 +22,8 @@ import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designli
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
 import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
 import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/variavel-hipotetica-interface';
+import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
-import { PilhaVariaveis } from './pilha-variaveis';
 import {
     AcessoIndiceVariavel,
     Agrupamento,
@@ -39,9 +39,14 @@ import {
     Variavel,
 } from '@designliquido/delegua/construtos';
 
+import { PilhaVariaveis } from './pilha-variaveis';
 import { inferirTipoVariavel } from '../interpretador/inferenciador';
+import { aplicarRegraVariaveisNaoUsadas } from './regras-pedagogicas/regra-variaveis-nao-usadas';
+import { aplicarRegraOrdemLeituraEscrita } from './regras-pedagogicas/regra-ordem-leitura-escrita';
+import { aplicarRegraUsoVariavelAuxiliar } from './regras-pedagogicas/regra-uso-variavel-auxiliar';
+import { ContextoRegraPedagogica } from './regras-pedagogicas/tipos-regras-pedagogicas';
+
 import tiposDeDados from '../tipos-de-dados';
-import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
 export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     pilhaVariaveis: PilhaVariaveis;
@@ -463,33 +468,19 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     }
 
     /**
-     * Verifica variáveis não usadas ao final da análise
+     * Executa regras pedagógicas opcionais (não bloqueantes).
      */
-    private verificarVariaveisNaoUsadas(): void {
-        const naoUsadas = this.gerenciadorEscopos.obterVariaveisNaoUsadas();
+    private executarRegrasPedagogicas(): void {
+        const contexto: ContextoRegraPedagogica = {
+            corpoMetodoPrincipal: this.corpoMetodoPrincipal,
+            diagnosticos: this.diagnosticos,
+            gerenciadorEscopos: this.gerenciadorEscopos,
+            sugestao: this.sugestao.bind(this),
+        };
 
-        for (let variavel of naoUsadas) {
-            // Verifica se já existe um erro associado à variável
-            const temErro = this.diagnosticos.some(
-                (d) => d.severidade === DiagnosticoSeveridade.ERRO && d.simbolo?.lexema === variavel.nome
-            );
-
-            // Se a variável já tem um erro associado, não emitir aviso de não usada
-            if (temErro) {
-                continue;
-            }
-
-            this.aviso(
-                {
-                    lexema: variavel.nome,
-                    linha: variavel.linha,
-                    tipo: variavel.tipo,
-                    hashArquivo: variavel.hashArquivo,
-                    literal: null,
-                },
-                `Variável '${variavel.nome}' foi declarada mas nunca usada.`
-            );
-        }
+        aplicarRegraVariaveisNaoUsadas(contexto);
+        aplicarRegraOrdemLeituraEscrita(contexto);
+        aplicarRegraUsoVariavelAuxiliar(contexto);
     }
 
     visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
@@ -658,8 +649,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         let simboloAlvo: SimboloInterface;
 
         // Determina o símbolo do alvo
-        switch (alvo.constructor.name) {
-            case 'Variavel':
+        switch (alvo.constructor) {
+            case Variavel:
                 const alvoVariavel = alvo as Variavel;
                 simboloAlvo = alvoVariavel.simbolo;
                 break;
@@ -1150,10 +1141,8 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
             this.atual++;
         }
 
-        // Verifica variáveis não usadas ao final da análise
-        // NOTA: Este recurso está comentado para manter compatibilidade com testes existentes.
-        // Descomente para habilitar avisos sobre variáveis não utilizadas.
-        // this.verificarVariaveisNaoUsadas();
+        // Regras pedagógicas opcionais (emitidas como sugestão).
+        this.executarRegrasPedagogicas();
 
         return {
             diagnosticos: this.diagnosticos,

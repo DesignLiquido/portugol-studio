@@ -9,6 +9,24 @@ Legenda:
 - ❌ Não implementado
 - 🔄 Delegado ao `delegua-node` (requer execução nesse ambiente)
 
+Tags de escopo (origem da implementação):
+- `[neste-pacote]`: implementado em `@designliquido/portugol-studio`
+- `[delegua-node]`: implementado em `delegua-node`
+- `[vscode-ext]`: implementado na extensão VSCode (`d:/Delegua/vscode`)
+- `[fora-escopo]`: decisão arquitetural de não implementar neste stack atual
+
+---
+
+## Arquitetura multi-repositório
+
+Para evitar falso negativo de compatibilidade, esta matriz separa **status funcional** de **local de implementação**:
+
+- Núcleo de dialeto (léxico, sintaxe, semântica, interpretação, formatação): `[neste-pacote]`;
+- Bibliotecas dependentes de ambiente/SO e integrações Node: `[delegua-node]`;
+- Shell de IDE desktop, árvore estrutural, inspetor de símbolos, editor avançado, depuração visual e atualização de extensão: `[vscode-ext]`.
+
+Com isso, um item só é tratado como lacuna quando não existe no ecossistema alvo, e não apenas por estar em outro repositório.
+
 ---
 
 ## 1. Linguagem — Construtos de núcleo
@@ -28,18 +46,18 @@ Legenda:
 | `escolha ... caso ... caso contrario` | ✅ | |
 | `retorne` | ✅ | Validação básica de compatibilidade de tipo com a função (Fase 4D) |
 | `pare` | ✅ | Dentro de `escolha`, consumido como separador de caso (sem nó AST `Sustar`) |
-| `continua` | ❌ | Não tokenizado pelo lexador; construto não existe no dialeto PS |
+| `continua` | ❌ | `[fora-escopo]` Não tokenizado pelo lexador; construto não existe no dialeto PS |
 | `escreva(...)` | ✅ | |
 | `escreva_linha(...)` / `escreva` com quebra | ✅ | |
 | `leia(...)` | ✅ | Validação de alvo: apenas variável ou acesso por índice (Fase 3) |
 | Operadores aritméticos `+`, `-`, `*`, `/`, `%` | ✅ | |
-| Operador divisão inteira `\` | ❌ | Token `DIVISAO_INTEIRA` definido nos tipos de símbolo, mas não tokenizado pelo lexador; inacessível no dialeto PS |
+| Operador divisão inteira `\` | ❌ | `[fora-escopo]` Token `DIVISAO_INTEIRA` definido nos tipos de símbolo, mas não tokenizado pelo lexador; inacessível no dialeto PS |
 | Operadores relacionais `<`, `>`, `<=`, `>=`, `==`, `!=` (`<>`) | ✅ | |
 | Operadores lógicos `e`, `ou`, `nao` | ✅ | |
 | Atribuição composta `+=`, `-=`, `*=`, `/=` | ✅ | Tratados no formatador (Fase 4B) |
 | Comentário de linha `//` | ✅ | |
 | Comentário de bloco `/* */` | ✅ | |
-| `inclua biblioteca X` | ✅ | Para bibliotecas fora do escopo deste pacote, retorna erro orientativo com referência ao `delegua-node` |
+| `inclua biblioteca X` | ✅ | `[neste-pacote]` Para bibliotecas fora do escopo deste pacote, retorna erro orientativo com referência ao `delegua-node` |
 
 ---
 
@@ -174,7 +192,7 @@ Implementação completa em `delegua-node/fontes/bibliotecas/dialetos/portugol-s
 
 | Função | Status | Notas |
 |---|:---:|---|
-| `abrir_arquivo(caminho, modo)` | 🔄 | Modos: 0 = leitura, 1 = escrita, 2 = acrescentar |
+| `abrir_arquivo(caminho, modo)` | 🔄 | `[delegua-node]` Modos: 0 = leitura, 1 = escrita, 2 = acrescentar |
 | `fechar_arquivo(endereco)` | 🔄 | |
 | `fim_arquivo(endereco)` | 🔄 | Retorna `verdadeiro` após última linha lida |
 | `ler_linha(endereco)` | 🔄 | Leitura sequencial linha a linha com cursor (Fase 5) |
@@ -186,7 +204,7 @@ Implementação completa em `delegua-node/fontes/bibliotecas/dialetos/portugol-s
 | `listar_pastas(caminho, vetor)` | 🔄 | Lança erro se vetor for menor que o número de pastas |
 | `listar_arquivos(caminho, vetor)` | 🔄 | |
 | `listar_arquivos_por_tipo(caminho, vetor, tipos)` | 🔄 | |
-| `selecionar_arquivo()` | ❌ | Diálogo de UI nativa (desktop); não implementável em ambiente CLI/Node |
+| `selecionar_arquivo()` | ❌ | `[fora-escopo]` Diálogo de UI nativa (desktop); não implementável em ambiente CLI/Node |
 
 ---
 
@@ -197,7 +215,7 @@ Implementação em `delegua-node/fontes/bibliotecas/dialetos/portugol-studio/uti
 
 | Função | Status | Notas |
 |---|:---:|---|
-| `obter_diretorio_usuario()` | 🔄 | |
+| `obter_diretorio_usuario()` | 🔄 | `[delegua-node]` |
 | `numero_elementos(vetor)` | 🔄 | |
 | `numero_linhas(matriz)` | 🔄 | |
 | `numero_colunas(matriz)` | 🔄 | |
@@ -214,10 +232,26 @@ Implementação em `fontes/bibliotecas/internet.ts` (acoplada ao Node; usada via
 
 | Função | Status | Notas |
 |---|:---:|---|
-| `definir_tempo_limite(ms)` | 🔄 | Timeout padrão: 2000 ms |
+| `definir_tempo_limite(ms)` | 🔄 | `[delegua-node]` Timeout padrão: 2000 ms |
 | `obter_texto(url)` | 🔄 | |
 | `baixar_imagem(url, caminho)` | 🔄 | Detecta PNG/JPEG pelo `content-type`; salva arquivo |
-| `endereco_disponivel(url)` | 🔄 | Faz HEAD request; retorna `falso` para 404 ou erro de rede |
+| `endereco_disponivel(url)` | 🔄 | `[delegua-node]` Faz HEAD request; retorna `falso` para 404 ou erro de rede |
+
+---
+
+## 9.1 Bibliotecas Reservadas (Desktop/Jogos)
+
+As bibliotecas reservadas do Portugol Studio original são tratadas majoritariamente em `delegua-node`.
+
+| Biblioteca | Status no ecossistema | Notas |
+|---|:---:|---|
+| `Graficos` | ✅ | `[delegua-node]` Implementada em `delegua-node/fontes/bibliotecas/dialetos/portugol-studio/graficos.ts` |
+| `Teclado` | ✅ | `[delegua-node]` Implementada e exposta no importador de dialeto |
+| `ServicosWeb` | ✅ | `[delegua-node]` Implementada e exposta no importador de dialeto |
+| `Mouse` | ✅ | `[delegua-node]` Implementada, testada e exposta no importador de dialeto (`portugol-studio-comum.ts`) |
+| `Sons` | ✅ | `[delegua-node]` Implementada, testada e exposta no importador de dialeto (`portugol-studio-comum.ts`) |
+
+---
 
 ---
 
@@ -267,7 +301,10 @@ Implementação em `fontes/bibliotecas/internet.ts` (acoplada ao Node; usada via
 
 ## Resumo executivo
 
-> Última atualização: 2026-03-22
+> Última atualização: 2026-04-10
+
+> Nota: as contagens abaixo refletem primariamente este pacote (`@designliquido/portugol-studio`).
+> Itens etiquetados como `[delegua-node]` ou `[vscode-ext]` estão cobertos no ecossistema, mesmo quando não residem neste repositório.
 
 | Categoria | Total de itens | ✅ | ⚠️ | ❌ | 🔄 |
 |---|:---:|:---:|:---:|:---:|:---:|
@@ -285,6 +322,6 @@ Implementação em `fontes/bibliotecas/internet.ts` (acoplada ao Node; usada via
 | **Total** | **162** | **129** | **3** | **3** | **23** |
 
 Itens com ❌ definitivo (sem plano de implementação):
-- Operador divisão inteira `\` — não tokenizado no lexador PS; ausente na gramática original do dialeto neste contexto
-- `continua` — não existe como palavra reservada no dialeto PS
-- `selecionar_arquivo()` — requer UI nativa de desktop; fora do escopo de ambiente CLI/Node
+- Operador divisão inteira `\` — `[fora-escopo]` não tokenizado no lexador PS; ausente na gramática original do dialeto neste contexto
+- `continua` — `[fora-escopo]` não existe como palavra reservada no dialeto PS
+- `selecionar_arquivo()` — `[fora-escopo]` requer UI nativa de desktop; fora do escopo de ambiente CLI/Node
