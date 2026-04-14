@@ -12,7 +12,7 @@ const ModoAcesso = {
 
 const arquivos = new Array(NUMERO_MAXIMO_ARQUIVOS).fill(null);
 
-export async function abrir_arquivo(interpretador: InterpretadorInterface, caminhoArquivo, modoAcesso) {
+export async function abrir_arquivo(interpretador: InterpretadorInterface, caminhoArquivo: any, modoAcesso: any) {
     if (modoAcesso < 0 || modoAcesso > 2) {
         throw new Error(`Modo de acesso inválido: ${modoAcesso}`);
     }
@@ -44,7 +44,7 @@ export async function abrir_arquivo(interpretador: InterpretadorInterface, camin
     }
 }
 
-export async function fechar_arquivo(interpretador: InterpretadorInterface, endereco) {
+export async function fechar_arquivo(interpretador: InterpretadorInterface, endereco: any) {
     const arquivo = obterArquivo(endereco);
     if (arquivo) {
         arquivo.stream.close();
@@ -54,12 +54,12 @@ export async function fechar_arquivo(interpretador: InterpretadorInterface, ende
     }
 }
 
-export function fim_arquivo(interpretador: InterpretadorInterface, endereco) {
+export function fim_arquivo(interpretador: InterpretadorInterface, endereco: any) {
     const arquivo = obterArquivo(endereco);
     return arquivo.fim;
 }
 
-export async function ler_linha(interpretador: InterpretadorInterface, endereco) {
+export async function ler_linha(interpretador: InterpretadorInterface, endereco: any) {
     const arquivo = obterArquivo(endereco);
     if (arquivo.modoAcesso !== ModoAcesso.LEITURA) {
         throw new Error(`O arquivo '${arquivo.caminho}' está aberto em modo de escrita`);
@@ -68,7 +68,7 @@ export async function ler_linha(interpretador: InterpretadorInterface, endereco)
     return data.split('\n')[0];
 }
 
-export async function escrever_linha(interpretador: InterpretadorInterface, linha, endereco) {
+export async function escrever_linha(interpretador: InterpretadorInterface, linha: any, endereco: any) {
     const arquivo = obterArquivo(endereco);
     if (arquivo.modoAcesso === ModoAcesso.LEITURA) {
         throw new Error(`O arquivo '${arquivo.caminho}' está aberto em modo de leitura`);
@@ -78,10 +78,10 @@ export async function escrever_linha(interpretador: InterpretadorInterface, linh
 
 export async function substituir_texto(
     interpretador: InterpretadorInterface,
-    endereco,
-    textoPesquisa,
-    textoSubstituto,
-    onlyFirst
+    endereco: any,
+    textoPesquisa: any,
+    textoSubstituto: any,
+    onlyFirst: any
 ) {
     const filePath = path.resolve(endereco);
     const data = await fs.promises.readFile(filePath, 'utf-8');
@@ -91,7 +91,7 @@ export async function substituir_texto(
     await fs.promises.writeFile(filePath, newText, 'utf-8');
 }
 
-export async function arquivo_existe(interpretador: InterpretadorInterface, caminhoArquivo) {
+export async function arquivo_existe(interpretador: InterpretadorInterface, caminhoArquivo: any) {
     const filePath = path.resolve(caminhoArquivo);
     return fs.promises
         .access(filePath, fs.constants.F_OK)
@@ -99,17 +99,17 @@ export async function arquivo_existe(interpretador: InterpretadorInterface, cami
         .catch(() => false);
 }
 
-export async function apagar_arquivo(interpretador: InterpretadorInterface, caminhoArquivo) {
+export async function apagar_arquivo(interpretador: InterpretadorInterface, caminhoArquivo: any) {
     const filePath = path.resolve(caminhoArquivo);
     await fs.promises.unlink(filePath);
 }
 
-export async function criar_pasta(interpretador: InterpretadorInterface, caminho) {
+export async function criar_pasta(interpretador: InterpretadorInterface, caminho: any) {
     const dirPath = path.resolve(caminho);
     await fs.promises.mkdir(dirPath, { recursive: true });
 }
 
-export async function listar_pastas(interpretador: InterpretadorInterface, caminhoPai, vetorPastas) {
+export async function listar_pastas(interpretador: InterpretadorInterface, caminhoPai: any, vetorPastas: any) {
     const dirPath = path.resolve(caminhoPai);
     const items = await fs.promises.readdir(dirPath, { withFileTypes: true });
     const pastas = items.filter((item) => item.isDirectory()).map((item) => item.name);
@@ -129,7 +129,7 @@ export async function listar_pastas(interpretador: InterpretadorInterface, camin
     }
 }
 
-export async function listar_arquivos(interpretador: InterpretadorInterface, caminhoPai, vetorArquivos) {
+export async function listar_arquivos(interpretador: InterpretadorInterface, caminhoPai: any, vetorArquivos: any) {
     const dirPath = path.resolve(caminhoPai);
     const items = await fs.promises.readdir(dirPath, { withFileTypes: true });
     const arquivos = items.filter((item) => item.isFile()).map((item) => item.name);
@@ -151,14 +151,14 @@ export async function listar_arquivos(interpretador: InterpretadorInterface, cam
 
 export async function listar_arquivos_por_tipo(
     interpretador: InterpretadorInterface,
-    caminhoPai,
-    vetorArquivos,
-    vetorTipos
+    caminhoPai: any,
+    vetorArquivos: any,
+    vetorTipos: any
 ) {
     const dirPath = path.resolve(caminhoPai);
     const items = await fs.promises.readdir(dirPath, { withFileTypes: true });
     const arquivos = items
-        .filter((item) => item.isFile() && vetorTipos.some((tipo) => item.name.endsWith(tipo)))
+        .filter((item) => item.isFile() && vetorTipos.some((tipo: any) => item.name.endsWith(tipo)))
         .map((item) => item.name);
 
     if (arquivos.length > vetorArquivos.length) {
@@ -184,7 +184,7 @@ function obterProximoIndiceLivre() {
     return indice;
 }
 
-function obterArquivo(endereco) {
+function obterArquivo(endereco: any) {
     const arquivo = arquivos[endereco];
     if (!arquivo) {
         throw new Error('O endereço de memória especificado não aponta para um arquivo');
@@ -192,6 +192,6 @@ function obterArquivo(endereco) {
     return arquivo;
 }
 
-function arquivoAberto(caminho) {
+function arquivoAberto(caminho: any) {
     return arquivos.some((arquivo) => arquivo && arquivo.caminho === caminho);
 }

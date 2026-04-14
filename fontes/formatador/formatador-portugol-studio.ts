@@ -597,7 +597,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
             }
         } else {
             this.codigoFormatado += `${declaracao.simbolo.lexema} = `;
-            this.formatarDeclaracaoOuConstruto(declaracao.inicializador);
+            this.formatarDeclaracaoOuConstruto(declaracao.inicializador as any);
         }
     }
 

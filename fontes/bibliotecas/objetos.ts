@@ -308,7 +308,7 @@ function parseXml(xmlString: string) {
             explicitRoot: false,
             mergeAttrs: true,
         },
-        (err, result) => {
+        (err: any, result: any) => {
             if (err) {
                 console.error('Erro processando XML:', err);
                 resultString = 'Erro processando XML';

@@ -31,7 +31,7 @@ export async function obter_texto(interpretador: InterpretadorInterface, caminho
 
         return conteudo;
     } catch (error) {
-        throw new Error(`Não foi possível obter o conteúdo de ${caminho}: ${error.message}`);
+        throw new Error(`Não foi possível obter o conteúdo de ${caminho}: ${(error as any).message}`);
     }
 }
 

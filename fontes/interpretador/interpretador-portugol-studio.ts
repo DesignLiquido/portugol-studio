@@ -20,10 +20,10 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
     constructor(
         diretorioBase: string,
         performance = false,
-        funcaoDeRetorno: Function = null,
-        funcaoLimpa: Function = null
+        funcaoDeRetorno: Function | null = null,
+        funcaoLimpa: Function | null = null
     ) {
-        super(diretorioBase, performance, funcaoDeRetorno, funcaoDeRetorno);
+        super(diretorioBase, performance, funcaoDeRetorno ?? undefined, funcaoDeRetorno ?? undefined);
 
         if (funcaoLimpa !== null) {
             this.funcaoLimpa = funcaoLimpa;
@@ -76,7 +76,7 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
     async visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
         try {
             const formatoTexto: string = await comum.avaliarArgumentosEscreva(this, declaracao.argumentos);
-            this.funcaoDeRetornoMesmaLinha(formatoTexto);
+            this.funcaoDeRetornoMesmaLinha?.(formatoTexto);
             return null;
         } catch (erro: any) {
             this.erros.push({

@@ -15,7 +15,9 @@
         "sourceMap": true,
         "declaration": true,
         "declarationMap": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "types": ["jest", "node"]
     },
     "exclude": [
         "babel.config.js",

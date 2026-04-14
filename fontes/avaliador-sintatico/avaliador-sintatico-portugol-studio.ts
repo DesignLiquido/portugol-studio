@@ -203,7 +203,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.INTEIRO:
             case tiposDeSimbolos.REAL:
                 const simboloVariavel: SimboloInterface = this.avancarEDevolverAnterior();
-                const dicionarioTiposDelegua = {
+                const dicionarioTiposDelegua: Record<string, string> = {
                     CADEIA: 'texto',
                     CARACTER: 'texto',
                     INTEIRO: 'inteiro',
@@ -214,7 +214,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                     this.hashArquivo,
                     Number(simboloVariavel.linha),
                     simboloVariavel.literal,
-                    dicionarioTiposDelegua[simboloAtual.tipo]
+                    dicionarioTiposDelegua[simboloAtual.tipo] as any
                 );
             case tiposDeSimbolos.FALSO:
                 this.avancarEDevolverAnterior();
@@ -387,12 +387,12 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             this.avancarEDevolverAnterior();
         }
 
-        let caminhoSenao = null;
+        let caminhoSenao: Declaracao | Declaracao[] | undefined = undefined;
         if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.SENAO)) {
             caminhoSenao = await this.resolverDeclaracaoForaDeBloco();
         }
 
-        return new Se(condicao, caminhoEntao, [], caminhoSenao);
+        return new Se(condicao, caminhoEntao, [], caminhoSenao as any);
     }
 
     async declaracaoEnquanto(): Promise<Enquanto> {
@@ -419,12 +419,12 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             this.consumir(tiposDeSimbolos.CHAVE_ESQUERDA, "Esperado '{' antes do escopo do 'escolha'.");
             this.blocos += 1;
 
-            const caminhos = [];
-            let caminhoPadrao = null;
+            const caminhos: { condicoes: Construto[]; declaracoes: Declaracao[]; }[] = [];
+            let caminhoPadrao: { declaracoes: (Declaracao | Declaracao[])[]; } | undefined = undefined;
             while (!this.estaNoFinal() && !this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CHAVE_DIREITA)) {
                 if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CASO)) {
                     if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CONTRARIO)) {
-                        if (caminhoPadrao !== null) {
+                        if (caminhoPadrao !== undefined) {
                             const excecao = new ErroAvaliadorSintatico(
                                 this.simbolos[this.atual],
                                 "Você só pode ter um 'contrario' em cada declaração de 'escolha'."
@@ -456,12 +456,12 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                     this.consumir(tiposDeSimbolos.DOIS_PONTOS, "Esperado ':' após o 'caso'.");
 
                     while (this.verificarTipoSimboloAtual(tiposDeSimbolos.CASO)) {
-                        this.consumir(tiposDeSimbolos.CASO, null);
+                        this.consumir(tiposDeSimbolos.CASO, '');
                         caminhoCondicoes.push(await this.expressao());
                         this.consumir(tiposDeSimbolos.DOIS_PONTOS, "Esperado ':' após declaração do 'caso'.");
                     }
 
-                    let declaracoes = [];
+                    let declaracoes: Declaracao[] = [];
                     do {
                         const retornoDeclaracao = await this.resolverDeclaracaoForaDeBloco();
                         if (Array.isArray(retornoDeclaracao)) {
@@ -483,7 +483,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 }
             }
 
-            return new Escolha(condicao, caminhos, caminhoPadrao);
+            return new Escolha(condicao, caminhos, caminhoPadrao as any);
         } finally {
             this.blocos -= 1;
         }
@@ -597,7 +597,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             `Esperado '(' após o nome ${tipo}.`
         );
 
-        let parametros = [];
+        let parametros: any[] = [];
         if (!this.verificarTipoSimboloAtual(tiposDeSimbolos.PARENTESE_DIREITO)) {
             parametros = await this.logicaComumParametros();
         }
@@ -665,6 +665,8 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                 }
 
                 return new Var(identificador, inicializador, 'inteiro');
+            default:
+                throw this.erro(this.simboloAtual(), `Tipo não suportado em declaracaoDeVariavel: ${this.simboloAnterior()?.tipo}.`);
         }
     }
 
@@ -747,7 +749,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         // Ponto-e-vírgula é opcional aqui.
         this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PONTO_E_VIRGULA);
         if (!expressao) {
-            throw new ErroAvaliadorSintatico(simboloAnterior, 'Esperado expressão.');
+            throw new ErroAvaliadorSintatico(simboloAnterior as any ?? null, 'Esperado expressão.');
         }
 
         return new Expressao(expressao);
@@ -916,7 +918,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         this.consumir(tiposDeSimbolos.PARENTESE_DIREITO, "Esperado ')' após o argumento em instrução `leia`.");
 
-        return new Leia(simboloLeia, argumentos);
+        return new Leia(simboloLeia, argumentos as any);
     }
 
     declaracaoLogicos(): Var[] {
@@ -957,7 +959,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
     async declaracaoRetorne(): Promise<Retorna> {
         this.avancarEDevolverAnterior();
         const simboloChave = this.simbolos[this.atual];
-        let valor = null;
+        let valor: Construto | undefined = undefined;
 
         if (
             [
@@ -974,7 +976,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             valor = await this.expressao();
         }
 
-        return new Retorna(simboloChave, valor);
+        return new Retorna(simboloChave, valor as any);
     }
 
     declaracaoPare(): Sustar {
@@ -989,7 +991,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
             this.consumir(tiposDeSimbolos.PARENTESE_ESQUERDO, "Esperado '(' após 'para'.");
 
-            let inicializador: Var | Expressao;
+            let inicializador: Var | Expressao | null = null;
             if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.PONTO_E_VIRGULA)) {
                 inicializador = null;
             } else if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.INTEIRO)) {
@@ -1013,7 +1015,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
             const corpo = await this.resolverDeclaracaoForaDeBloco() as Bloco;
 
-            return new Para(this.hashArquivo, Number(simboloPara.linha), inicializador, condicao, incrementar, corpo);
+            return new Para(this.hashArquivo, Number(simboloPara.linha), inicializador as any, condicao as any, incrementar as any, corpo);
         } finally {
             this.blocos -= 1;
         }
@@ -1086,7 +1088,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
     async declaracaoDeConstantes(): Promise<Const> {
         let identificador: SimboloInterface;
-        let tipo: SimboloInterface;
+        let tipo: SimboloInterface | undefined;
         if (
             [
                 tiposDeSimbolos.REAL,
@@ -1107,10 +1109,10 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
 
         this.pilhaEscopos.definirInformacoesVariavel(
             identificador.lexema,
-            new InformacaoElementoSintatico(identificador.lexema, tipo.lexema)
+            new InformacaoElementoSintatico(identificador.lexema, tipo?.lexema ?? '')
         );
 
-        return new Const(identificador, inicializador, tipo.lexema as TipoInferencia);
+        return new Const(identificador, inicializador, (tipo?.lexema ?? '') as TipoInferencia);
     }
 
     async resolverDeclaracaoForaDeBloco(): Promise<Declaracao | Declaracao[]> {
@@ -1157,7 +1159,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             case tiposDeSimbolos.PROGRAMA:
             case tiposDeSimbolos.CHAVE_DIREITA:
                 this.avancarEDevolverAnterior();
-                return null;
+                return [] as Declaracao[];
             case tiposDeSimbolos.REAL:
                 return await this.declaracaoReais();
             case tiposDeSimbolos.RETORNE:

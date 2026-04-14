@@ -184,7 +184,7 @@ const bibliotecasDelegadasAoDeleguaNode = ['Arquivos', 'Internet', 'Util'];
 
 function erroBibliotecaDelegada(caminho: string): never {
     throw new ErroEmTempoDeExecucao(
-        null,
+        undefined,
         `Biblioteca '${caminho}' depende de recursos específicos de ambiente e deve ser executada em um runtime que ofereça essa biblioteca, como o projeto delegua-node.`
     );
 }
@@ -206,7 +206,7 @@ export function logicaComumImportacao(caminho: string): DeleguaModulo {
                 erroBibliotecaDelegada(caminho);
             }
 
-            throw new ErroEmTempoDeExecucao(null, `Biblioteca não implementada: ${caminho}.`);
+            throw new ErroEmTempoDeExecucao(undefined, `Biblioteca não implementada: ${caminho}.`);
     }
 }
 
@@ -263,7 +263,7 @@ export async function visitarExpressaoLeiaComum(
             const variavel: VariavelInterface = promises[0];
             const indice = interpretador.resolverValor(promises[1]);
 
-            variavel.valor[indice] = converterValor(variavel.subtipo, valorLido);
+            variavel.valor[indice] = converterValor(variavel.subtipo as string, valorLido);
             continue;
         }
 
@@ -273,7 +273,7 @@ export async function visitarExpressaoLeiaComum(
         }
 
         throw new ErroEmTempoDeExecucao(
-            null,
+            undefined,
             'Argumento inválido em leia(). Esperado variável ou posição indexada de vetor/matriz.'
         );
     }
@@ -332,7 +332,7 @@ async function inicializarDimensaoMatrizVazia(
  * @param interpretador A instância do interpretador.
  * @param valores A matriz de valores das dimensões ainda não resolvidas.
  */
-async function resolverValoresMatriz(interpretador: VisitantePortugolStudioInterface, valores: any[]) {
+async function resolverValoresMatriz(interpretador: VisitantePortugolStudioInterface, valores: any[]): Promise<any[]> {
     const valoresResolvidos = [];
 
     for (let i = 0; i < valores.length; i++) {

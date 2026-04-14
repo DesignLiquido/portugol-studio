@@ -73,7 +73,7 @@ export class LexadorPortugolStudio extends LexadorBase {
 
         const codigo: string = this.codigo[this.linha].substring(this.inicioSimbolo, this.atual);
 
-        const tipo: string = codigo in palavrasReservadas ? palavrasReservadas[codigo] : tiposDeSimbolos.IDENTIFICADOR;
+        const tipo: string = codigo in palavrasReservadas ? (palavrasReservadas as Record<string, string>)[codigo] : tiposDeSimbolos.IDENTIFICADOR;
 
         this.adicionarSimbolo(tipo);
     }

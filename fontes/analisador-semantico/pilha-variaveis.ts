@@ -23,6 +23,6 @@ export class PilhaVariaveis implements PilhaInterface<{ [nomeVariavel: string]: 
 
     removerUltimo(): { [nomeVariavel: string]: VariavelInterface } {
         if (this.eVazio()) throw new Error('Pilha vazia.');
-        return this.pilha.pop();
+        return this.pilha.pop()!;
     }
 }

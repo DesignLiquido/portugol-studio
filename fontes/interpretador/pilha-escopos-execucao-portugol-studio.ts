@@ -60,7 +60,7 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
 
     removerUltimo(): EscopoExecucao {
         if (this.eVazio()) throw new Error('Pilha vazia.');
-        return this.pilha.pop();
+        return this.pilha.pop()!;
     }
 
     definirConstante(nomeConstante: string, valor: any, tipo?: string): void {
@@ -88,7 +88,7 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
     }
 
     definirVariavel(nomeVariavel: string, valor: any, tipo?: string) {
-        let variavel: VariavelInterface;
+        let variavel: VariavelInterface | undefined;
         let profundidadeVariavel: number = 0;
         for (let i = 1; i <= this.pilha.length; i++) {
             profundidadeVariavel = this.pilha.length - i;
@@ -226,7 +226,7 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
      * em console, do último escopo.
      */
     obterTodasDeleguaFuncao(): { [nome: string]: DeleguaFuncao } {
-        const retorno = {};
+        const retorno: { [nome: string]: DeleguaFuncao } = {};
         const espacoMemoria = this.pilha[this.pilha.length - 1].espacoMemoria;
         for (const [nome, corpo] of Object.entries(espacoMemoria.valores)) {
             const corpoValor = corpo.hasOwnProperty('valor') ? corpo.valor : corpo;
@@ -243,7 +243,7 @@ export class PilhaEscoposExecucaoPortugolStudio implements PilhaEscoposExecucaoI
      * @returns
      */
     obterTodasDeclaracaoClasse(): any {
-        const retorno = {};
+        const retorno: { [nome: string]: any } = {};
         const espacoMemoria = this.pilha[this.pilha.length - 1].espacoMemoria;
         for (const [nome, corpo] of Object.entries(espacoMemoria.valores)) {
             const corpoValor = corpo.hasOwnProperty('valor') ? corpo.valor : corpo;

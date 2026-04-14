@@ -21,11 +21,11 @@ export class InterpretadorPortugolStudioComDepuracao
 
     constructor(
         diretorioBase: string,
-        funcaoDeRetorno: Function = null,
-        funcaoDeRetornoMesmaLinha: Function = null,
-        funcaoLimpa: Function = null
+        funcaoDeRetorno: Function | null = null,
+        funcaoDeRetornoMesmaLinha: Function | null = null,
+        funcaoLimpa: Function | null = null
     ) {
-        super(diretorioBase, funcaoDeRetorno, funcaoDeRetornoMesmaLinha);
+        super(diretorioBase, funcaoDeRetorno as any, funcaoDeRetornoMesmaLinha as any);
 
         if (funcaoLimpa !== null) {
             this.funcaoLimpa = funcaoLimpa;
@@ -48,7 +48,7 @@ export class InterpretadorPortugolStudioComDepuracao
     async visitarDeclaracaoEscrevaMesmaLinha(declaracao: EscrevaMesmaLinha): Promise<any> {
         try {
             const formatoTexto: string = await comum.avaliarArgumentosEscreva(this, declaracao.argumentos);
-            this.funcaoDeRetornoMesmaLinha(formatoTexto);
+            this.funcaoDeRetornoMesmaLinha?.(formatoTexto);
             return null;
         } catch (erro: any) {
             this.erros.push({
