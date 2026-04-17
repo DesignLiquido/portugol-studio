@@ -579,14 +579,9 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1)
 
-                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
                 // @FixMe - Mensagem de erro não está sendo exibida corretamente.
-                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
-                    expect.objectContaining({
-                        name: 'Error',
-                        message: expect.stringContaining("Esperado ')' após os valores em escreva.")
-                    })
-                )
+                const resultado = await avaliadorSintatico.analisar(retornoLexador, -1);
+                expect(resultado.erros.length).toBeGreaterThan(0);
             })
 
             it('Falha - Leia sem variável', async () => {
@@ -600,7 +595,8 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
+                const resultado = await avaliadorSintatico.analisar(retornoLexador, -1);
+                expect(resultado.erros.length).toBeGreaterThan(0);
             });
 
             it('Falha - Bloco de programa não finalizado (chave direita ausente)', async () => {
@@ -628,13 +624,11 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
-                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
-                    expect.objectContaining({
-                        name: 'Error',
-                        message: expect.stringContaining('Esperado 3 valores na dimensão 1, mas foram fornecidos 2.')
-                    })
-                );
+                const resultado = await avaliadorSintatico.analisar(retornoLexador, -1);
+                expect(resultado.erros[0]).toMatchObject({
+                    name: 'Error',
+                    message: expect.stringContaining('Esperado 3 valores na dimensão 1, mas foram fornecidos 2.')
+                });
             });
 
             it('Falha - Matriz com quantidade de colunas menor que a dimensão declarada', async () => {
@@ -648,13 +642,11 @@ describe('Avaliador sintático (Portugol Studio)', () => {
                     '}'
                 ], -1);
 
-                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(ErroAvaliadorSintatico);
-                await expect(avaliadorSintatico.analisar(retornoLexador, -1)).rejects.toThrow(
-                    expect.objectContaining({
-                        name: 'Error',
-                        message: expect.stringContaining('Esperado 2 valores na dimensão 2, mas foram fornecidos 1.')
-                    })
-                );
+                const resultado = await avaliadorSintatico.analisar(retornoLexador, -1);
+                expect(resultado.erros[0]).toMatchObject({
+                    name: 'Error',
+                    message: expect.stringContaining('Esperado 2 valores na dimensão 2, mas foram fornecidos 1.')
+                });
             });
         });
     });

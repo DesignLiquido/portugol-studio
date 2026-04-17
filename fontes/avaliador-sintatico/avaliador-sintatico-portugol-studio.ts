@@ -33,16 +33,11 @@ import {
     Sustar,
 } from '@designliquido/delegua/declaracoes';
 import { RetornoLexador, RetornoAvaliadorSintatico } from '@designliquido/delegua/interfaces/retornos';
-import { AvaliadorSintaticoBase } from '@designliquido/delegua/avaliador-sintatico/avaliador-sintatico-base';
-import { PilhaEscopos } from '@designliquido/delegua/avaliador-sintatico';
-import { InformacaoEscopo } from '@designliquido/delegua/avaliador-sintatico/informacao-escopo';
+import { AvaliadorSintaticoBase, ErroAvaliadorSintatico, InformacaoEscopo, PilhaEscopos } from '@designliquido/delegua/avaliador-sintatico';
 import { InformacaoElementoSintatico } from '@designliquido/delegua/informacao-elemento-sintatico';
 import { TipoInferencia } from '@designliquido/delegua/inferenciador';
-
 import { ParametroInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
-
 import { Simbolo } from '@designliquido/delegua/lexador';
-import { ErroAvaliadorSintatico } from '@designliquido/delegua/avaliador-sintatico/erro-avaliador-sintatico';
 
 import { Matriz, Limpa } from '../construtos';
 
@@ -121,7 +116,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         this.blocos += 1;
         this.pilhaEscopos.empilhar(new InformacaoEscopo());
 
-        while (!this.estaNoFinal()) {
+        while (!this.estaNoFinal() && !this.verificarTipoSimboloAtual(tiposDeSimbolos.CHAVE_DIREITA)) {
             const declaracaoOuVetor: any = await this.resolverDeclaracaoForaDeBloco();
             if (Array.isArray(declaracaoOuVetor)) {
                 this.declaracoes = this.declaracoes.concat(declaracaoOuVetor);
@@ -130,7 +125,12 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             }
         }
 
-        this.consumir(tiposDeSimbolos.CHAVE_DIREITA, 'Esperado chave direita final para término do programa.');
+        try {
+            this.consumir(tiposDeSimbolos.CHAVE_DIREITA, 'Esperado chave direita final para término do programa.');
+        } catch (erro: any) {
+            if (this.erros.length === 0) throw erro;
+            this.erros.push(erro);
+        }
         this.pilhaEscopos.removerUltimo();
 
         // Podem haver comentários depois da declaração do programa em si.
@@ -146,7 +146,10 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         );
 
         if (encontrarDeclaracaoInicio.length <= 0) {
-            throw this.erro(this.simbolos[0], "Função 'inicio()' para iniciar o programa não foi definida.");
+            if (this.erros.length === 0) {
+                throw this.erro(this.simbolos[0], "Função 'inicio()' para iniciar o programa não foi definida.");
+            }
+            return;
         }
 
         // A última declaração do programa deve ser uma chamada a inicio()
@@ -383,7 +386,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         const caminhoEntao = await this.resolverDeclaracaoForaDeBloco() as Declaracao;
 
         while (this.verificarTipoSimboloAtual(tiposDeSimbolos.COMENTARIO) ||
-               this.verificarTipoSimboloAtual(tiposDeSimbolos.LINHA_COMENTARIO)) {
+            this.verificarTipoSimboloAtual(tiposDeSimbolos.LINHA_COMENTARIO)) {
             this.avancarEDevolverAnterior();
         }
 
@@ -420,7 +423,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
             this.blocos += 1;
 
             const caminhos: { condicoes: Construto[]; declaracoes: Declaracao[]; }[] = [];
-            let caminhoPadrao: { declaracoes: (Declaracao | Declaracao[])[]; } | undefined = undefined;
+            let caminhoPadrao: { declaracoes: (Declaracao | Declaracao[] | undefined)[]; } | undefined = undefined;
             while (!this.estaNoFinal() && !this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CHAVE_DIREITA)) {
                 if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CASO)) {
                     if (this.verificarSeSimboloAtualEIgualA(tiposDeSimbolos.CONTRARIO)) {
@@ -447,7 +450,7 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
                         );
 
                         caminhoPadrao = {
-                            declaracoes,
+                            declaracoes
                         };
                         continue;
                     }
@@ -1115,59 +1118,93 @@ export class AvaliadorSintaticoPortugolStudio extends AvaliadorSintaticoBase {
         return new Const(identificador, inicializador, (tipo?.lexema ?? '') as TipoInferencia);
     }
 
-    async resolverDeclaracaoForaDeBloco(): Promise<Declaracao | Declaracao[]> {
-        const simboloAtual = this.simbolos[this.atual];
-        switch (simboloAtual.tipo) {
-            case tiposDeSimbolos.CADEIA:
-                return await this.declaracaoCadeiasCaracteres();
-            case tiposDeSimbolos.CARACTER:
-                return await this.declaracaoCaracteres();
-            case tiposDeSimbolos.CHAVE_ESQUERDA:
-                const simboloInicioBloco: SimboloInterface = this.simbolos[this.atual];
-                return new Bloco(simboloInicioBloco.hashArquivo, Number(simboloInicioBloco.linha), await this.blocoEscopo());
-            case tiposDeSimbolos.COMENTARIO:
-                return this.declaracaoComentarioUmaLinha();
-            case tiposDeSimbolos.CONSTANTE:
-                this.avancarEDevolverAnterior();
-                return await this.declaracaoDeConstantes();
-            case tiposDeSimbolos.ENQUANTO:
-                return await this.declaracaoEnquanto();
-            case tiposDeSimbolos.ESCOLHA:
-                return await this.declaracaoEscolha();
-            case tiposDeSimbolos.ESCREVA:
-                return await this.declaracaoEscrevaMesmaLinha();
-            case tiposDeSimbolos.FACA:
-                return await this.declaracaoFazer();
-            case tiposDeSimbolos.FUNCAO:
-                return await this.funcao('funcao');
-            case tiposDeSimbolos.INCLUA:
-                return this.declaracaoInclua();
-            case tiposDeSimbolos.INTEIRO:
-                return await this.declaracaoInteiros();
-            case tiposDeSimbolos.LEIA:
-                return new Expressao(await this.expressaoLeia());
-            case tiposDeSimbolos.LIMPA:
-                return new Expressao(this.expressaoLimpa());
-            case tiposDeSimbolos.LINHA_COMENTARIO:
-                return this.declaracaoComentarioMultilinha();
-            case tiposDeSimbolos.LOGICO:
-                return this.declaracaoLogicos();
-            case tiposDeSimbolos.PARA:
-                return await this.declaracaoPara();
-            case tiposDeSimbolos.PARE:
-                return this.declaracaoPare();
-            case tiposDeSimbolos.PROGRAMA:
-            case tiposDeSimbolos.CHAVE_DIREITA:
-                this.avancarEDevolverAnterior();
-                return [] as Declaracao[];
-            case tiposDeSimbolos.REAL:
-                return await this.declaracaoReais();
-            case tiposDeSimbolos.RETORNE:
-                return await this.declaracaoRetorne();
-            case tiposDeSimbolos.SE:
-                return await this.declaracaoSe();
-            default:
-                return await this.declaracaoExpressao(simboloAtual);
+    async resolverDeclaracaoForaDeBloco(): Promise<Declaracao | Declaracao[] | undefined> {
+        try {
+            const simboloAtual = this.simbolos[this.atual];
+            switch (simboloAtual.tipo) {
+                case tiposDeSimbolos.CADEIA:
+                    return await this.declaracaoCadeiasCaracteres();
+                case tiposDeSimbolos.CARACTER:
+                    return await this.declaracaoCaracteres();
+                case tiposDeSimbolos.CHAVE_ESQUERDA:
+                    const simboloInicioBloco: SimboloInterface = this.simbolos[this.atual];
+                    return new Bloco(simboloInicioBloco.hashArquivo, Number(simboloInicioBloco.linha), await this.blocoEscopo());
+                case tiposDeSimbolos.COMENTARIO:
+                    return this.declaracaoComentarioUmaLinha();
+                case tiposDeSimbolos.CONSTANTE:
+                    this.avancarEDevolverAnterior();
+                    return await this.declaracaoDeConstantes();
+                case tiposDeSimbolos.ENQUANTO:
+                    return await this.declaracaoEnquanto();
+                case tiposDeSimbolos.ESCOLHA:
+                    return await this.declaracaoEscolha();
+                case tiposDeSimbolos.ESCREVA:
+                    return await this.declaracaoEscrevaMesmaLinha();
+                case tiposDeSimbolos.FACA:
+                    return await this.declaracaoFazer();
+                case tiposDeSimbolos.FUNCAO:
+                    return await this.funcao('funcao');
+                case tiposDeSimbolos.INCLUA:
+                    return this.declaracaoInclua();
+                case tiposDeSimbolos.INTEIRO:
+                    return await this.declaracaoInteiros();
+                case tiposDeSimbolos.LEIA:
+                    return new Expressao(await this.expressaoLeia());
+                case tiposDeSimbolos.LIMPA:
+                    return new Expressao(this.expressaoLimpa());
+                case tiposDeSimbolos.LINHA_COMENTARIO:
+                    return this.declaracaoComentarioMultilinha();
+                case tiposDeSimbolos.LOGICO:
+                    return this.declaracaoLogicos();
+                case tiposDeSimbolos.PARA:
+                    return await this.declaracaoPara();
+                case tiposDeSimbolos.PARE:
+                    return this.declaracaoPare();
+                case tiposDeSimbolos.PROGRAMA:
+                case tiposDeSimbolos.CHAVE_DIREITA:
+                    this.avancarEDevolverAnterior();
+                    return [] as Declaracao[];
+                case tiposDeSimbolos.REAL:
+                    return await this.declaracaoReais();
+                case tiposDeSimbolos.RETORNE:
+                    return await this.declaracaoRetorne();
+                case tiposDeSimbolos.SE:
+                    return await this.declaracaoSe();
+                default:
+                    return await this.declaracaoExpressao(simboloAtual);
+            }
+        } catch (erro: any) {
+            this.sincronizar();
+            this.erros.push(erro);
+            return undefined;
+        }
+    }
+
+    /**
+     * Usado quando há erros na avaliação sintática.
+     * Garante que o avaliador sintático não entre em _loop_ infinito.
+     * @returns Sempre retorna `void`.
+     */
+    protected sincronizar(): void {
+        this.avancarEDevolverAnterior(); // avança além do token com erro
+
+        while (!this.estaNoFinal()) {
+            // Um ponto-e-vírgula já consumido indica fronteira limpa entre declarações.
+            if (this.simbolos[this.atual].tipo === tiposDeSimbolos.PONTO_E_VIRGULA) return;
+
+            // Uma palavra-chave de início de declaração ou fecha-chave à frente:
+            // retorna SEM consumir o token, para que o chamador o analise normalmente.
+            switch (this.simbolos[this.atual].tipo) {
+                case tiposDeSimbolos.CHAVE_DIREITA:
+                case tiposDeSimbolos.FUNCAO:
+                case tiposDeSimbolos.PARA:
+                case tiposDeSimbolos.SE:
+                case tiposDeSimbolos.ENQUANTO:
+                case tiposDeSimbolos.ESCREVA:
+                    return;
+            }
+
+            this.avancarEDevolverAnterior();
         }
     }
 
