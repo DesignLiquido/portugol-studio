@@ -1,5 +1,6 @@
 import { DiagnosticoSeveridade } from '@designliquido/delegua/interfaces/erros';
-import { ContextoRegraPedagogica } from './tipos-regras-pedagogicas';
+
+import { ContextoRegraPedagogica } from '../../interfaces/regras-pedagogicas';
 
 export function aplicarRegraVariaveisNaoUsadas(contexto: ContextoRegraPedagogica): void {
     const naoUsadas = contexto.gerenciadorEscopos.obterVariaveisNaoUsadas();

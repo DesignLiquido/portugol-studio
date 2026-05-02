@@ -1,14 +1,15 @@
-import { Construto } from '@designliquido/delegua/construtos';
+import { ConstrutoInterface } from '@designliquido/delegua/interfaces';
+
 import { VisitantePortugolStudioInterface } from '../interfaces';
 
-export class Matriz implements Construto {
+export class Matriz implements ConstrutoInterface {
     linha: number;
     hashArquivo: number;
-    dimensoes: Construto[];
+    dimensoes: ConstrutoInterface[];
     tipoDados: string;
     valores: any;
 
-    constructor(hashArquivo: number, linha: number, dimensoes: Construto[], tipoDados: string, valores: any) {
+    constructor(hashArquivo: number, linha: number, dimensoes: ConstrutoInterface[], tipoDados: string, valores: any) {
         this.linha = linha;
         this.hashArquivo = hashArquivo;
         this.dimensoes = dimensoes;

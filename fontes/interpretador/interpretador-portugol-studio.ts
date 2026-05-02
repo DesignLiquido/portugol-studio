@@ -1,6 +1,6 @@
 import { EscrevaMesmaLinha, Importar } from '@designliquido/delegua/declaracoes';
 import { InterpretadorBase } from '@designliquido/delegua/interpretador/interpretador-base';
-import { EscopoExecucao } from '@designliquido/delegua/interfaces/escopo-execucao';
+import { EscopoExecucaoInterface } from '@designliquido/delegua/interfaces/escopo-execucao';
 import { EspacoMemoria } from '@designliquido/delegua/interpretador/espaco-memoria';
 import { DeleguaModulo } from '@designliquido/delegua/interpretador/estruturas';
 import { ImportarComoConstruto, Leia } from '@designliquido/delegua/construtos';
@@ -30,7 +30,7 @@ export class InterpretadorPortugolStudio extends InterpretadorBase implements Vi
         }
 
         this.pilhaEscoposExecucao = new PilhaEscoposExecucaoPortugolStudio();
-        const escopoExecucao: EscopoExecucao = {
+        const escopoExecucao: EscopoExecucaoInterface = {
             declaracoes: [],
             declaracaoAtual: 0,
             espacoMemoria: new EspacoMemoria(),

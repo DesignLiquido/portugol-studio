@@ -1,4 +1,4 @@
-import { VisitanteComumInterface } from '@designliquido/delegua/interfaces';
+import { ConstrutoInterface, VisitanteComumInterface } from '@designliquido/delegua/interfaces';
 import {
     Bloco,
     CabecalhoPrograma,
@@ -41,7 +41,6 @@ import {
     Binario,
     Chamada,
     ComentarioComoConstruto,
-    Construto,
     DefinirValor,
     Dicionario,
     ExpressaoRegular,
@@ -1011,7 +1010,7 @@ export class FormatadorPortugolStudio implements VisitanteComumInterface {
         this.codigoFormatado += `]`;
     }
 
-    formatarDeclaracaoOuConstruto(declaracaoOuConstruto: Declaracao | Construto): void {
+    formatarDeclaracaoOuConstruto(declaracaoOuConstruto: Declaracao | ConstrutoInterface): void {
         switch (declaracaoOuConstruto.constructor) {
             case AcessoIndiceVariavel:
                 this.visitarExpressaoAcessoIndiceVariavel(declaracaoOuConstruto as AcessoIndiceVariavel);

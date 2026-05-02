@@ -1,8 +1,8 @@
-import { Construto } from '@designliquido/delegua';
+import { ConstrutoInterface } from '@designliquido/delegua/interfaces';
 
 import { VisitantePortugolStudioInterface } from '../interfaces';
 
-export class Limpa implements Construto {
+export class Limpa implements ConstrutoInterface {
     linha: number;
     hashArquivo: number;
 

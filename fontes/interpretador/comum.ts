@@ -1,8 +1,8 @@
-import { AcessoIndiceVariavel, Construto, ImportarComoConstruto, Leia, Variavel } from '@designliquido/delegua/construtos';
+import { AcessoIndiceVariavel, ImportarComoConstruto, Leia, Variavel } from '@designliquido/delegua/construtos';
 import { Declaracao, Expressao, Importar } from '@designliquido/delegua/declaracoes';
 import { DeleguaModulo, FuncaoPadrao } from '@designliquido/delegua/interpretador/estruturas';
 import { ErroEmTempoDeExecucao } from '@designliquido/delegua/excecoes';
-import { VariavelInterface } from '@designliquido/delegua';
+import { ConstrutoInterface, VariavelInterface } from '@designliquido/delegua';
 
 import { VisitantePortugolStudioInterface } from '../interfaces';
 import { Matriz } from '../construtos/matriz';
@@ -167,7 +167,7 @@ function carregarBibliotecaTipos(): DeleguaModulo {
  */
 export async function avaliarArgumentosEscreva(
     interpretador: VisitantePortugolStudioInterface,
-    argumentos: Construto[]
+    argumentos: ConstrutoInterface[]
 ): Promise<string> {
     let formatoTexto: string = '';
 
@@ -219,13 +219,13 @@ export async function visitarExpressaoImportarComum(expressao: ImportarComoConst
     return Promise.resolve(logicaComumImportacao(caminho));
 }
 
-function desenveloparConstruto(expressao: Construto | Declaracao): Construto {
+function desenveloparConstruto(expressao: ConstrutoInterface | Declaracao): ConstrutoInterface {
     if (expressao instanceof Expressao) {
         return desenveloparConstruto((<Expressao>expressao).expressao);
     }
 
     // TODO: Verificar sem tem mais algum caso de declaração não coberto aqui.
-    return expressao as Construto;
+    return expressao as ConstrutoInterface;
 }
 
 /**

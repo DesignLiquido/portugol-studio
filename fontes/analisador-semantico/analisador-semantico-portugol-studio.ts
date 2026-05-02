@@ -17,10 +17,8 @@ import {
 
 import { AnalisadorSemanticoBase } from '@designliquido/delegua/analisador-semantico/analisador-semantico-base';
 import { GerenciadorEscopos } from '@designliquido/delegua/analisador-semantico/gerenciador-escopos';
-import { SimboloInterface } from '@designliquido/delegua/interfaces';
-import { DiagnosticoAnalisadorSemantico, DiagnosticoSeveridade } from '@designliquido/delegua/interfaces/erros';
+import { DiagnosticoAnalisadorSemanticoInterface, DiagnosticoSeveridade, RetornoAnalisadorSemanticoInterface, SimboloInterface } from '@designliquido/delegua/interfaces';
 import { FuncaoHipoteticaInterface } from '@designliquido/delegua/interfaces/funcao-hipotetica-interface';
-import { RetornoAnalisadorSemantico } from '@designliquido/delegua/interfaces/retornos/retorno-analisador-semantico';
 import { VariavelHipoteticaInterface } from '@designliquido/delegua/interfaces/variavel-hipotetica-interface';
 import { TipoInferencia } from '@designliquido/delegua/inferenciador';
 
@@ -41,10 +39,8 @@ import {
 
 import { PilhaVariaveis } from './pilha-variaveis';
 import { inferirTipoVariavel } from '../interpretador/inferenciador';
-import { aplicarRegraVariaveisNaoUsadas } from './regras-pedagogicas/regra-variaveis-nao-usadas';
-import { aplicarRegraOrdemLeituraEscrita } from './regras-pedagogicas/regra-ordem-leitura-escrita';
-import { aplicarRegraUsoVariavelAuxiliar } from './regras-pedagogicas/regra-uso-variavel-auxiliar';
-import { ContextoRegraPedagogica } from './regras-pedagogicas/tipos-regras-pedagogicas';
+import { ContextoRegraPedagogica } from '../interfaces/regras-pedagogicas';
+import { aplicarRegraOrdemLeituraEscrita, aplicarRegraUsoVariavelAuxiliar, aplicarRegraVariaveisNaoUsadas } from './regras-pedagogicas';
 
 import tiposDeDados from '../tipos-de-dados';
 
@@ -53,7 +49,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
     variaveis: { [nomeVariavel: string]: VariavelHipoteticaInterface };
     funcoes: { [nomeFuncao: string]: FuncaoHipoteticaInterface };
     atual: number;
-    diagnosticos: DiagnosticoAnalisadorSemantico[];
+    diagnosticos: DiagnosticoAnalisadorSemanticoInterface[];
     corpoMetodoPrincipal: Declaracao[] = [];
     /** Tipo de retorno declarado da função sendo analisada no momento. Nulo fora de funções. */
     tipoRetornoFuncaoAtual: string | null = null;
@@ -1108,7 +1104,7 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
         return Promise.resolve(null);
     }
 
-    async analisar(declaracoes: Declaracao[]): Promise<RetornoAnalisadorSemantico> {
+    async analisar(declaracoes: Declaracao[]): Promise<RetornoAnalisadorSemanticoInterface> {
         // Inicializa o estado do analisador
         this.gerenciadorEscopos = new GerenciadorEscopos();
         this.variaveis = {};
@@ -1146,6 +1142,6 @@ export class AnalisadorSemanticoPortugolStudio extends AnalisadorSemanticoBase {
 
         return {
             diagnosticos: this.diagnosticos,
-        } as RetornoAnalisadorSemantico;
+        } as RetornoAnalisadorSemanticoInterface;
     }
 }

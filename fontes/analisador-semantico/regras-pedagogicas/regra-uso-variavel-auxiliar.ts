@@ -1,7 +1,8 @@
 import { Declaracao, Expressao } from '@designliquido/delegua/declaracoes';
 import { SimboloInterface } from '@designliquido/delegua/interfaces';
 import { Atribuir, Variavel } from '@designliquido/delegua/construtos';
-import { ContextoRegraPedagogica, CorrecaoSugestaoPedagogica } from './tipos-regras-pedagogicas';
+import { ContextoRegraPedagogica, CorrecaoSugestaoPedagogica } from '../../interfaces/regras-pedagogicas';
+
 
 function obterExpressaoDeclaracao(declaracao: Declaracao) {
     if (declaracao instanceof Expressao) {
