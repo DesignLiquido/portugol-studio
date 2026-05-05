@@ -6,6 +6,11 @@ export default async (): Promise<Config.InitialOptions> => {
         modulePathIgnorePatterns: ['<rootDir>/dist/'],
         preset: 'ts-jest',
         testEnvironment: 'node',
+        globals: {
+            'ts-jest': {
+                tsconfig: 'tsconfig.testes.json'
+            }
+        },
         coverageReporters: ['json-summary', 'lcov', 'text', 'text-summary'],
         moduleNameMapper: {
             // Se for utilizar módulos linkados, comentar a linha abaixo:
