@@ -29,10 +29,10 @@
         "xml2js": "^0.6.2"
     },
     "peerDependencies": {
-        "@designliquido/delegua": "^1.23.3"
+        "@designliquido/delegua": "^1.23.4"
     },
     "devDependencies": {
-        "@designliquido/delegua": "^1.23.3",
+        "@designliquido/delegua": "^1.23.4",
         "@types/estree": "^1.0.7",
         "@types/jest": "^30.0.0",
         "@types/node": "^25.0.2",
